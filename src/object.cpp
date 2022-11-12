@@ -1,8 +1,12 @@
 #include "object.h"
+#include "keystate.h"
 
-Object::Object(int x, int y, int height, int width, SDL_Texture* texture) :
+#include <iostream>
+
+Object::Object(double x, double y, double height, double width, SDL_Texture* texture) :
     body()
-   ,velocity()
+   ,updateBody()
+   ,currentVelocity()
    ,tex(texture)
 
 {
@@ -10,6 +14,11 @@ Object::Object(int x, int y, int height, int width, SDL_Texture* texture) :
     body.y = y;
     body.h = height;
     body.w = width;
+    
+    updateBody.x = x;
+    updateBody.y = y;
+    updateBody.h = height;
+    updateBody.w = width;
 
     SDL_QueryTexture(tex, NULL, NULL, &body.w, &body.h);
 }
@@ -24,38 +33,73 @@ void Object::draw(SDL_Renderer* rend)
     SDL_RenderCopy(rend, tex, NULL, &body);
 }
 
-void Object::move(int x, int y)
+void Object::update(double deltaTime)
 {
-    body.x = x;
-    body.y = y;
+    const double speed = 0.0001;
+    KeyState& keyState = *KeyState::get();
+    if(keyState[SDL_SCANCODE_UP] == SDL_KEYDOWN
+    || keyState[SDL_SCANCODE_W] == SDL_KEYDOWN)
+    {
+        velocityDelta(0, -speed*deltaTime);
+    }
+
+    if(keyState[SDL_SCANCODE_DOWN] == SDL_KEYDOWN
+    || keyState[SDL_SCANCODE_S] == SDL_KEYDOWN)
+    {
+        velocityDelta(0, speed*deltaTime);
+    }
+
+    if(keyState[SDL_SCANCODE_LEFT] == SDL_KEYDOWN
+    || keyState[SDL_SCANCODE_A] == SDL_KEYDOWN)
+    {
+        velocityDelta(-speed*deltaTime, 0);
+    }
+
+    if(keyState[SDL_SCANCODE_RIGHT] == SDL_KEYDOWN
+    || keyState[SDL_SCANCODE_D] == SDL_KEYDOWN)
+    {
+        velocityDelta(speed*deltaTime, 0);
+    }
+    std::cout << "velocity: " << currentVelocity.x << " " << currentVelocity.y << "\r\n";
+    moveDelta(currentVelocity.x, currentVelocity.y);
+    body.x = updateBody.x;
+    body.y = updateBody.y;
+    body.h = updateBody.h;
+    body.w = updateBody.w;
 }
 
-void Object::moveDelta(int x, int y)
+void Object::move(double x, double y)
 {
-    body.x += x;
-    body.y += y;
+    updateBody.x = x;
+    updateBody.y = y;
 }
 
-void Object::velosity(int x, int y)
+void Object::moveDelta(double x, double y)
 {
-    velocity.x = x;
-    velocity.y = y;
+    updateBody.x += x;
+    updateBody.y += y;
 }
 
-void Object::velosityDelta(int x, int y)
+void Object::velocity(double x, double y)
 {
-    velocity.x += x;
-    velocity.y += y;
+    currentVelocity.x = x;
+    currentVelocity.y = y;
 }
 
-void Object::resize(int height, int width)
+void Object::velocityDelta(double x, double y)
 {
-    body.h = height;
-    body.w = width;
+    currentVelocity.x += x;
+    currentVelocity.y += y;
 }
 
-void Object::resizeDelta(int height, int width)
+void Object::resize(double height, double width)
 {
-    body.h += height;
-    body.w += width;
+    updateBody.h = height;
+    updateBody.w = width;
+}
+
+void Object::resizeDelta(double height, double width)
+{
+    updateBody.h += height;
+    updateBody.w += width;
 }
