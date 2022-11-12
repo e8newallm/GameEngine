@@ -1,0 +1,4 @@
+*.xcf
+build
+bin
+.vscode
