@@ -6,6 +6,9 @@
 #include <ctime>
 
 #include "object.h"
+#include "physicsobject.h"
+#include "player.h"
+
 #include "keystate.h"
 
 Uint64 currentTime = SDL_GetPerformanceCounter();
@@ -27,14 +30,15 @@ int main()
     std::srand(std::time(nullptr));
     KeyState* keyState = KeyState::get();
 
-    Object test(500.0, 500.0, 40.0, 40.0, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    PhysicsObject test(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    Player player(500.0, 500.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
  
     while (!close)
     {
         Uint64 newTime = SDL_GetPerformanceCounter();
         deltaTime = (double)((newTime - currentTime)*1000 / (double)SDL_GetPerformanceFrequency());
         currentTime = newTime;
-        std::cout << "DELTA: " << deltaTime << " " << 1.0f/(deltaTime/1000) << " FPS \r\n";
+        //std::cout << "DELTA: " << deltaTime << " " << 1.0f/(deltaTime/1000) << " FPS \r\n";
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
         {
@@ -60,11 +64,10 @@ int main()
 
         SDL_RenderClear(rend);
  
-        test.update(deltaTime);
-        test.draw(rend);
+        PhysicsObject::updateObjects(deltaTime, rend);
 
         SDL_RenderPresent(rend);
-        SDL_Delay(1000 / 200);
+        SDL_Delay(1000 / 60);
     }
  
     SDL_DestroyRenderer(rend);

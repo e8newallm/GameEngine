@@ -1,7 +1,7 @@
+#include <iostream>
+
 #include "object.h"
 #include "keystate.h"
-
-#include <iostream>
 
 Object::Object(double x, double y, double height, double width, SDL_Texture* texture) :
     body()
@@ -10,6 +10,7 @@ Object::Object(double x, double y, double height, double width, SDL_Texture* tex
    ,tex(texture)
 
 {
+    SDL_QueryTexture(tex, NULL, NULL, NULL, NULL);
     body.x = x;
     body.y = y;
     body.h = height;
@@ -19,8 +20,6 @@ Object::Object(double x, double y, double height, double width, SDL_Texture* tex
     updateBody.y = y;
     updateBody.h = height;
     updateBody.w = width;
-
-    SDL_QueryTexture(tex, NULL, NULL, &body.w, &body.h);
 }
 
 Object::~Object()
@@ -35,37 +34,6 @@ void Object::draw(SDL_Renderer* rend)
 
 void Object::update(double deltaTime)
 {
-    const double speed = 0.0001;
-    KeyState& keyState = *KeyState::get();
-    if(keyState[SDL_SCANCODE_UP] == SDL_KEYDOWN
-    || keyState[SDL_SCANCODE_W] == SDL_KEYDOWN)
-    {
-        velocityDelta(0, -speed*deltaTime);
-    }
-
-    if(keyState[SDL_SCANCODE_DOWN] == SDL_KEYDOWN
-    || keyState[SDL_SCANCODE_S] == SDL_KEYDOWN)
-    {
-        velocityDelta(0, speed*deltaTime);
-    }
-
-    if(keyState[SDL_SCANCODE_LEFT] == SDL_KEYDOWN
-    || keyState[SDL_SCANCODE_A] == SDL_KEYDOWN)
-    {
-        velocityDelta(-speed*deltaTime, 0);
-    }
-
-    if(keyState[SDL_SCANCODE_RIGHT] == SDL_KEYDOWN
-    || keyState[SDL_SCANCODE_D] == SDL_KEYDOWN)
-    {
-        velocityDelta(speed*deltaTime, 0);
-    }
-    std::cout << "velocity: " << currentVelocity.x << " " << currentVelocity.y << "\r\n";
-    moveDelta(currentVelocity.x, currentVelocity.y);
-    body.x = updateBody.x;
-    body.y = updateBody.y;
-    body.h = updateBody.h;
-    body.w = updateBody.w;
 }
 
 void Object::move(double x, double y)
