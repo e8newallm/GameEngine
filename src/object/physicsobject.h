@@ -18,11 +18,15 @@ class PhysicsObject : public Object
 
         virtual void update(double deltaTime);
         virtual void collision(SDL_Rect* other);
+        void groundCheck();
+        bool isOnGround();
 
         static void updateObjects(double deltaTime, SDL_Renderer* rend);
-        void detectCollision(int pos);
+        bool detectCollision();
 
     protected:
+
+        bool onGround;
         bool isStatic;
         bool canCollide;
 

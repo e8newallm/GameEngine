@@ -38,7 +38,7 @@ int main()
         Uint64 newTime = SDL_GetPerformanceCounter();
         deltaTime = (double)((newTime - currentTime)*1000 / (double)SDL_GetPerformanceFrequency());
         currentTime = newTime;
-        //std::cout << "DELTA: " << deltaTime << " " << 1.0f/(deltaTime/1000) << " FPS \r\n";
+        std::cout << "DELTA: " << deltaTime << " " << 1.0f/(deltaTime/1000) << " FPS \r\n";
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
         {
@@ -63,11 +63,13 @@ int main()
         }
 
         SDL_RenderClear(rend);
- 
+        
         PhysicsObject::updateObjects(deltaTime, rend);
-
+        //PhysicsObject::updateObjects(1000 / 80, rend);
+        //char test;
+        //std::cin >> test;
+        //SDL_Delay(1000 / 60);
         SDL_RenderPresent(rend);
-        SDL_Delay(1000 / 60);
     }
  
     SDL_DestroyRenderer(rend);

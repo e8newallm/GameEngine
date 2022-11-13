@@ -13,25 +13,11 @@ void Player::update(double deltaTime)
 {
     KeyState& keyState = *KeyState::get();
     const double speed = 0.5;
-    const double jump = 2.0;
+    const double jump = 1.0;
 
-    std::cout << "DELTA: " << deltaTime << "\r\n";
-
-    if(keyState[SDL_SCANCODE_UP] == SDL_KEYDOWN
-    || keyState[SDL_SCANCODE_W] == SDL_KEYDOWN)
+    if(keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN && isOnGround())
     {
-        SDL_Point groundCheck;
-        groundCheck.x = body.x + body.w/2;
-        groundCheck.y = body.y + body.h + 2;
-        for(int i = 0; i < collisionObjects.size(); i++)
-        {
-            if(SDL_PointInRect(&groundCheck, collisionObjects[i]->getBody()))
-            {
-                velocityDelta(0, -jump*deltaTime);
-                break;
-            }
-        }
-        
+        velocityDelta(0, -jump*deltaTime);
     }
 
     if(keyState[SDL_SCANCODE_LEFT] == SDL_KEYDOWN
