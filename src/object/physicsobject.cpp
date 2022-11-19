@@ -10,6 +10,8 @@ PhysicsObject::PhysicsObject(double x, double y, double height, double width, in
     Object(x, y, height, width, texture)
    ,isStatic(flags & PHYOBJ_STATIC)
    ,canCollide(flags & PHYOBJ_COLLIDE)
+   ,currentVelocity()
+   ,nextVelocity()
 {
     if(canCollide)
     {
@@ -23,6 +25,18 @@ PhysicsObject::PhysicsObject(double x, double y, double height, double width, in
 
 PhysicsObject::~PhysicsObject()
 {
+}
+
+void PhysicsObject::velocity(double x, double y)
+{
+    nextVelocity.x = x;
+    nextVelocity.y = y;
+}
+
+void PhysicsObject::velocityDelta(double x, double y)
+{
+    nextVelocity.x += x;
+    nextVelocity.y += y;
 }
 
 void PhysicsObject::groundCheck()
@@ -44,6 +58,12 @@ void PhysicsObject::groundCheck()
     return;
 }
 
+void PhysicsObject::preUpdate()
+{
+    currentVelocity.x = nextVelocity.x;
+    currentVelocity.y = nextVelocity.y;
+}
+
 bool PhysicsObject::isOnGround()
 {
     return onGround;
@@ -55,38 +75,43 @@ void PhysicsObject::update(double deltaTime)
         return;
 
     if(!isOnGround())
-        velocityDelta(0, 0.1*deltaTime);
+        velocityDelta(0, gravity * deltaTime);
 
-    std::cout << "currentVelocity.x: " << currentVelocity.x << " currentVelocity.y" << currentVelocity.y << "\r\n";
-    float magnitude = sqrt(currentVelocity.x * currentVelocity.x + currentVelocity.y * currentVelocity.y);
+    SDL_FPoint displacement;
+    displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
+    displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
+    std::cout << "currentVel: " << currentVelocity.x << " " << currentVelocity.y << "\r\n";
+    std::cout << "nextVel: " << nextVelocity.x << " " << nextVelocity.y << "\r\n";
+    std::cout << "displacement: " << displacement.x << " " << displacement.y << "\r\n";
+
+    float magnitude = sqrt(displacement.x * displacement.x + displacement.y * displacement.y);
+    std::cout << "MAGNATUDE: " << magnitude << " / DELTA: " << magnitude / deltaTime << "\r\n";
     if(magnitude > 5.0f)
     {
-        while(magnitude > 0.0f)
+        SDL_FPoint tempDisplacement;
+        tempDisplacement.x = (displacement.x / magnitude) * 5.0f;
+        tempDisplacement.y = (displacement.y / magnitude) * 5.0f;
+        for(int i = 0; i < magnitude / 5.0f; i++)
         {
-            std::cout << "MAG: " << magnitude << "\r\n";
-            SDL_FPoint tempVelocity;
-            tempVelocity = currentVelocity;
-            tempVelocity.x /= 5.0f;
-            tempVelocity.y /= 5.0f;
-            moveDelta(tempVelocity.x, tempVelocity.y);
+            moveDelta(tempDisplacement.x, tempDisplacement.y);
             body.x = updateBody.x;
             body.y = updateBody.y;
             body.h = updateBody.h;
             body.w = updateBody.w;
             if(detectCollision())
                 return;
-            magnitude -= 5.0f;
         }
     }
     else
     {
-        moveDelta(currentVelocity.x, currentVelocity.y);
+        moveDelta(displacement.x, displacement.y);
         body.x = updateBody.x;
         body.y = updateBody.y;
         body.h = updateBody.h;
         body.w = updateBody.w;
         detectCollision();
     }
+    std::cout << "body.x: " << body.x << " body.y: " << body.y << "\r\n";
 }
 
 bool PhysicsObject::detectCollision()
@@ -95,7 +120,6 @@ bool PhysicsObject::detectCollision()
     {
         if(SDL_HasIntersection(getBody(), collisionObjects[i]->getBody()) && this != collisionObjects[i])
         {
-            std::cout << "COLLISION!\r\n";
             collision(collisionObjects[i]->getBody());
             return true;
         }
@@ -112,12 +136,13 @@ void PhysicsObject::collision(SDL_Rect* other)
         {
             body.x -= collisionArea.w;
             currentVelocity.x = 0;
+            nextVelocity.x = 0;
         }
         else
         {
-            std::cout << "collisionArea.h: " << collisionArea.h << "\r\n";
             body.y -= collisionArea.h;
             currentVelocity.y = 0;
+            nextVelocity.y = 0;
         }
     }
 }
@@ -127,11 +152,13 @@ void PhysicsObject::updateObjects(double deltaTime, SDL_Renderer* rend)
     for(int i = 0; i < collisionObjects.size(); i++)
     {
         collisionObjects[i]->groundCheck();
+        collisionObjects[i]->preUpdate();
         collisionObjects[i]->update(deltaTime);
         collisionObjects[i]->draw(rend);
     }
     for(int i = 0; i < noncollisionObjects.size(); i++)
     {
+        collisionObjects[i]->preUpdate();
         noncollisionObjects[i]->update(deltaTime);
         noncollisionObjects[i]->draw(rend);
     }

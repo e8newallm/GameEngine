@@ -10,6 +10,11 @@ class Player : public PhysicsObject
         Player() : PhysicsObject() {};
 
         virtual void update(double deltaTime);
+
+    private:
+        const double speed = 0.5f;
+        const double jump = 2.0f;
+        double MAXHEIGHT = 99999.0f;
 };
 
 #endif

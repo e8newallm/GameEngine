@@ -31,14 +31,13 @@ int main()
     KeyState* keyState = KeyState::get();
 
     PhysicsObject test(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    Player player(500.0, 500.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    Player player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
  
     while (!close)
     {
         Uint64 newTime = SDL_GetPerformanceCounter();
         deltaTime = (double)((newTime - currentTime)*1000 / (double)SDL_GetPerformanceFrequency());
         currentTime = newTime;
-        std::cout << "DELTA: " << deltaTime << " " << 1.0f/(deltaTime/1000) << " FPS \r\n";
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
         {
@@ -64,12 +63,14 @@ int main()
 
         SDL_RenderClear(rend);
         
+        deltaTime = 10;
+
+        std::cout << "\r\nDelta: " << deltaTime << "\r\n";
         PhysicsObject::updateObjects(deltaTime, rend);
-        //PhysicsObject::updateObjects(1000 / 80, rend);
-        //char test;
-        //std::cin >> test;
-        //SDL_Delay(1000 / 60);
         SDL_RenderPresent(rend);
+        SDL_Delay(100);
+        char test;
+        //std::cin >> test;
     }
  
     SDL_DestroyRenderer(rend);

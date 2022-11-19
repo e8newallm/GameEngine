@@ -6,7 +6,6 @@
 Object::Object(double x, double y, double height, double width, SDL_Texture* texture) :
     body()
    ,updateBody()
-   ,currentVelocity()
    ,tex(texture)
 
 {
@@ -46,18 +45,6 @@ void Object::moveDelta(double x, double y)
 {
     updateBody.x += x;
     updateBody.y += y;
-}
-
-void Object::velocity(double x, double y)
-{
-    currentVelocity.x = x;
-    currentVelocity.y = y;
-}
-
-void Object::velocityDelta(double x, double y)
-{
-    currentVelocity.x += x;
-    currentVelocity.y += y;
 }
 
 void Object::resize(double height, double width)

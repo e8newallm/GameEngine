@@ -12,12 +12,17 @@ Player::Player(double x, double y, double height, double width, int flags, SDL_T
 void Player::update(double deltaTime)
 {
     KeyState& keyState = *KeyState::get();
-    const double speed = 0.5;
-    const double jump = 1.0;
 
-    if(keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN && isOnGround())
+    std::cout << "y: " << body.y << "\r\n";
+    if(body.y < MAXHEIGHT)
     {
-        velocityDelta(0, -jump*deltaTime);
+        MAXHEIGHT = body.y;
+    }
+    std::cout << "MAXHEIGHT: " << MAXHEIGHT << "\r\n";
+    if(true && isOnGround()) //keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN
+    {
+        std::cout << "JUMOP\r\n";
+        velocityDelta(0, -jump);
     }
 
     if(keyState[SDL_SCANCODE_LEFT] == SDL_KEYDOWN

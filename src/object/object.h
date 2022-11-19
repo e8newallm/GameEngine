@@ -17,9 +17,6 @@ class Object
         virtual void move(double x, double y);
         virtual void moveDelta(double x, double y);
 
-        virtual void velocity(double x, double y);
-        virtual void velocityDelta(double x, double y);
-
         virtual void resize(double height, double width);
         virtual void resizeDelta(double height, double width);
 
@@ -28,7 +25,6 @@ class Object
     protected:
         SDL_Rect body;
         SDL_FRect updateBody;
-        SDL_FPoint currentVelocity;
         SDL_Texture* tex;
 };
 
