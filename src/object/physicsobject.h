@@ -2,6 +2,7 @@
 #define PHYSICSOBJECT_H
 
 #include <vector>
+#include <SDL2/SDL_mutex.h>
 
 #include "object.h"
 
@@ -18,29 +19,42 @@ class PhysicsObject : public Object
 
         void preUpdate();
         virtual void update(double deltaTime);
+        void draw(SDL_Renderer* rend, double percent);
+
         virtual void collision(SDL_Rect* other);
         void groundCheck();
         bool isOnGround();
 
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
+        virtual SDL_FPoint getVelocity() { return nextVelocity; };
 
-        static void updateObjects(double deltaTime, SDL_Renderer* rend);
+        virtual SDL_Rect getInterBody(double percent);
+
+        static void updateObjects();
+        static void drawObjects(SDL_Renderer* rend);
         bool detectCollision();
 
     protected:
 
-        const double gravity = 0.005f;
-
         bool onGround;
         bool isStatic;
         bool canCollide;
+
+        SDL_Rect prevBody;
 
         SDL_FPoint currentVelocity;
         SDL_FPoint nextVelocity;
 
         static std::vector<PhysicsObject*> noncollisionObjects;
         static std::vector<PhysicsObject*> collisionObjects;
+        
+        static Uint64 updateTime;
+        static Uint64 lastRender;
+        //static SDL_mutex usageLock;
+
+        static const double gravity;
+        static const double phyTick;
 };
 
 #endif

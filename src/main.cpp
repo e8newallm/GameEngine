@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_thread.h>
 
 #include <iostream>
 #include <ctime>
@@ -11,9 +12,16 @@
 
 #include "keystate.h"
 
-Uint64 currentTime = SDL_GetPerformanceCounter();
-double deltaTime = 1;
 bool close = false;
+
+int physLoop(void* data)
+{
+    while(!close)
+    {
+        PhysicsObject::updateObjects();
+    }
+    return 0;
+}
 
 int main()
 {
@@ -32,12 +40,11 @@ int main()
 
     PhysicsObject test(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
     Player player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
- 
+    
+    SDL_Thread* physThread = SDL_CreateThread(physLoop, "phyThread", NULL);
+
     while (!close)
     {
-        Uint64 newTime = SDL_GetPerformanceCounter();
-        deltaTime = (double)((newTime - currentTime)*1000 / (double)SDL_GetPerformanceFrequency());
-        currentTime = newTime;
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
         {
@@ -62,17 +69,11 @@ int main()
         }
 
         SDL_RenderClear(rend);
-        
-        deltaTime = 10;
-
-        std::cout << "\r\nDelta: " << deltaTime << "\r\n";
-        PhysicsObject::updateObjects(deltaTime, rend);
+        PhysicsObject::drawObjects(rend);
         SDL_RenderPresent(rend);
-        SDL_Delay(100);
-        char test;
-        //std::cin >> test;
+        //SDL_Delay(500);
     }
- 
+    SDL_WaitThread(physThread, NULL);
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
