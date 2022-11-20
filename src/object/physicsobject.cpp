@@ -170,15 +170,21 @@ void PhysicsObject::collision(SDL_Rect* other)
             {
                 moveDelta(collisionArea.w, 0);
                 body.x += collisionArea.w;
-                currentVelocity.x = 0;
-                nextVelocity.x = 0;
+                if(nextVelocity.x < 0.0f)
+                {
+                    currentVelocity.x = 0;
+                    nextVelocity.x = 0;
+                }
             }
             else
             {
                 moveDelta(-collisionArea.w, 0);
                 body.x -= collisionArea.w;
-                currentVelocity.x = 0;
-                nextVelocity.x = 0;
+                if(nextVelocity.x > 0.0f)
+                {
+                    currentVelocity.x = 0;
+                    nextVelocity.x = 0;
+                }
             }
         }
         else
@@ -187,15 +193,21 @@ void PhysicsObject::collision(SDL_Rect* other)
             {
                 moveDelta(0, collisionArea.h);
                 body.y += collisionArea.h;
-                currentVelocity.y = 0;
-                nextVelocity.y = 0;
+                if(nextVelocity.y < 0.0f)
+                {
+                    currentVelocity.y = 0;
+                    nextVelocity.y = 0;
+                }
             }
             else
             {
                 moveDelta(0, -collisionArea.h);
                 body.y -= collisionArea.h;
-                currentVelocity.y = 0;
-                nextVelocity.y = 0;
+                if(nextVelocity.y > 0.0f)
+                {
+                    currentVelocity.y = 0;
+                    nextVelocity.y = 0;
+                }
             }
         }
     }
