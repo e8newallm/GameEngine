@@ -216,6 +216,7 @@ void PhysicsObject::collision(SDL_Rect* other)
 void PhysicsObject::updateObjects()
 {
     SDL_LockMutex(usageLock);
+    Uint64 startTime = SDL_GetPerformanceCounter();
     for(int i = 0; i < collisionObjects.size(); i++)
     {
         collisionObjects[i]->groundCheck();
@@ -229,8 +230,11 @@ void PhysicsObject::updateObjects()
     }
     updateTime = SDL_GetPerformanceCounter();
     SDL_UnlockMutex(usageLock);
+
+    double phyTickDuration = (updateTime - startTime) * 1000 / (double)SDL_GetPerformanceFrequency();
+    std::cout << "phys tick duration: " << phyTickDuration << "\r\n";
     
-    SDL_Delay(1000.0f / phyTick);
+    SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
 }
 
 void PhysicsObject::drawObjects(SDL_Renderer* rend)

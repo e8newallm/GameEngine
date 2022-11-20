@@ -20,7 +20,8 @@ void Player::update(double deltaTime)
     }
     if(isOnGround() && keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN)
     {
-        velocityDelta(0, -jump);
+        SDL_FPoint curVel = getVelocity();
+        velocity(curVel.x, -jump);
     }
     
     SDL_FPoint vel = getVelocity();
