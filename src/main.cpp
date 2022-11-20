@@ -39,6 +39,9 @@ int main()
     KeyState* keyState = KeyState::get();
 
     PhysicsObject test(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    PhysicsObject testTwo(0.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    PhysicsObject testThree(700.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
+    PhysicsObject testFour(700.0, 600.0, 60.0, 200.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
     Player player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
     
     SDL_Thread* physThread = SDL_CreateThread(physLoop, "phyThread", NULL);
@@ -71,8 +74,9 @@ int main()
         SDL_RenderClear(rend);
         PhysicsObject::drawObjects(rend);
         SDL_RenderPresent(rend);
-        //SDL_Delay(500);
+        SDL_Delay(10);
     }
+    
     SDL_WaitThread(physThread, NULL);
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);

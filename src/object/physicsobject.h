@@ -51,7 +51,7 @@ class PhysicsObject : public Object
         
         static Uint64 updateTime;
         static Uint64 lastRender;
-        //static SDL_mutex usageLock;
+        static SDL_mutex* usageLock;
 
         static const double gravity;
         static const double phyTick;
