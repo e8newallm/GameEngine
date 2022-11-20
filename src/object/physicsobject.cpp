@@ -123,16 +123,14 @@ void PhysicsObject::update(double deltaTime)
             body.y = updateBody.y;
             body.h = updateBody.h;
             body.w = updateBody.w;
-            if(detectCollision())
-                return;
+            detectCollision();
         }
         moveDelta((displacement.x / magnitude) * remainder * 5.0f, (displacement.y / magnitude) * remainder * 5.0f);
         body.x = updateBody.x;
         body.y = updateBody.y;
         body.h = updateBody.h;
         body.w = updateBody.w;
-        if(detectCollision())
-            return;
+        detectCollision();
     }
     else
     {
@@ -232,7 +230,6 @@ void PhysicsObject::updateObjects()
     SDL_UnlockMutex(usageLock);
 
     double phyTickDuration = (updateTime - startTime) * 1000 / (double)SDL_GetPerformanceFrequency();
-    std::cout << "phys tick duration: " << phyTickDuration << "\r\n";
     
     SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
 }
@@ -243,7 +240,7 @@ void PhysicsObject::drawObjects(SDL_Renderer* rend)
     double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());
     double fps = 1.0f / (double)((SDL_GetPerformanceCounter() - lastRender) / (double)SDL_GetPerformanceFrequency());
     lastRender = SDL_GetPerformanceCounter();
-    std::cout << "\r\nFPS: " << fps << "\r\n";
+    //std::cout << "\r\nFPS: " << fps << "\r\n";
     double percent = deltaTime / (1000.0f / phyTick);
     for(int i = 0; i < collisionObjects.size(); i++)
     {
