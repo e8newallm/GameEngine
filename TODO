@@ -1,0 +1,15 @@
+PhysicsObject
+ - Add variable speed
+ - Reduce collision O()
+ - 
+
+Features
+ - Lua scripting
+ - spritemap handling
+ - UI handling
+ - Mouse controls
+ - Audio
+
+General
+ - Add logging
+ - Add unit tests

@@ -8,8 +8,7 @@ file(GLOB src
     )
 
 file(GLOB headers
-        object
-        .
+        ./object
     )
 
 add_library(GameEngine STATIC ${src})
