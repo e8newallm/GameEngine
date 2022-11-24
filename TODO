@@ -9,7 +9,9 @@ Features
  - UI handling
  - Mouse controls
  - Audio
+ - Coordinate system
 
 General
  - Add logging
  - Add unit tests
+ - Doxygen

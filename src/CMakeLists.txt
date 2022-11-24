@@ -3,6 +3,8 @@ find_package(SDL2_image REQUIRED)
 
 file(GLOB src 
         keystate.cpp
+        context.cpp
+        view.cpp
         object/object.cpp
         object/physicsobject.cpp
     )

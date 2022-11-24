@@ -9,6 +9,7 @@
 #define PHYOBJ_STATIC 1<<0
 #define PHYOBJ_COLLIDE 1<<1
 
+class PhysicsContext;
 class PhysicsObject : public Object
 {
     public:
@@ -18,12 +19,12 @@ class PhysicsObject : public Object
         ~PhysicsObject();
 
         void preUpdate();
-        virtual void update(double deltaTime);
+        virtual void update(double deltaTime, PhysicsContext* context);
         void draw(SDL_Renderer* rend, double percent);
 
+        bool detectCollision(PhysicsContext* context);
         virtual void collision(SDL_Rect* other);
-        void groundCheck();
-        bool isOnGround();
+        void groundCheck(PhysicsContext* context);
 
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
@@ -31,30 +32,45 @@ class PhysicsObject : public Object
 
         virtual SDL_Rect getInterBody(double percent);
 
-        static void updateObjects();
-        static void drawObjects(SDL_Renderer* rend);
-        bool detectCollision();
+        bool onGround() { return _onGround; };
+        bool isStatic() { return _isStatic; };
+        bool canCollide() { return _canCollide; };
 
     protected:
 
-        bool onGround;
-        bool isStatic;
-        bool canCollide;
+        bool _onGround;
+        bool _isStatic;
+        bool _canCollide;
 
         SDL_Rect prevBody;
 
         SDL_FPoint currentVelocity;
         SDL_FPoint nextVelocity;
+};
 
-        static std::vector<PhysicsObject*> noncollisionObjects;
-        static std::vector<PhysicsObject*> collisionObjects;
-        
-        static Uint64 updateTime;
-        static Uint64 lastRender;
-        static SDL_mutex* usageLock;
+class PhysicsContext
+{
+    public:
+        PhysicsContext();
+        void addPhyObj(PhysicsObject* obj);
 
-        static const double gravity;
-        static const double phyTick;
+        void updateObjects();
+        void drawObjects(SDL_Renderer* rend);
+
+        const double getGravity() { return gravity; };
+        std::vector<PhysicsObject*>& getCollisionObjects() { return collisionObjects; };
+        std::vector<PhysicsObject*>& getnoncollisionObjects() { return noncollisionObjects; };
+
+    private:
+        Uint64 updateTime = 0;
+        Uint64 lastRender = 0;
+        SDL_mutex* usageLock = SDL_CreateMutex();
+
+        const double gravity = 0.00005f;
+        const double phyTick = 60.0f;
+
+        std::vector<PhysicsObject*> noncollisionObjects;
+        std::vector<PhysicsObject*> collisionObjects;
 };
 
 #endif

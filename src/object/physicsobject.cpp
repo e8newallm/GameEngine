@@ -4,32 +4,16 @@
 #include "physicsobject.h"
 #include "keystate.h"
 
-Uint64 PhysicsObject::updateTime = 0;
-Uint64 PhysicsObject::lastRender = 0;
-SDL_mutex* PhysicsObject::usageLock = SDL_CreateMutex();
-const double PhysicsObject::gravity = 0.00005f;
-const double PhysicsObject::phyTick = 60.0f;
-std::vector<PhysicsObject*> PhysicsObject::collisionObjects, PhysicsObject::noncollisionObjects;
-
 PhysicsObject::PhysicsObject(double x, double y, double height, double width, int flags, SDL_Texture* texture) :
     Object(x, y, height, width, texture)
-   ,isStatic(flags & PHYOBJ_STATIC)
-   ,canCollide(flags & PHYOBJ_COLLIDE)
+   ,_isStatic(flags & PHYOBJ_STATIC)
+   ,_canCollide(flags & PHYOBJ_COLLIDE)
    ,currentVelocity()
    ,nextVelocity()
    ,prevBody()
 {
     prevBody.x = body.x;
     prevBody.y = body.y;
-    
-    if(canCollide)
-    {
-        collisionObjects.push_back(this);
-    }
-    else
-    {
-        noncollisionObjects.push_back(this);
-    }
 }
 
 PhysicsObject::~PhysicsObject()
@@ -58,22 +42,23 @@ void PhysicsObject::velocityDelta(double x, double y)
     nextVelocity.y += y;
 }
 
-void PhysicsObject::groundCheck()
+void PhysicsObject::groundCheck(PhysicsContext* context)
 {
     SDL_Rect groundCheck;
     groundCheck.x = body.x;
     groundCheck.y = body.y + body.h;
     groundCheck.w = body.w;
     groundCheck.h = 2;
+    std::vector<PhysicsObject*> collisionObjects = context->getCollisionObjects();
     for(int i = 0; i < collisionObjects.size(); i++)
     {
         if(SDL_HasIntersection(&groundCheck, collisionObjects[i]->getBody()))
         {
-            onGround = true;
+            _onGround = true;
             return;
         }
     }
-    onGround = false;
+    _onGround = false;
     return;
 }
 
@@ -91,18 +76,13 @@ void PhysicsObject::draw(SDL_Renderer* rend, double percent)
     SDL_RenderCopy(rend, tex, NULL, &body);
 }
 
-bool PhysicsObject::isOnGround()
-{
-    return onGround;
-}
-
-void PhysicsObject::update(double deltaTime)
+void PhysicsObject::update(double deltaTime, PhysicsContext* context)
 {    
-    if(isStatic)
+    if(isStatic())
         return;
 
-    if(!isOnGround())
-        velocityDelta(0, gravity * deltaTime);
+    if(!onGround())
+        velocityDelta(0, context->getGravity() * deltaTime);
 
     SDL_FPoint displacement;
     displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
@@ -123,14 +103,14 @@ void PhysicsObject::update(double deltaTime)
             body.y = updateBody.y;
             body.h = updateBody.h;
             body.w = updateBody.w;
-            detectCollision();
+            detectCollision(context);
         }
         moveDelta((displacement.x / magnitude) * remainder * 5.0f, (displacement.y / magnitude) * remainder * 5.0f);
         body.x = updateBody.x;
         body.y = updateBody.y;
         body.h = updateBody.h;
         body.w = updateBody.w;
-        detectCollision();
+        detectCollision(context);
     }
     else
     {
@@ -139,13 +119,14 @@ void PhysicsObject::update(double deltaTime)
         body.y = updateBody.y;
         body.h = updateBody.h;
         body.w = updateBody.w;
-        detectCollision();
+        detectCollision(context);
     }
 }
 
-bool PhysicsObject::detectCollision()
+bool PhysicsObject::detectCollision(PhysicsContext* context)
 {
     bool collisionFound = false;
+    std::vector<PhysicsObject*> collisionObjects = context->getCollisionObjects();
     for(int i = 0; i < collisionObjects.size(); i++)
     {
         if(SDL_HasIntersection(getBody(), collisionObjects[i]->getBody()) && this != collisionObjects[i])
@@ -211,20 +192,42 @@ void PhysicsObject::collision(SDL_Rect* other)
     }
 }
 
-void PhysicsObject::updateObjects()
+PhysicsContext::PhysicsContext() :
+    updateTime(0)
+    , lastRender(0)
+    , usageLock(SDL_CreateMutex())
+    , gravity(0.00005f)
+    , phyTick(60.0f)
+{
+
+}
+
+void PhysicsContext::addPhyObj(PhysicsObject* obj)
+{
+    if(obj->canCollide())
+    {
+        collisionObjects.push_back(obj);
+    }
+    else
+    {
+        noncollisionObjects.push_back(obj);
+    }
+}
+
+void PhysicsContext::updateObjects()
 {
     SDL_LockMutex(usageLock);
     Uint64 startTime = SDL_GetPerformanceCounter();
     for(int i = 0; i < collisionObjects.size(); i++)
     {
-        collisionObjects[i]->groundCheck();
+        collisionObjects[i]->groundCheck(this);
         collisionObjects[i]->preUpdate();
-        collisionObjects[i]->update(phyTick);
+        collisionObjects[i]->update(phyTick, this);
     }
     for(int i = 0; i < noncollisionObjects.size(); i++)
     {
         collisionObjects[i]->preUpdate();
-        noncollisionObjects[i]->update(phyTick);
+        noncollisionObjects[i]->update(phyTick, this);
     }
     updateTime = SDL_GetPerformanceCounter();
     SDL_UnlockMutex(usageLock);
@@ -234,7 +237,7 @@ void PhysicsObject::updateObjects()
     SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
 }
 
-void PhysicsObject::drawObjects(SDL_Renderer* rend)
+void PhysicsContext::drawObjects(SDL_Renderer* rend)
 {
     SDL_LockMutex(usageLock);
     double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());

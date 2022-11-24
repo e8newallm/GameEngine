@@ -8,20 +8,12 @@
 
 #include "object.h"
 #include "physicsobject.h"
+#include "context.h"
 #include "player.h"
 
 #include "keystate.h"
 
 bool close = false;
-
-int physLoop(void* data)
-{
-    while(!close)
-    {
-        PhysicsObject::updateObjects();
-    }
-    return 0;
-}
 
 int main()
 {
@@ -35,18 +27,17 @@ int main()
                                        1000, 1000, 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
-    std::srand(std::time(nullptr));
     KeyState* keyState = KeyState::get();
 
-    PhysicsObject test(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    PhysicsObject testTwo(0.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    PhysicsObject testThree(700.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    PhysicsObject testFour(700.0, 600.0, 60.0, 200.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    PhysicsObject testFive(0.0, 0.0, 900.0, 50.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-    Player player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png")));
-
-    SDL_Thread* physThread = SDL_CreateThread(physLoop, "phyThread", NULL);
-
+    Context state(rend);
+    PhysicsContext* phyContext = state.getPhysicsContext();
+    phyContext->addPhyObj(new PhysicsObject(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject(0.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject(700.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject(700.0, 600.0, 60.0, 200.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject(0.0, 0.0, 900.0, 50.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new Player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    state.startPhysics();
     while (!close)
     {
         SDL_Event event;
@@ -73,12 +64,11 @@ int main()
         }
 
         SDL_RenderClear(rend);
-        PhysicsObject::drawObjects(rend);
+        phyContext->drawObjects(rend);
         SDL_RenderPresent(rend);
         SDL_Delay(10);
     }
-    
-    SDL_WaitThread(physThread, NULL);
+    state.stopPhysics();
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
