@@ -12,8 +12,8 @@ int defaultPhysLoop(void* data)
     return 0;
 }
 
-Context::Context(SDL_Renderer* rend, SDL_ThreadFunction phyFunction) :
-    viewport()
+Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction) :
+    viewport(viewport)
     , rend(rend)
     , keyState(KeyState::get())
     , phyRunning(true)
@@ -28,5 +28,5 @@ Context::Context(SDL_Renderer* rend, SDL_ThreadFunction phyFunction) :
 
 void Context::draw()
 {
-    getPhysicsContext()->drawObjects(rend);
+    getPhysicsContext()->drawObjects(rend, *viewport);
 }

@@ -5,6 +5,7 @@
 #include <SDL2/SDL_mutex.h>
 
 #include "object.h"
+#include "view.h"
 
 #define PHYOBJ_STATIC 1<<0
 #define PHYOBJ_COLLIDE 1<<1
@@ -20,7 +21,7 @@ class PhysicsObject : public Object
 
         void preUpdate();
         virtual void update(double deltaTime, PhysicsContext* context);
-        void draw(SDL_Renderer* rend, double percent);
+        void draw(SDL_Renderer* rend, double percent, View viewport);
 
         bool detectCollision(PhysicsContext* context);
         virtual void collision(SDL_Rect* other);
@@ -55,7 +56,7 @@ class PhysicsContext
         void addPhyObj(PhysicsObject* obj);
 
         void updateObjects();
-        void drawObjects(SDL_Renderer* rend);
+        void drawObjects(SDL_Renderer* rend, View viewport);
 
         const double getGravity() { return gravity; };
         std::vector<PhysicsObject*>& getCollisionObjects() { return collisionObjects; };

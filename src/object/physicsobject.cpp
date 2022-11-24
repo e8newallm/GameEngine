@@ -70,9 +70,13 @@ void PhysicsObject::preUpdate()
     currentVelocity.y = nextVelocity.y;
 }
 
-void PhysicsObject::draw(SDL_Renderer* rend, double percent)
+void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
 {
     SDL_Rect body = getInterBody(percent);
+    body.x = body.x * viewport.getZoom() + viewport.getZoomXOffset() + viewport.getPosition().x;
+    body.y = body.y * viewport.getZoom() + viewport.getZoomYOffset() - viewport.getPosition().y;
+    body.h = body.h * viewport.getZoom();
+    body.w = body.w * viewport.getZoom();
     SDL_RenderCopy(rend, tex, NULL, &body);
 }
 
@@ -237,7 +241,7 @@ void PhysicsContext::updateObjects()
     SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
 }
 
-void PhysicsContext::drawObjects(SDL_Renderer* rend)
+void PhysicsContext::drawObjects(SDL_Renderer* rend, View viewport)
 {
     SDL_LockMutex(usageLock);
     double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());
@@ -247,12 +251,12 @@ void PhysicsContext::drawObjects(SDL_Renderer* rend)
     double percent = deltaTime / (1000.0f / phyTick);
     for(int i = 0; i < collisionObjects.size(); i++)
     {
-        collisionObjects[i]->draw(rend, percent);
+        collisionObjects[i]->draw(rend, percent, viewport);
     }
 
     for(int i = 0; i < noncollisionObjects.size(); i++)
     {
-        noncollisionObjects[i]->draw(rend, percent);
+        noncollisionObjects[i]->draw(rend, percent, viewport);
     }
     SDL_UnlockMutex(usageLock);
 }

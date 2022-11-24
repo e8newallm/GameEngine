@@ -29,7 +29,11 @@ int main()
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
     KeyState* keyState = KeyState::get();
 
-    Context state(rend);
+    View viewport( {1000, 1000}, {0, 0});
+    viewport.setZoom(0.5);
+
+    Context state(rend, &viewport);
+
     PhysicsContext* phyContext = state.getPhysicsContext();
     phyContext->addPhyObj(new PhysicsObject(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
     phyContext->addPhyObj(new PhysicsObject(0.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
@@ -38,6 +42,7 @@ int main()
     phyContext->addPhyObj(new PhysicsObject(0.0, 0.0, 900.0, 50.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
     phyContext->addPhyObj(new Player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
     state.startPhysics();
+
     while (!close)
     {
         SDL_Event event;
@@ -63,8 +68,42 @@ int main()
             }
         }
 
+        if((*keyState)[SDL_SCANCODE_2] == SDL_KEYDOWN)
+        {
+            viewport.setZoom(std::min(viewport.getZoom() + 0.01, 2.0));
+        }
+        else if((*keyState)[SDL_SCANCODE_1] == SDL_KEYDOWN)
+        {
+            viewport.setZoom(std::max(viewport.getZoom() - 0.01, 0.1));
+        }
+        
+        if((*keyState)[SDL_SCANCODE_UP] == SDL_KEYDOWN)
+        {
+            SDL_Point newPosition = viewport.getPosition();
+            newPosition.y -= 1.0;
+            viewport.setPosition(newPosition);
+        }
+        if((*keyState)[SDL_SCANCODE_DOWN] == SDL_KEYDOWN)
+        {
+            SDL_Point newPosition = viewport.getPosition();
+            newPosition.y += 1.0;
+            viewport.setPosition(newPosition);
+        }
+        if((*keyState)[SDL_SCANCODE_RIGHT] == SDL_KEYDOWN)
+        {
+            SDL_Point newPosition = viewport.getPosition();
+            newPosition.x -= 1.0;
+            viewport.setPosition(newPosition);
+        }
+        if((*keyState)[SDL_SCANCODE_LEFT] == SDL_KEYDOWN)
+        {
+            SDL_Point newPosition = viewport.getPosition();
+            newPosition.x += 1.0;
+            viewport.setPosition(newPosition);
+        }
+
         SDL_RenderClear(rend);
-        phyContext->drawObjects(rend);
+        state.draw();
         SDL_RenderPresent(rend);
         SDL_Delay(10);
     }
