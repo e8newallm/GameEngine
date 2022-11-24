@@ -73,8 +73,8 @@ void PhysicsObject::preUpdate()
 void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
 {
     SDL_Rect body = getInterBody(percent);
-    body.x = body.x * viewport.getZoom() + viewport.getZoomXOffset() + viewport.getPosition().x;
-    body.y = body.y * viewport.getZoom() + viewport.getZoomYOffset() - viewport.getPosition().y;
+    body.x = (body.x + viewport.getPosition().x) * viewport.getZoom() + viewport.getZoomXOffset();
+    body.y = (body.y - viewport.getPosition().y) * viewport.getZoom() + viewport.getZoomYOffset();
     body.h = body.h * viewport.getZoom();
     body.w = body.w * viewport.getZoom();
     SDL_RenderCopy(rend, tex, NULL, &body);

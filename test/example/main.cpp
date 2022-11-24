@@ -30,7 +30,7 @@ int main()
     KeyState* keyState = KeyState::get();
 
     View viewport( {1000, 1000}, {0, 0});
-    viewport.setZoom(0.5);
+    viewport.setZoom(1.0);
 
     Context state(rend, &viewport);
 
