@@ -15,8 +15,9 @@ class Context
         void draw();
         
         PhysicsContext* getPhysicsContext() { return phyContext; };
-        void startPhysics() { physThread = SDL_CreateThread(phyFunction, "phyThread", this); };
-        void stopPhysics() { phyRunning = false; SDL_WaitThread(physThread, NULL); };
+        void startPhysics();
+        void stepPhysics();
+        void stopPhysics();
         bool physicsRunning() { return phyRunning; };
         
     private:

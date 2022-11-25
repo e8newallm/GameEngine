@@ -5,6 +5,7 @@
 int defaultPhysLoop(void* data)
 {
     Context* context = static_cast<Context*>(data);
+    context->getPhysicsContext()->updateObjects();
     while(context->physicsRunning())
     {
         context->getPhysicsContext()->updateObjects();
@@ -16,7 +17,7 @@ Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunct
     viewport(viewport)
     , rend(rend)
     , keyState(KeyState::get())
-    , phyRunning(true)
+    , phyRunning(false)
     , phyFunction(phyFunction)
 {
     phyContext = new PhysicsContext();
@@ -29,4 +30,23 @@ Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunct
 void Context::draw()
 {
     getPhysicsContext()->drawObjects(rend, *viewport);
+}
+
+void Context::startPhysics()
+{
+    phyRunning = true; 
+    physThread = SDL_CreateThread(phyFunction, "phyThread", this);
+}
+
+void Context::stepPhysics()
+{
+    phyRunning = false;
+    physThread = SDL_CreateThread(phyFunction, "phyThread", this);
+    SDL_WaitThread(physThread, NULL);
+}
+
+void Context::stopPhysics()
+{ 
+    phyRunning = false;
+    SDL_WaitThread(physThread, NULL);
 }

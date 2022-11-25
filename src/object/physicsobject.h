@@ -55,7 +55,7 @@ class PhysicsContext
         PhysicsContext();
         void addPhyObj(PhysicsObject* obj);
 
-        void updateObjects();
+        void updateObjects(bool instant = false);
         void drawObjects(SDL_Renderer* rend, View viewport);
 
         const double getGravity() { return gravity; };

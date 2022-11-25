@@ -218,7 +218,7 @@ void PhysicsContext::addPhyObj(PhysicsObject* obj)
     }
 }
 
-void PhysicsContext::updateObjects()
+void PhysicsContext::updateObjects(bool instant)
 {
     SDL_LockMutex(usageLock);
     Uint64 startTime = SDL_GetPerformanceCounter();
@@ -237,8 +237,8 @@ void PhysicsContext::updateObjects()
     SDL_UnlockMutex(usageLock);
 
     double phyTickDuration = (updateTime - startTime) * 1000 / (double)SDL_GetPerformanceFrequency();
-    
-    SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
+    if(!instant)
+        SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
 }
 
 void PhysicsContext::drawObjects(SDL_Renderer* rend, View viewport)
