@@ -11,6 +11,7 @@
 #include "context.h"
 #include "player.h"
 
+#include "mousestate.h"
 #include "keystate.h"
 
 bool close = false;
@@ -25,9 +26,10 @@ int main()
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
                                        1000, 1000, 0);
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
     KeyState* keyState = KeyState::get();
+    MouseState* mouseState = MouseState::get();
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
@@ -45,6 +47,8 @@ int main()
 
     while (!close)
     {
+        mouseState->reset();
+
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
         {
@@ -61,6 +65,22 @@ int main()
                     keyState->update(event.key.keysym.scancode, event.type);
                     break;
                 }
+                case SDL_MOUSEBUTTONDOWN:
+                case SDL_MOUSEBUTTONUP:
+                {
+                    mouseState->updateButton(event.button);
+                    break;
+                }
+                case SDL_MOUSEMOTION:
+                {
+                    mouseState->updateMove(event.motion);
+                    break;
+                }
+                case SDL_MOUSEWHEEL:
+                {
+                    mouseState->updateWheel(event.wheel);
+                    break;
+                }
                 default:
                 {
                        
@@ -68,16 +88,20 @@ int main()
             }
         }
 
-        if((*keyState)[SDL_SCANCODE_2] == SDL_KEYDOWN)
+        if(mouseState->scrollDelta() != 0)
         {
-            viewport.setZoom(std::min(viewport.getZoom() + 0.01, 2.0));
+            viewport.setZoom(std::max(std::min(viewport.getZoom() + 0.05 * (float)mouseState->scrollDelta(), 2.0), 0.1));
         }
-        else if((*keyState)[SDL_SCANCODE_1] == SDL_KEYDOWN)
+        if(mouseState->buttonDown(SDL_BUTTON_RIGHT))
         {
-            viewport.setZoom(std::max(viewport.getZoom() - 0.01, 0.1));
+            SDL_Point newPosition = viewport.getPosition();
+            SDL_Point delta = mouseState->mouseDelta();
+            newPosition.y -= delta.y / viewport.getZoom();
+            newPosition.x += delta.x / viewport.getZoom();
+            viewport.setPosition(newPosition);
         }
         
-        if((*keyState)[SDL_SCANCODE_UP] == SDL_KEYDOWN)
+        /*if((*keyState)[SDL_SCANCODE_UP] == SDL_KEYDOWN)
         {
             SDL_Point newPosition = viewport.getPosition();
             newPosition.y -= 1.0;
@@ -100,7 +124,7 @@ int main()
             SDL_Point newPosition = viewport.getPosition();
             newPosition.x += 1.0;
             viewport.setPosition(newPosition);
-        }
+        }*/
 
         SDL_RenderClear(rend);
         state.draw();

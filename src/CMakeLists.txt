@@ -3,6 +3,7 @@ find_package(SDL2_image REQUIRED)
 
 file(GLOB src 
         keystate.cpp
+        mousestate.cpp
         context.cpp
         view.cpp
         object/object.cpp
