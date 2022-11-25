@@ -125,7 +125,6 @@ int main()
             newPosition.x += 1.0;
             viewport.setPosition(newPosition);
         }*/
-
         SDL_RenderClear(rend);
         state.draw();
         SDL_RenderPresent(rend);
