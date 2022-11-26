@@ -15,7 +15,9 @@ class Object
         virtual void update(double deltaTime);
 
         virtual void move(double x, double y);
+        virtual void moveInstantly(double x, double y);
         virtual void moveDelta(double x, double y);
+        virtual void moveDeltaInstantly(double x, double y);
 
         virtual void resize(double height, double width);
         virtual void resizeDelta(double height, double width);

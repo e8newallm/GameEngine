@@ -30,7 +30,6 @@ class View
         void setPosition(SDL_Point position) { this->position = position; };
 
     private:
-
         double zoom = 1.0;
         double xZoomOffset, yZoomOffset;
         SDL_Point resolution;

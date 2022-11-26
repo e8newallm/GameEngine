@@ -41,10 +41,23 @@ void Object::move(double x, double y)
     updateBody.y = y;
 }
 
+void Object::moveInstantly(double x, double y)
+{
+    body.x = x;
+    body.y = y;
+}
+
+
 void Object::moveDelta(double x, double y)
 {
     updateBody.x += x;
     updateBody.y += y;
+}
+
+void Object::moveDeltaInstantly(double x, double y)
+{
+    body.x += x;
+    body.y += y;
 }
 
 void Object::resize(double height, double width)

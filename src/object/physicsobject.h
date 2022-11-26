@@ -32,6 +32,7 @@ class PhysicsObject : public Object
         virtual SDL_FPoint getVelocity() { return nextVelocity; };
 
         virtual SDL_Rect getInterBody(double percent);
+        SDL_Rect calcDrawBody(double percent, View viewport);
 
         bool onGround() { return _onGround; };
         bool isStatic() { return _isStatic; };
@@ -58,7 +59,12 @@ class PhysicsContext
         void updateObjects(bool instant = false);
         void drawObjects(SDL_Renderer* rend, View viewport);
 
-        const double getGravity() { return gravity; };
+        double getGravity() { return gravity; };
+        void setGravity(double newGravity) { gravity = newGravity; };
+
+        double getPhyTick() { return phyTick; };
+        void setPhyTick(double newPhyTick) { phyTick = newPhyTick; };
+
         std::vector<PhysicsObject*>& getCollisionObjects() { return collisionObjects; };
         std::vector<PhysicsObject*>& getnoncollisionObjects() { return noncollisionObjects; };
 
@@ -67,8 +73,8 @@ class PhysicsContext
         Uint64 lastRender = 0;
         SDL_mutex* usageLock = SDL_CreateMutex();
 
-        const double gravity = 0.00005f;
-        const double phyTick = 60.0f;
+        double gravity = 0.00005f;
+        double phyTick = 60.0f;
 
         std::vector<PhysicsObject*> noncollisionObjects;
         std::vector<PhysicsObject*> collisionObjects;

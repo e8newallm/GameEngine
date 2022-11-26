@@ -48,5 +48,5 @@ void MouseState::updateMove(SDL_MouseMotionEvent mouseMove)
 
 void MouseState::updateWheel(SDL_MouseWheelEvent wheelScroll)
 {
-    scrollAmount = (wheelScroll.direction == SDL_MOUSEWHEEL_FLIPPED) ? -wheelScroll.y : wheelScroll.y;
+    scrollAmount += (wheelScroll.direction == SDL_MOUSEWHEEL_FLIPPED) ? -wheelScroll.y : wheelScroll.y;
 }

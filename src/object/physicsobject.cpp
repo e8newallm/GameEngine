@@ -20,6 +20,16 @@ PhysicsObject::~PhysicsObject()
 {
 }
 
+SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
+{
+    SDL_Rect body = getInterBody(percent);
+    body.x = (body.x + viewport.getPosition().x) * viewport.getZoom() + viewport.getZoomXOffset();
+    body.y = (body.y - viewport.getPosition().y) * viewport.getZoom() + viewport.getZoomYOffset();
+    body.h = body.h * viewport.getZoom();
+    body.w = body.w * viewport.getZoom();
+    return body;
+}
+
 SDL_Rect PhysicsObject::getInterBody(double percent)
 {
     SDL_Rect interBody;
@@ -69,14 +79,9 @@ void PhysicsObject::preUpdate()
     currentVelocity.x = nextVelocity.x;
     currentVelocity.y = nextVelocity.y;
 }
-
 void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
 {
-    SDL_Rect body = getInterBody(percent);
-    body.x = (body.x + viewport.getPosition().x) * viewport.getZoom() + viewport.getZoomXOffset();
-    body.y = (body.y - viewport.getPosition().y) * viewport.getZoom() + viewport.getZoomYOffset();
-    body.h = body.h * viewport.getZoom();
-    body.w = body.w * viewport.getZoom();
+    SDL_Rect body = calcDrawBody(percent, viewport);
     SDL_RenderCopy(rend, tex, NULL, &body);
 }
 
