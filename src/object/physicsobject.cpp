@@ -25,8 +25,8 @@ SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
     SDL_Rect body = getInterBody(percent);
     body.x = (body.x + viewport.getPosition().x) * viewport.getZoom() + viewport.getZoomXOffset();
     body.y = (body.y - viewport.getPosition().y) * viewport.getZoom() + viewport.getZoomYOffset();
-    body.h = body.h * viewport.getZoom();
-    body.w = body.w * viewport.getZoom();
+    body.h = round((double)body.h * viewport.getZoom());
+    body.w = round((double)body.w * viewport.getZoom());
     return body;
 }
 
