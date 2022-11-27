@@ -3,22 +3,17 @@
 #include "object.h"
 #include "keystate.h"
 
-Object::Object(double x, double y, double height, double width, SDL_Texture* texture) :
-    body()
+Object::Object(SDL_Rect body, SDL_Texture* texture) :
+    body(body)
    ,updateBody()
    ,tex(texture)
-
 {
     SDL_QueryTexture(tex, NULL, NULL, NULL, NULL);
-    body.x = x;
-    body.y = y;
-    body.h = height;
-    body.w = width;
     
-    updateBody.x = x;
-    updateBody.y = y;
-    updateBody.h = height;
-    updateBody.w = width;
+    updateBody.x = body.x;
+    updateBody.y = body.y;
+    updateBody.h = body.h;
+    updateBody.w = body.w;
 }
 
 Object::~Object()

@@ -4,8 +4,8 @@
 #include "physicsobject.h"
 #include "keystate.h"
 
-PhysicsObject::PhysicsObject(double x, double y, double height, double width, int flags, SDL_Texture* texture) :
-    Object(x, y, height, width, texture)
+PhysicsObject::PhysicsObject(SDL_Rect body, int flags, SDL_Texture* texture) :
+    Object(body, texture)
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)
    ,currentVelocity()

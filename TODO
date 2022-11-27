@@ -1,7 +1,10 @@
 PhysicsObject
  - Add variable speed
  - Reduce collision O()
- - 
+ - Maybe add layering (In case of non-collision stuff)
+
+Image
+ - Better layering than foreground/background
 
 Features
  - Lua scripting

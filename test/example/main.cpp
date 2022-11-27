@@ -8,11 +8,13 @@
 
 #include "object.h"
 #include "physicsobject.h"
+#include "image.h"
 #include "context.h"
-#include "player.h"
 
 #include "mousestate.h"
 #include "keystate.h"
+
+#include "player.h"
 
 bool close = false;
 
@@ -37,12 +39,13 @@ int main()
     Context state(rend, &viewport);
 
     PhysicsContext* phyContext = state.getPhysicsContext();
-    phyContext->addPhyObj(new PhysicsObject(0.0, 960.0, 40.0, 1000.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject(0.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject(700.0, 900.0, 60.0, 500.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject(700.0, 600.0, 60.0, 200.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject(0.0, 0.0, 900.0, 50.0, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new Player(500.0, 920.0, 40.0, 40.0, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    state.addImage(new Image({0, 0, 1000, 1000}, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/background.png")), false));
+    phyContext->addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
     state.startPhysics();
 
     while (!close)

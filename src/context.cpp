@@ -29,7 +29,13 @@ Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunct
 
 void Context::draw()
 {
+    for(Image* image : backgroundImages)
+        image->draw(rend);
+
     getPhysicsContext()->drawObjects(rend, *viewport);
+
+    for(Image* image : foregroundImages)
+        image->draw(rend);
 }
 
 void Context::startPhysics()
@@ -50,3 +56,16 @@ void Context::stopPhysics()
     phyRunning = false;
     SDL_WaitThread(physThread, NULL);
 }
+
+void Context::addImage(Image* newImage)
+{
+    if(newImage->isForeground())
+    {
+        this->foregroundImages.push_back(newImage);
+    }
+    else
+    {
+        this->backgroundImages.push_back(newImage);
+    }
+    
+};

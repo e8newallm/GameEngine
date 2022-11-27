@@ -7,8 +7,8 @@
 class Object
 {
     public:
-        Object(double x, double y, double height, double width, SDL_Texture* texture);
-        Object() : Object(0.0f, 0.0f, 0.0f, 0.0f, NULL) {};
+        Object(SDL_Rect body, SDL_Texture* texture);
+        Object() : Object((SDL_Rect){0, 0, 0, 0}, NULL) {};
         ~Object();
 
         virtual void draw(SDL_Renderer* rend);

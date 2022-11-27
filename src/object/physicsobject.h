@@ -14,8 +14,7 @@ class PhysicsContext;
 class PhysicsObject : public Object
 {
     public:
-        PhysicsObject(double x, double y, double height, double width, 
-                      int flags, SDL_Texture* texture);
+        PhysicsObject(SDL_Rect body, int flags, SDL_Texture* texture);
         PhysicsObject() : Object(){};
         ~PhysicsObject();
 

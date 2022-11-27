@@ -8,6 +8,7 @@ file(GLOB src
         view.cpp
         object/object.cpp
         object/physicsobject.cpp
+        object/image.cpp
     )
 
 file(GLOB headers
