@@ -3,12 +3,12 @@
 #include "object.h"
 #include "keystate.h"
 
-Object::Object(SDL_Rect body, SDL_Texture* texture) :
+Object::Object(SDL_Rect body, Texture* texture) :
     body(body)
    ,updateBody()
    ,tex(texture)
 {
-    SDL_QueryTexture(tex, NULL, NULL, NULL, NULL);
+    SDL_QueryTexture(tex->getTexture().texture, NULL, NULL, NULL, NULL);
     
     updateBody.x = body.x;
     updateBody.y = body.y;
@@ -18,17 +18,18 @@ Object::Object(SDL_Rect body, SDL_Texture* texture) :
 
 Object::~Object()
 {
-    SDL_DestroyTexture(tex);
+    SDL_DestroyTexture(tex->getTexture().texture);
 }
 
-void Object::draw(SDL_Renderer* rend, SDL_Rect* texturePos)
+void Object::draw(SDL_Renderer* rend)
 {
-    draw(rend, &body, texturePos);
+    draw(rend, &body);
 }
 
-void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, SDL_Rect* texturePos)
+void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
 {
-    SDL_RenderCopyEx(rend, tex, texturePos, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+    TexRequest texture = tex->getTexture();
+    SDL_RenderCopyEx(rend, texture.texture, &(texture.position), bodyPos, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 void Object::update(double deltaTime)

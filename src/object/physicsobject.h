@@ -14,13 +14,13 @@ class PhysicsContext;
 class PhysicsObject : public Object
 {
     public:
-        PhysicsObject(SDL_Rect body, int flags, SDL_Texture* texture);
+        PhysicsObject(SDL_Rect body, int flags, Texture* texture);
         PhysicsObject() : Object(){};
         ~PhysicsObject();
 
         void preUpdate();
         virtual void update(double deltaTime, PhysicsContext* context);
-        void draw(SDL_Renderer* rend, double percent, View viewport);
+        virtual void draw(SDL_Renderer* rend, double percent, View viewport);
 
         bool detectCollision(PhysicsContext* context);
         virtual void collision(SDL_Rect* other);

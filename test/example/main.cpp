@@ -11,6 +11,9 @@
 #include "image.h"
 #include "context.h"
 
+#include "texture.h"
+#include "spritemap.h"
+
 #include "mousestate.h"
 #include "keystate.h"
 
@@ -39,13 +42,13 @@ int main()
     Context state(rend, &viewport);
 
     PhysicsContext* phyContext = state.getPhysicsContext();
-    state.addImage(new Image({0, 0, 1000, 1000}, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/background.png")), false));
-    phyContext->addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
-    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, IMG_Load("tex/Tile.png"))));
+    state.addImage(new Image({0, 0, 1000, 1000}, new Texture(rend, "tex/background.png"), false));
+    phyContext->addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
+    phyContext->addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
+    phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
+    phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
+    phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
+    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.png", {150, 150})));
     state.startPhysics();
 
     while (!close)
@@ -131,7 +134,7 @@ int main()
         SDL_RenderClear(rend);
         state.draw();
         SDL_RenderPresent(rend);
-        SDL_Delay(10);
+        //SDL_Delay(10);
     }
     state.stopPhysics();
     SDL_DestroyRenderer(rend);

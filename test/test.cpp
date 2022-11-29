@@ -11,6 +11,8 @@
 #include "physicsobject.h"
 #include "context.h"
 
+#include "texture.h"
+
 #include "mousestate.h"
 #include "keystate.h"
 
@@ -144,7 +146,7 @@ TEST_CASE("Basic functionality", "[physics]")
 
     SECTION("Box drop")
     {
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
         phyContext->addPhyObj(box);
 
         box->velocityDelta(0.0, 0.5);
@@ -182,9 +184,9 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Collision")
     {
         phyContext->setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
         phyContext->addPhyObj(box);
-        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, nullptr));
+        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
         phyContext->addPhyObj(boxCollide);
 
         box->velocityDelta(1.0, 0.0);
@@ -214,7 +216,7 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Correct interpolation and viewpoint adjustment for drawing")
     {
         phyContext->setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, SDL_CreateTextureFromSurface(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
         phyContext->addPhyObj(box);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});

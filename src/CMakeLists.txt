@@ -9,10 +9,12 @@ file(GLOB src
         object/object.cpp
         object/physicsobject.cpp
         object/image.cpp
+        texture/texture.cpp
     )
 
 file(GLOB headers
-        ./object
+        object
+        texture
     )
 
 add_library(GameEngine STATIC ${src})

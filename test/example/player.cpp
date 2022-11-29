@@ -3,12 +3,7 @@
 
 #include "player.h"
 #include "keystate.h"
-
-Player::Player(SDL_Rect body, int flags, SDL_Texture* texture) :
-    PhysicsObject(body, flags, texture)
-{
-
-}
+#include "spritemap.h"
 
 void Player::update(double deltaTime, PhysicsContext* context)
 {
@@ -39,4 +34,10 @@ void Player::update(double deltaTime, PhysicsContext* context)
     }
     
     PhysicsObject::update(deltaTime, context);
+}
+
+void Player::draw(SDL_Renderer* rend, double percent, View viewport)
+{
+    ((SpriteMap*)tex)->nextSprite();
+    PhysicsObject::draw(rend, percent, viewport);
 }

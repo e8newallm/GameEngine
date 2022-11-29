@@ -3,8 +3,9 @@
 
 #include "physicsobject.h"
 #include "keystate.h"
+#include "texture.h"
 
-PhysicsObject::PhysicsObject(SDL_Rect body, int flags, SDL_Texture* texture) :
+PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture* texture) :
     Object(body, texture)
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)
@@ -82,7 +83,7 @@ void PhysicsObject::preUpdate()
 void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
 {
     SDL_Rect body = calcDrawBody(percent, viewport);
-    Object::draw(rend, &body, nullptr);
+    Object::draw(rend, &body);
 }
 
 void PhysicsObject::update(double deltaTime, PhysicsContext* context)
