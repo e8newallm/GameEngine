@@ -82,7 +82,7 @@ void PhysicsObject::preUpdate()
 void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
 {
     SDL_Rect body = calcDrawBody(percent, viewport);
-    SDL_RenderCopy(rend, tex, NULL, &body);
+    Object::draw(rend, &body, nullptr);
 }
 
 void PhysicsObject::update(double deltaTime, PhysicsContext* context)

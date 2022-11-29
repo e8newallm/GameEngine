@@ -248,8 +248,8 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {550, 550, 50, 50});
         testRect(box->getInterBody(1.0), {600, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {554, 459, 13, 13});
-        testRect(box->calcDrawBody(0.5, viewport), {567, 473, 13, 13});
-        testRect(box->calcDrawBody(1.0, viewport), {581, 486, 13, 13});
+        testRect(box->calcDrawBody(0, viewport), {554, 459, 14, 14});
+        testRect(box->calcDrawBody(0.5, viewport), {567, 473, 14, 14});
+        testRect(box->calcDrawBody(1.0, viewport), {581, 486, 14, 14});
     }
 }

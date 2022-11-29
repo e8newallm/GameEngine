@@ -21,9 +21,14 @@ Object::~Object()
     SDL_DestroyTexture(tex);
 }
 
-void Object::draw(SDL_Renderer* rend)
+void Object::draw(SDL_Renderer* rend, SDL_Rect* texturePos)
 {
-    SDL_RenderCopy(rend, tex, NULL, &body);
+    draw(rend, &body, texturePos);
+}
+
+void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, SDL_Rect* texturePos)
+{
+    SDL_RenderCopyEx(rend, tex, texturePos, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 void Object::update(double deltaTime)

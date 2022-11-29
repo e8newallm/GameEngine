@@ -8,10 +8,11 @@ class Object
 {
     public:
         Object(SDL_Rect body, SDL_Texture* texture);
-        Object() : Object((SDL_Rect){0, 0, 0, 0}, NULL) {};
+        Object() : Object({0, 0, 0, 0}, NULL) {};
         ~Object();
 
-        virtual void draw(SDL_Renderer* rend);
+        virtual void draw(SDL_Renderer* rend, SDL_Rect* texturePos = nullptr);
+        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos, SDL_Rect* texturePos);
         virtual void update(double deltaTime);
 
         virtual void move(double x, double y);
