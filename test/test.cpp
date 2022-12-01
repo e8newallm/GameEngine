@@ -3,9 +3,13 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_thread.h>
 
+#include <rapidjson/document.h>
+
 #include <iostream>
 #include <ctime>
 #include <source_location>
+#include <fstream>
+#include <sstream>
 
 #include "object.h"
 #include "physicsobject.h"
@@ -19,8 +23,28 @@
 #include "catch_all.hpp"
 
 
+TEST_CASE("JSON parse testing", "[basic]")
+{
+    std::ifstream file("json/test.json");
+    std::ostringstream ss;
+    ss << file.rdbuf();
+    rapidjson::Document d;
+    d.Parse(ss.str().c_str());
 
-TEST_CASE("KeyState testing", "[state]")
+    REQUIRE(!d.HasParseError());
+    REQUIRE(d.IsObject());
+    REQUIRE(d["Sprites"].IsArray());
+    for(rapidjson::Value::ConstValueIterator i = d["Sprites"].Begin(); i != d["Sprites"].End(); i++)
+    {
+        REQUIRE(i->IsObject());
+        for (rapidjson::Value::ConstMemberIterator j = i->MemberBegin(); j != i->MemberEnd(); ++j) 
+        {
+            std::cout << j->name.GetString() << "\r\n";
+        }
+    }
+}
+
+TEST_CASE("KeyState testing", "[basic]")
 {
     KeyState* keyState = KeyState::get();
     keyState->update(SDL_SCANCODE_1, SDL_KEYDOWN);
@@ -41,7 +65,7 @@ TEST_CASE("KeyState testing", "[state]")
     REQUIRE((*keyState)[SDL_SCANCODE_A] == SDL_KEYDOWN);
 }
 
-TEST_CASE("MouseState testing", "[state]")
+TEST_CASE("MouseState testing", "[basic]")
 {
     MouseState* mouseState = MouseState::get();
 

@@ -7,11 +7,12 @@ Image
  - Better layering than foreground/background
 
 Features
- - Lua scripting
+ - Lua scripting(?)
  - spritemap handling
  - UI handling
  - Audio
  - Coordinate system
+ - Saving/loading files
 
 General
  - Add logging

@@ -48,7 +48,7 @@ int main()
     phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
-    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.png", {150, 150})));
+    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.png", "")));
     state.startPhysics();
 
     while (!close)
