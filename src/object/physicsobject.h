@@ -20,7 +20,7 @@ class PhysicsObject : public Object
 
         void preUpdate();
         virtual void update(double deltaTime, PhysicsContext* context);
-        virtual void draw(SDL_Renderer* rend, double percent, View viewport);
+        virtual void draw(SDL_Renderer* rend, double percent, double deltaT, View viewport);
 
         bool detectCollision(PhysicsContext* context);
         virtual void collision(SDL_Rect* other);

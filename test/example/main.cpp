@@ -48,7 +48,7 @@ int main()
     phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
-    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.png", "")));
+    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.json")));
     state.startPhysics();
 
     while (!close)
@@ -107,30 +107,6 @@ int main()
             viewport.setPosition(newPosition);
         }
         
-        /*if((*keyState)[SDL_SCANCODE_UP] == SDL_KEYDOWN)
-        {
-            SDL_Point newPosition = viewport.getPosition();
-            newPosition.y -= 1.0;
-            viewport.setPosition(newPosition);
-        }
-        if((*keyState)[SDL_SCANCODE_DOWN] == SDL_KEYDOWN)
-        {
-            SDL_Point newPosition = viewport.getPosition();
-            newPosition.y += 1.0;
-            viewport.setPosition(newPosition);
-        }
-        if((*keyState)[SDL_SCANCODE_RIGHT] == SDL_KEYDOWN)
-        {
-            SDL_Point newPosition = viewport.getPosition();
-            newPosition.x -= 1.0;
-            viewport.setPosition(newPosition);
-        }
-        if((*keyState)[SDL_SCANCODE_LEFT] == SDL_KEYDOWN)
-        {
-            SDL_Point newPosition = viewport.getPosition();
-            newPosition.x += 1.0;
-            viewport.setPosition(newPosition);
-        }*/
         SDL_RenderClear(rend);
         state.draw();
         SDL_RenderPresent(rend);

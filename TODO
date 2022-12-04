@@ -6,6 +6,9 @@ PhysicsObject
 Image
  - Better layering than foreground/background
 
+spritemap
+ - Better handing for fail states (If texture isn't found, handing of animation ending, etc)
+
 Features
  - Lua scripting(?)
  - spritemap handling
@@ -13,6 +16,9 @@ Features
  - Audio
  - Coordinate system
  - Saving/loading files
+
+Cleanup
+ - Better handling of nullptrs
 
 General
  - Add logging

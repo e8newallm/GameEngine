@@ -80,10 +80,10 @@ void PhysicsObject::preUpdate()
     currentVelocity.x = nextVelocity.x;
     currentVelocity.y = nextVelocity.y;
 }
-void PhysicsObject::draw(SDL_Renderer* rend, double percent, View viewport)
+void PhysicsObject::draw(SDL_Renderer* rend, double percent, double deltaT, View viewport)
 {
     SDL_Rect body = calcDrawBody(percent, viewport);
-    Object::draw(rend, &body);
+    Object::draw(rend, &body, deltaT);
 }
 
 void PhysicsObject::update(double deltaTime, PhysicsContext* context)
@@ -257,12 +257,12 @@ void PhysicsContext::drawObjects(SDL_Renderer* rend, View viewport)
     double percent = deltaTime / (1000.0f / phyTick);
     for(int i = 0; i < collisionObjects.size(); i++)
     {
-        collisionObjects[i]->draw(rend, percent, viewport);
+        collisionObjects[i]->draw(rend, percent, deltaTime, viewport);
     }
 
     for(int i = 0; i < noncollisionObjects.size(); i++)
     {
-        noncollisionObjects[i]->draw(rend, percent, viewport);
+        noncollisionObjects[i]->draw(rend, percent, deltaTime, viewport);
     }
     SDL_UnlockMutex(usageLock);
 }

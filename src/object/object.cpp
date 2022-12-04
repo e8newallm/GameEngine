@@ -21,13 +21,14 @@ Object::~Object()
     SDL_DestroyTexture(tex->getTexture().texture);
 }
 
-void Object::draw(SDL_Renderer* rend)
+void Object::draw(SDL_Renderer* rend, double deltaT)
 {
-    draw(rend, &body);
+    draw(rend, &body, deltaT);
 }
 
-void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
+void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT)
 {
+    tex->update(deltaT);
     TexRequest texture = tex->getTexture();
     SDL_RenderCopyEx(rend, texture.texture, &(texture.position), bodyPos, 0.0, NULL, SDL_FLIP_NONE);
 }

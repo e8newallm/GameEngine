@@ -69,6 +69,34 @@
                     }
                 }
             }
+        },
+        "Animations": 
+        {
+            "type": "array",
+            "items": 
+            {
+                "type": "object",
+                "properties":
+                {
+                    "name":
+                    {
+                        "type": "string"
+                    },
+                    "frames":
+                    {
+                        "type": "array",
+                        "items": 
+                        {
+                            "type": "string"
+                        }
+                    },
+                    "FSP":
+                    {
+                        "type": "number",
+                        "minimum": 0.0
+                    }
+                }
+            }
         }
     }
 }

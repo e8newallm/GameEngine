@@ -17,6 +17,11 @@ void Player::update(double deltaTime, PhysicsContext* context)
     {
         SDL_FPoint curVel = getVelocity();
         velocity(curVel.x, -jump);
+        ((SpriteMap*)tex)->startAnimation("explosion");
+    }
+    else if(onGround())
+    {
+        ((SpriteMap*)tex)->setSprite("sprite01");
     }
     
     SDL_FPoint vel = getVelocity();
@@ -34,10 +39,4 @@ void Player::update(double deltaTime, PhysicsContext* context)
     }
     
     PhysicsObject::update(deltaTime, context);
-}
-
-void Player::draw(SDL_Renderer* rend, double percent, View viewport)
-{
-    ((SpriteMap*)tex)->nextSprite();
-    PhysicsObject::draw(rend, percent, viewport);
 }

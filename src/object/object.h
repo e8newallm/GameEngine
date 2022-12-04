@@ -13,8 +13,8 @@ class Object
         Object() : Object({0, 0, 0, 0}, NULL) {};
         ~Object();
 
-        virtual void draw(SDL_Renderer* rend);
-        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos);
+        virtual void draw(SDL_Renderer* rend, double deltaT = 0);
+        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT);
         virtual void update(double deltaTime);
 
         virtual void move(double x, double y);

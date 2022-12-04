@@ -11,6 +11,7 @@ file(GLOB src
         object/physicsobject.cpp
         object/image.cpp
         texture/texture.cpp
+        texture/spritemap.cpp
     )
 
 file(GLOB headers
