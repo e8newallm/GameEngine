@@ -13,15 +13,18 @@ void Player::update(double deltaTime, PhysicsContext* context)
     {
         MAXHEIGHT = body.y;
     }
+    
     if(onGround() && keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN)
     {
         SDL_FPoint curVel = getVelocity();
         velocity(curVel.x, -jump);
-        ((SpriteMap*)tex)->startAnimation("explosion");
+        //((SpriteMap*)tex)->startAnimation("explosion");
     }
-    else if(onGround())
+    
+    if(!((SpriteMap*)tex)->animationRunning())
     {
-        ((SpriteMap*)tex)->setSprite("sprite01");
+        std::cout << "Run ani\r\n";
+        ((SpriteMap*)tex)->startAnimation("explosion");
     }
     
     SDL_FPoint vel = getVelocity();

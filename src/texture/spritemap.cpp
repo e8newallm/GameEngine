@@ -66,6 +66,7 @@ TexRequest SpriteMap::getTexture()
 
     return {currentSprite->texture, currentSprite->position};
 }
+
 void SpriteMap::setAnimationSprite(std::string name)
 {
     if(sprites.find(name) == sprites.end())

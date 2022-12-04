@@ -35,7 +35,7 @@ class SpriteMap : public Texture
         void setAnimationSprite(std::string name);
         void startAnimation(std::string animation);
         void update(double deltaT) override;
-        bool animationRunning() {return currentAnimation == nullptr; };
+        bool animationRunning() {return currentAnimation != nullptr; };
 
     private:
         std::map<std::string, SDL_Texture*> textures;
