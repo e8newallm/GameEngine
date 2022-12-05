@@ -33,6 +33,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
                                             SDL_CreateTextureFromSurface(rend, IMG_Load(config["Textures"].GetString())));
         textures.insert(newTexture);
     }
+
     
     for(rapidjson::Value& value : config["Sprites"].GetArray())
     {

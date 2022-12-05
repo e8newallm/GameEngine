@@ -17,8 +17,13 @@ file(GLOB src
 file(GLOB headers
         object
         texture
+        schema
     )
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL2_LIBRARIES} SDL2_image)
 target_include_directories(GameEngine PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS})
+
+add_custom_command(TARGET GameEngine PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_CURRENT_SOURCE_DIR}/schema/ $<TARGET_FILE_DIR:GameEngine>/schema)

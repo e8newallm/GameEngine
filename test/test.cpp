@@ -4,6 +4,8 @@
 #include <SDL2/SDL_thread.h>
 
 #include <rapidjson/document.h>
+#include <rapidjson/schema.h>
+#include <rapidjson/stringbuffer.h>
 
 #include <iostream>
 #include <ctime>
@@ -25,22 +27,27 @@
 
 TEST_CASE("JSON parse testing", "[basic]")
 {
-    std::ifstream file("json/test.json");
-    std::ostringstream ss;
-    ss << file.rdbuf();
-    rapidjson::Document d;
-    d.Parse(ss.str().c_str());
+    std::ifstream ischema("../lib/schema/SpriteMapSchema.json");
+    std::ostringstream schemass;
+    schemass << ischema.rdbuf();
 
-    REQUIRE(!d.HasParseError());
-    REQUIRE(d.IsObject());
-    REQUIRE(d["Sprites"].IsArray());
-    for(rapidjson::Value::ConstValueIterator i = d["Sprites"].Begin(); i != d["Sprites"].End(); i++)
+    rapidjson::Document dschema;
+    dschema.Parse(schemass.str().c_str());
+    REQUIRE(!dschema.HasParseError());
+
+    SECTION("Schema test")
     {
-        REQUIRE(i->IsObject());
-        for (rapidjson::Value::ConstMemberIterator j = i->MemberBegin(); j != i->MemberEnd(); ++j) 
-        {
-            std::cout << j->name.GetString() << "\r\n";
-        }
+        std::ifstream file("json/test.json");
+        std::ostringstream ss;
+        ss << file.rdbuf();
+
+        rapidjson::Document d;
+        d.Parse(ss.str().c_str());
+        REQUIRE(!d.HasParseError());
+
+        rapidjson::SchemaDocument schema(dschema);
+        rapidjson::SchemaValidator validator(schema);
+        REQUIRE(d.Accept(validator));
     }
 }
 
