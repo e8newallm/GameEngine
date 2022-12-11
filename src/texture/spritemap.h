@@ -45,7 +45,6 @@ class SpriteMap : public Texture
         Animation* currentAnimation;
         CurrentFrame currentFrame;
         Sprite* currentSprite;
-        static rapidjson::SchemaValidator* validator;
 };
 
 #endif

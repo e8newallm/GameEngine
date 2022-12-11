@@ -43,16 +43,16 @@
                     "width": {
                         "type": "integer",
                         "minimum": 0
-                    },
-                    "flipped": {
-                        "type": "boolean"
-                    },
-                    "rotation": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "multipleOf": 90
                     }
-                }
+                },
+                "required": [
+                    "name",
+                    "texture",
+                    "x",
+                    "y",
+                    "height",
+                    "width"
+                ]
             }
         },
         "Animations": {
@@ -73,7 +73,12 @@
                         "type": "number",
                         "minimum": 0
                     }
-                }
+                },
+                "required": [
+                    "name",
+                    "frames",
+                    "FPS"
+                ]
             }
         }
     },

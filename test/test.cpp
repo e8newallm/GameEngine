@@ -18,19 +18,48 @@
 #include "context.h"
 
 #include "texture.h"
+#include "spritemap.h"
 
 #include "mousestate.h"
 #include "keystate.h"
 
-#include "schema.h"
-
-#include "testjson.h"
 #include "catch_all.hpp"
+
+extern const char* SpriteMapSchema;
 
 TEST_CASE("JSON parse testing", "[basic]")
 {
-    SECTION("Schema test")
+    REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
+
+    SECTION("Schema sanity check")
     {
+        const char* spriteMapJSON = R"(
+            {
+                "Textures": "spritemap.png",
+                "Sprites": [
+                    {
+                        "name": "sprite01",
+                        "texture": "spritemap.png",
+                        "x": 0,
+                        "y": 0,
+                        "height": 150,
+                        "width": 150
+                    }
+                ],
+                "Animations": [
+                    {
+                        "name": "explosion",
+                        "frames": [
+                            "sprite01"
+                        ],
+                        "FPS": 5.0
+                    }
+                ]
+            }
+        )";
+
         rapidjson::Document d;
         d.Parse(spriteMapJSON);
         REQUIRE(!d.HasParseError());
@@ -41,6 +70,12 @@ TEST_CASE("JSON parse testing", "[basic]")
         rapidjson::SchemaDocument schemaDoc(schema);
         rapidjson::SchemaValidator validator(schemaDoc);
         REQUIRE(d.Accept(validator));
+    }
+
+    SECTION("SpriteMap schema test")
+    {
+        REQUIRE_NOTHROW(SpriteMap(rend, "json/spritemap.json"));
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/badspritemap.json"), "Spritemap JSON failed to pass SpriteMap schema!");
     }
 }
 

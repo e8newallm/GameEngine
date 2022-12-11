@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    std::string data = "";
+    std::string data = "#ifndef SCHEMA_H\r\n#define SCHEMA_H\r\n\r\n";
 
     for(int i = 0; i < argc; i++)
     {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         schemaFile.close();
         data += "const char* " + std::string(schema) + " = R\"SCHEMA(\r\n" + buffer.str() + ")SCHEMA\";\r\n\r\n";
     }
-
+    data += "#endif";
     std::ofstream header(argv[1]);
     header << data;
     header.close();

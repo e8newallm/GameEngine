@@ -1,12 +1,14 @@
 #include <iostream>
-#include <rapidjson/document.h>
 #include <fstream>
 #include <sstream>
+#include <string>
+
+#include <rapidjson/document.h>
+#include <rapidjson/schema.h>
+#include <rapidjson/stringbuffer.h>
 
 #include "spritemap.h"
 #include "schema.h"
-
-rapidjson::SchemaValidator* SpriteMap::validator = nullptr;
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
@@ -15,22 +17,34 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
 {
-    if(validator == nullptr)
-    {
-        std::cout << "SETTING UP VALIDATOR!\r\n";
-        rapidjson::Document schema;
-        schema.Parse(SpriteMapSchema);
-        rapidjson::SchemaDocument schemaDoc(schema);
-        validator = new rapidjson::SchemaValidator(schemaDoc);
-    }
+    rapidjson::Document schema;
+    schema.Parse(SpriteMapSchema);
+    rapidjson::SchemaDocument schemaDoc(schema);
+    rapidjson::SchemaValidator validator(schemaDoc);
 
     std::ifstream file(spriteConfig);
+
+    if(!file.is_open())
+    {
+        throw std::runtime_error(std::string("Could not open Spritemap JSON \"") + spriteConfig + "\"!");
+    }
+
     std::ostringstream ss;
     ss << file.rdbuf();
     rapidjson::Document config;
     config.Parse(ss.str().c_str());
 
-    config.Accept(*validator);
+    if(config.HasParseError())
+    {
+        throw std::runtime_error(std::string("Invalid JSON received by SpriteMap!"));
+    }
+
+    if(!config.Accept(validator))
+    {
+        rapidjson::StringBuffer sb;
+        validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
+        throw std::runtime_error(std::string("Spritemap JSON failed to pass SpriteMap schema!"));
+    }
 
     if(config["Textures"].IsArray())
     {
