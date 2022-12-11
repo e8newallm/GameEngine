@@ -3,9 +3,12 @@
 
 #include "texture.h"
 
-Texture::Texture(SDL_Renderer* rend, const char* texturePath)
+Texture::   Texture(SDL_Renderer* rend, const char* texturePath)
 {
-    texture = SDL_CreateTextureFromSurface(rend, IMG_Load(texturePath));
+    if(texturePath == nullptr)
+        texture = SDL_CreateTextureFromSurface(rend, nullptr);
+    else    
+        texture = SDL_CreateTextureFromSurface(rend, IMG_Load(texturePath));
 }
 
 TexRequest Texture::getTexture()

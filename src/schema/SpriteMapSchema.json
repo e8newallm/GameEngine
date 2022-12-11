@@ -1,0 +1,85 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Spritemap configuration",
+    "description": "A configuration representing a spritemap",
+    "type": "object",
+    "properties": {
+        "Textures": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "Sprites": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "texture": {
+                        "type": "string"
+                    },
+                    "x": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "y": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "height": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "width": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "flipped": {
+                        "type": "boolean"
+                    },
+                    "rotation": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "multipleOf": 90
+                    }
+                }
+            }
+        },
+        "Animations": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "frames": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "FPS": {
+                        "type": "number",
+                        "minimum": 0
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "Textures",
+        "Sprites",
+        "Animations"
+    ]
+}

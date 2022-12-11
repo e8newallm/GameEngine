@@ -3,9 +3,15 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_thread.h>
 
+#include <rapidjson/document.h>
+#include <rapidjson/schema.h>
+#include <rapidjson/stringbuffer.h>
+
 #include <iostream>
 #include <ctime>
 #include <source_location>
+#include <fstream>
+#include <sstream>
 
 #include "object.h"
 #include "physicsobject.h"
@@ -16,11 +22,29 @@
 #include "mousestate.h"
 #include "keystate.h"
 
+#include "schema.h"
+
+#include "testjson.h"
 #include "catch_all.hpp"
 
+TEST_CASE("JSON parse testing", "[basic]")
+{
+    SECTION("Schema test")
+    {
+        rapidjson::Document d;
+        d.Parse(spriteMapJSON);
+        REQUIRE(!d.HasParseError());
+        
+        rapidjson::Document schema;
+        schema.Parse(SpriteMapSchema);
+        REQUIRE(!schema.HasParseError());
+        rapidjson::SchemaDocument schemaDoc(schema);
+        rapidjson::SchemaValidator validator(schemaDoc);
+        REQUIRE(d.Accept(validator));
+    }
+}
 
-
-TEST_CASE("KeyState testing", "[state]")
+TEST_CASE("KeyState testing", "[basic]")
 {
     KeyState* keyState = KeyState::get();
     keyState->update(SDL_SCANCODE_1, SDL_KEYDOWN);
@@ -41,7 +65,7 @@ TEST_CASE("KeyState testing", "[state]")
     REQUIRE((*keyState)[SDL_SCANCODE_A] == SDL_KEYDOWN);
 }
 
-TEST_CASE("MouseState testing", "[state]")
+TEST_CASE("MouseState testing", "[basic]")
 {
     MouseState* mouseState = MouseState::get();
 
