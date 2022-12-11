@@ -4,6 +4,9 @@
 #include <sstream>
 
 #include "spritemap.h"
+#include "schema.h"
+
+rapidjson::SchemaValidator* SpriteMap::validator = nullptr;
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
@@ -12,11 +15,22 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
 {
+    if(validator == nullptr)
+    {
+        std::cout << "SETTING UP VALIDATOR!\r\n";
+        rapidjson::Document schema;
+        schema.Parse(SpriteMapSchema);
+        rapidjson::SchemaDocument schemaDoc(schema);
+        validator = new rapidjson::SchemaValidator(schemaDoc);
+    }
+
     std::ifstream file(spriteConfig);
     std::ostringstream ss;
     ss << file.rdbuf();
     rapidjson::Document config;
     config.Parse(ss.str().c_str());
+
+    config.Accept(*validator);
 
     if(config["Textures"].IsArray())
     {

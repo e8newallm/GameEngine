@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <rapidjson/document.h>
+#include <rapidjson/schema.h>
 #include <string>
 
 #include "texture.h"
@@ -44,6 +45,7 @@ class SpriteMap : public Texture
         Animation* currentAnimation;
         CurrentFrame currentFrame;
         Sprite* currentSprite;
+        static rapidjson::SchemaValidator* validator;
 };
 
 #endif

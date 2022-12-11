@@ -22,31 +22,24 @@
 #include "mousestate.h"
 #include "keystate.h"
 
-#include "catch_all.hpp"
+#include "schema.h"
 
+#include "testjson.h"
+#include "catch_all.hpp"
 
 TEST_CASE("JSON parse testing", "[basic]")
 {
-    std::ifstream ischema("../lib/schema/SpriteMapSchema.json");
-    std::ostringstream schemass;
-    schemass << ischema.rdbuf();
-
-    rapidjson::Document dschema;
-    dschema.Parse(schemass.str().c_str());
-    REQUIRE(!dschema.HasParseError());
-
     SECTION("Schema test")
     {
-        std::ifstream file("json/test.json");
-        std::ostringstream ss;
-        ss << file.rdbuf();
-
         rapidjson::Document d;
-        d.Parse(ss.str().c_str());
+        d.Parse(spriteMapJSON);
         REQUIRE(!d.HasParseError());
-
-        rapidjson::SchemaDocument schema(dschema);
-        rapidjson::SchemaValidator validator(schema);
+        
+        rapidjson::Document schema;
+        schema.Parse(SpriteMapSchema);
+        REQUIRE(!schema.HasParseError());
+        rapidjson::SchemaDocument schemaDoc(schema);
+        rapidjson::SchemaValidator validator(schemaDoc);
         REQUIRE(d.Accept(validator));
     }
 }
