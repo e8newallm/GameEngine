@@ -76,5 +76,10 @@
                 }
             }
         }
-    }
+    },
+    "required": [
+        "Textures",
+        "Sprites",
+        "Animations"
+    ]
 }
