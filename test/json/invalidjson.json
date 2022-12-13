@@ -1,0 +1,21 @@
+{
+    "Sprites": [
+        {
+            "name": "sprite01",
+            "texture": "spritemap.png",
+            "x": 0,
+            "y": 0,
+            "height": 150,
+            "width": 150
+        }
+    ],
+    "Animations": [
+        {
+            "name": "explosion",
+            "frames": [
+                "sprite01",
+                "sprite02",
+                "sprite03",
+                "sprite04"
+            ],
+            "FPS": 5.0

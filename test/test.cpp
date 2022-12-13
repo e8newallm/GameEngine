@@ -74,8 +74,28 @@ TEST_CASE("JSON parse testing", "[basic]")
 
     SECTION("SpriteMap schema test")
     {
-        REQUIRE_NOTHROW(SpriteMap(rend, "json/spritemap.json"));
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/badspritemap.json"), "Spritemap JSON failed to pass SpriteMap schema!");
+        REQUIRE_NOTHROW(SpriteMap(rend, "json/spritemap/spritemap.json"));
+
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "UNKNOWN FILE"), 
+                            "Could not open Spritemap JSON \"UNKNOWN FILE\"");
+
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/invalidjson.json"), 
+                            "\"json/invalidjson.json\" is invalid JSON");
+
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/badspritemap.json"), 
+                            "\"json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
+
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/mismatchedsprite.json"), 
+                            "\"json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
+        
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/mismatchedanimation.json"), 
+                            "\"json/spritemap/mismatchedanimation.json\" has a animation (explosion) referencing a sprite not named in the JSON");
+        
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/duplicatedsprite.json"), 
+                            "\"json/spritemap/duplicatedsprite.json\" has two sprites named (sprite01)");
+
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/duplicatedanimation.json"), 
+                            "\"json/spritemap/duplicatedanimation.json\" has two animations named (explosion)");
     }
 }
 

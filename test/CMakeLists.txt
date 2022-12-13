@@ -3,23 +3,19 @@ add_subdirectory(Catch2)
 
 project(UnitTests LANGUAGES CXX)
 
-file(GLOB jsonfiles "json/*.json")
+file(GLOB_RECURSE jsonfiles "json/*")
 
 add_custom_target(TestJSON
   ALL
   DEPENDS ${jsonfiles}
 )
 
-add_custom_command(
-    TARGET TestJSON POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/json
-)
 
 add_custom_command(
     TARGET TestJSON POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${jsonfiles}
-        ${CMAKE_BINARY_DIR}/bin/json
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_SOURCE_DIR}/json
+      ${CMAKE_BINARY_DIR}/bin/json
 )
 
 add_executable(UnitTests ${jsonfiles} test.cpp)

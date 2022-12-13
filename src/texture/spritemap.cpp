@@ -26,7 +26,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
 
     if(!file.is_open())
     {
-        throw std::runtime_error(std::string("Could not open Spritemap JSON \"") + spriteConfig + "\"!");
+        throw std::runtime_error(std::string("Could not open Spritemap JSON \"") + spriteConfig + "\"");
     }
 
     std::ostringstream ss;
@@ -36,14 +36,14 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
 
     if(config.HasParseError())
     {
-        throw std::runtime_error(std::string("Invalid JSON received by SpriteMap!"));
+        throw std::runtime_error(std::string("\"") + spriteConfig + "\" is invalid JSON");
     }
 
     if(!config.Accept(validator))
     {
         rapidjson::StringBuffer sb;
         validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
-        throw std::runtime_error(std::string("Spritemap JSON failed to pass SpriteMap schema!"));
+        throw std::runtime_error(std::string("\"") + spriteConfig + "\" has failed to pass SpriteMap schema");
     }
 
     if(config["Textures"].IsArray())
@@ -61,12 +61,21 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
                                             SDL_CreateTextureFromSurface(rend, IMG_Load(config["Textures"].GetString())));
         textures.insert(newTexture);
     }
-
     
     for(rapidjson::Value& value : config["Sprites"].GetArray())
     {
         Sprite newEntry;
         rapidjson::GenericObject<false, rapidjson::Value> sprite = value.GetObject();
+        if(sprites.find(sprite.FindMember("name")->value.GetString()) != sprites.end())
+        {
+            throw std::runtime_error(std::string("\"") + spriteConfig + "\" has two sprites named (" + sprite.FindMember("name")->value.GetString() + ")");
+        }
+        if(textures.find(sprite.FindMember("texture")->value.GetString()) == textures.end())
+        {
+            throw std::runtime_error(std::string("\"") + spriteConfig + "\" has a sprite (" + 
+                                    sprite.FindMember("name")->value.GetString() + ") referencing a texture not named in the JSON");
+        }
+
         newEntry.position = { sprite.FindMember("x")->value.GetInt()
                              , sprite.FindMember("y")->value.GetInt()
                              , sprite.FindMember("height")->value.GetInt()
@@ -77,11 +86,22 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
 
     for(rapidjson::Value& value : config["Animations"].GetArray())
     {
-        rapidjson::GenericObject<false, rapidjson::Value> animation = value.GetObject();
         Animation newAni;
+        rapidjson::GenericObject<false, rapidjson::Value> animation = value.GetObject();
+        if(animations.find(animation.FindMember("name")->value.GetString()) != animations.end())
+        {
+            throw std::runtime_error(std::string("\"") + spriteConfig + "\" has two animations named (" + animation.FindMember("name")->value.GetString() + ")");
+        }
+
         newAni.FPS = animation.FindMember("FPS")->value.GetDouble();
         for(rapidjson::Value& i : animation.FindMember("frames")->value.GetArray())
         {
+            if(sprites.find(i.GetString()) == sprites.end())
+            {
+                throw std::runtime_error(std::string("\"") + spriteConfig + "\" has a animation (" + 
+                                    animation.FindMember("name")->value.GetString() + ") referencing a sprite not named in the JSON");
+            }
+
             newAni.sprites.push_back((char*)i.GetString());
         }
         animations.insert(std::make_pair(animation.FindMember("name")->value.GetString(), newAni));
