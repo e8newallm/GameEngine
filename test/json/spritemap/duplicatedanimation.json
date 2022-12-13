@@ -1,9 +1,9 @@
 {
-    "Textures": "spritemap.png",
+    "Textures": "tex/spritemap.png",
     "Sprites": [
         {
             "name": "sprite01",
-            "texture": "spritemap.png",
+            "texture": "tex/spritemap.png",
             "x": 0,
             "y": 0,
             "height": 150,

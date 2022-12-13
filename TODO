@@ -3,6 +3,9 @@ PhysicsObject
  - Reduce collision O()
  - Maybe add layering (In case of non-collision stuff)
 
+Textures
+ - Avoid duplicated texture loading
+
 Image
  - Better layering than foreground/background
 

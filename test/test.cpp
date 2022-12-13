@@ -85,6 +85,9 @@ TEST_CASE("JSON parse testing", "[basic]")
         REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/badspritemap.json"), 
                             "\"json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
 
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/texturenotfound.json"), 
+                            "\"json/spritemap/texturenotfound.json\" could not load texture file \"texspritemap.png\"");
+
         REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/mismatchedsprite.json"), 
                             "\"json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
         

@@ -50,15 +50,26 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     {
         for(rapidjson::Value& value : config["Textures"].GetArray())
         {
+            SDL_Surface* surface = IMG_Load(value.GetString());
+            if(surface == nullptr)
+            {
+                throw std::runtime_error(std::string("\"") + spriteConfig + "\" could not load texture file \"" + value.GetString() + "\"");
+            }
+
             std::pair<const char*, SDL_Texture*> newTexture = std::make_pair(value.GetString(),
-                                        SDL_CreateTextureFromSurface(rend, IMG_Load(value.GetString())));
+                                        SDL_CreateTextureFromSurface(rend, surface));
             textures.insert(newTexture);
         }
     }
     else
     {
+        SDL_Surface* surface = IMG_Load(config["Textures"].GetString());
+        if(surface == nullptr)
+        {
+            throw std::runtime_error(std::string("\"") + spriteConfig + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
+        }
         std::pair<const char*, SDL_Texture*> newTexture = std::make_pair(config["Textures"].GetString(),
-                                            SDL_CreateTextureFromSurface(rend, IMG_Load(config["Textures"].GetString())));
+                                            SDL_CreateTextureFromSurface(rend, surface));
         textures.insert(newTexture);
     }
     
