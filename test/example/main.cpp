@@ -33,8 +33,8 @@ int main()
                                        1000, 1000, 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
-    KeyState* keyState = KeyState::get();
-    MouseState* mouseState = MouseState::get();
+    KeyState& keyState = KeyState::get();
+    MouseState& mouseState = MouseState::get();
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
@@ -53,7 +53,7 @@ int main()
 
     while (!close)
     {
-        mouseState->reset();
+        mouseState.reset();
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) 
@@ -68,23 +68,23 @@ int main()
                 case SDL_KEYDOWN:
                 case SDL_KEYUP:
                 {
-                    keyState->update(event.key.keysym.scancode, event.type);
+                    keyState.update(event.key.keysym.scancode, event.type);
                     break;
                 }
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                 {
-                    mouseState->updateButton(event.button);
+                    mouseState.updateButton(event.button);
                     break;
                 }
                 case SDL_MOUSEMOTION:
                 {
-                    mouseState->updateMove(event.motion);
+                    mouseState.updateMove(event.motion);
                     break;
                 }
                 case SDL_MOUSEWHEEL:
                 {
-                    mouseState->updateWheel(event.wheel);
+                    mouseState.updateWheel(event.wheel);
                     break;
                 }
                 default:
@@ -94,14 +94,14 @@ int main()
             }
         }
 
-        if(mouseState->scrollDelta() != 0)
+        if(mouseState.scrollDelta() != 0)
         {
-            viewport.setZoom(std::max(std::min(viewport.getZoom() + 0.05 * (float)mouseState->scrollDelta(), 2.0), 0.1));
+            viewport.setZoom(std::max(std::min(viewport.getZoom() + 0.05 * (float)mouseState.scrollDelta(), 2.0), 0.1));
         }
-        if(mouseState->buttonDown(SDL_BUTTON_RIGHT))
+        if(mouseState.buttonDown(SDL_BUTTON_RIGHT))
         {
             SDL_Point newPosition = viewport.getPosition();
-            SDL_Point delta = mouseState->mouseDelta();
+            SDL_Point delta = mouseState.mouseDelta();
             newPosition.y -= delta.y / viewport.getZoom();
             newPosition.x += delta.x / viewport.getZoom();
             viewport.setPosition(newPosition);

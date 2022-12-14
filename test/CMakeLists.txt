@@ -10,7 +10,6 @@ add_custom_target(TestJSON
   DEPENDS ${jsonfiles}
 )
 
-
 add_custom_command(
     TARGET TestJSON POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -21,3 +20,4 @@ add_custom_command(
 add_executable(UnitTests ${jsonfiles} test.cpp)
 target_link_libraries(UnitTests PRIVATE Catch2::Catch2WithMain GameEngine)
 target_include_directories(UnitTests PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} ${CMAKE_BINARY_DIR}/src Catch2/src/catch2)
+add_dependencies(UnitTests SchemaLoader)

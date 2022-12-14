@@ -1,12 +1,10 @@
 #include "keystate.h"
 
-KeyState* KeyState::singleton = nullptr;
 
-KeyState* KeyState::get()
+
+KeyState& KeyState::get()
 {
-    if (singleton == nullptr)
-        singleton = new KeyState();
-    
+    static KeyState singleton;
     return singleton;
 }
 

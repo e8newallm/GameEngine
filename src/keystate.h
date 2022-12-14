@@ -9,7 +9,7 @@
 class KeyState
 {
     public:
-        static KeyState* get();
+        static KeyState& get();
 
         void update(SDL_Scancode key, SDL_EventType keyEvent);
         void update(SDL_Scancode key, Uint32 keyEvent);
@@ -17,8 +17,8 @@ class KeyState
 
     private:
         std::vector<SDL_EventType> keys;
+        KeyState(const KeyState&) = delete;
         KeyState();
-        static KeyState* singleton;
 };
 
 #endif

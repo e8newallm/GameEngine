@@ -16,7 +16,7 @@ struct mousePosition
 class MouseState
 {
     public:
-        static MouseState* get();
+        static MouseState& get();
 
         void updateButton(SDL_MouseButtonEvent buttonPress);
         void updateMove(SDL_MouseMotionEvent mouseMove);
@@ -52,7 +52,6 @@ class MouseState
         std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;
         Sint32 scrollAmount;
         MouseState();
-        static MouseState* singleton;
 };
 
 #endif

@@ -30,7 +30,7 @@ class Context
 
         View* viewport;
         SDL_Renderer* rend;
-        KeyState* keyState;
+        KeyState& keyState;
         PhysicsContext* phyContext;
 
         std::vector<Image*> backgroundImages, foregroundImages;

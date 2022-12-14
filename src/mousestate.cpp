@@ -1,12 +1,10 @@
 #include "mousestate.h"
 
-MouseState* MouseState::singleton = nullptr;
 
-MouseState* MouseState::get()
+
+MouseState& MouseState::get()
 {
-    if (singleton == nullptr)
-        singleton = new MouseState();
-    
+    static MouseState singleton;
     return singleton;
 }
 

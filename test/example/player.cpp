@@ -7,7 +7,7 @@
 
 void Player::update(double deltaTime, PhysicsContext* context)
 {
-    KeyState& keyState = *KeyState::get();
+    KeyState& keyState = KeyState::get();
 
     if(body.y < MAXHEIGHT)
     {
@@ -23,7 +23,6 @@ void Player::update(double deltaTime, PhysicsContext* context)
     
     if(!((SpriteMap*)tex)->animationRunning())
     {
-        std::cout << "Run ani\r\n";
         ((SpriteMap*)tex)->startAnimation("explosion");
     }
     
