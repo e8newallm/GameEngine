@@ -2,7 +2,10 @@ PhysicsObject
  - Add variable speed
  - Reduce collision O()
  - Maybe add layering (In case of non-collision stuff)
-
+ - Change gravity into editable vector
+ - Handle deletion of physics objects
+ - Make more versatile
+ 
 Textures
  - Avoid duplicated texture loading
 

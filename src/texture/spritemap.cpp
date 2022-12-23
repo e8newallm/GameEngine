@@ -163,7 +163,6 @@ void SpriteMap::update(double deltaT)
         currentFrame.elapsedTime += deltaT;
         if(currentFrame.elapsedTime > 1000.0/currentAnimation->FPS)
         {
-            
             currentFrame.elapsedTime -= 1000.0/currentAnimation->FPS;
             currentFrame.frame++;
             if(currentFrame.frame > currentAnimation->sprites.size()-1)
