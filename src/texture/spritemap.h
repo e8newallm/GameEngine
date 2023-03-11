@@ -3,29 +3,10 @@
 
 #include <map>
 #include <vector>
-#include <rapidjson/document.h>
-#include <rapidjson/schema.h>
 #include <string>
 
 #include "texture.h"
-
-struct Sprite
-{
-    SDL_Texture* texture;
-    SDL_Rect position;
-};
-
-struct Animation
-{
-    double FPS;
-    std::vector<std::string> sprites;
-};
-
-struct CurrentFrame
-{
-    double elapsedTime = 0.0;
-    Uint32 frame = 0;
-};
+#include "spritemapdata.h"
 
 class SpriteMap : public Texture
 {
@@ -39,12 +20,10 @@ class SpriteMap : public Texture
         bool animationRunning() {return currentAnimation != nullptr; };
 
     private:
-        std::map<std::string, SDL_Texture*> textures;
-        std::map<std::string, Sprite> sprites;
-        std::map<std::string, Animation> animations;
         Animation* currentAnimation;
         CurrentFrame currentFrame;
         Sprite* currentSprite;
+        SpriteMapData data;
 };
 
 #endif

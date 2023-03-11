@@ -12,15 +12,17 @@ file(GLOB schemalist
 
 add_custom_target(SchemaGeneration
   ALL
-  DEPENDS ${CMAKE_BINARY_DIR}/src/schema.h
+  DEPENDS ${CMAKE_BINARY_DIR}/src/schema.cpp
 )
 
 add_custom_command(
     PRE_BUILD 
-    OUTPUT ${CMAKE_BINARY_DIR}/src/schema.h
-    COMMAND SchemaLoader ${CMAKE_BINARY_DIR}/src/schema.h ${schemalist}
+    OUTPUT ${CMAKE_BINARY_DIR}/src/schema.cpp
+    COMMAND SchemaLoader ${CMAKE_BINARY_DIR}/src/schema.cpp ${schemalist}
     DEPENDS ${schemalist} schemaloader.cpp
 )
+
+add_subdirectory(tools)
 
 project(GameEngine LANGUAGES CXX)
 
@@ -34,15 +36,16 @@ file(GLOB src
     object/image.cpp
     texture/texture.cpp
     texture/spritemap.cpp
+    data/spritemapdata.cpp
+    ${CMAKE_BINARY_DIR}/src/schema.cpp
 )
 
 file(GLOB headers
     object
     texture
     schema
-    ${CMAKE_BINARY_DIR}/src
+    data
 )
-
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL2_LIBRARIES} SDL2_image)
