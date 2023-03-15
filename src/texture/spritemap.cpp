@@ -2,12 +2,12 @@
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
-    , data(rend, spriteConfig)
+    , data()
     , currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
 {
-
+    data.loadFromFile(rend, spriteConfig);
 }
 
 TexRequest SpriteMap::getTexture()

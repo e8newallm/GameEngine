@@ -14,6 +14,7 @@ Image
 
 spritemap
  - Better handing for fail states (If texture isn't found, handing of animation ending, etc)
+ - zlib images/JSON into compressed file
 
 Features
  - Lua scripting(?)

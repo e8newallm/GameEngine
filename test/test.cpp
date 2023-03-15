@@ -19,6 +19,7 @@
 
 #include "texture.h"
 #include "spritemap.h"
+#include "spritemapdata.h"
 
 #include "mousestate.h"
 #include "keystate.h"
@@ -27,7 +28,7 @@
 
 extern const char* SpriteMapSchema;
 
-TEST_CASE("JSON parse testing", "[basic]")
+TEST_CASE("Spritemap parse testing", "[basic]")
 {
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
@@ -70,6 +71,15 @@ TEST_CASE("JSON parse testing", "[basic]")
         rapidjson::SchemaDocument schemaDoc(schema);
         rapidjson::SchemaValidator validator(schemaDoc);
         REQUIRE(d.Accept(validator));
+    }
+
+    SECTION("JSON load/save sanity check")
+    {
+        SpriteMapData test, testTwo;
+        test.loadFromFile(rend, "json/spritemap/spritemap.json");
+        std::string result = R"TEST({"Textures":["tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
+        REQUIRE(test.serialise() == result);
+        REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));
     }
 
     SECTION("SpriteMap schema test")

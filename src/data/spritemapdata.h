@@ -14,6 +14,7 @@
 struct Sprite
 {
     SDL_Texture* texture;
+    std::string textureName;
     SDL_Rect position;
 };
 
@@ -32,7 +33,13 @@ struct CurrentFrame
 class SpriteMapData
 {
     public:
-        SpriteMapData(SDL_Renderer* rend, const char* spriteConfig);
+        SpriteMapData();
+
+        void loadFromFile(SDL_Renderer* rend, const char* configLocation);
+        void loadFromString(SDL_Renderer* rend, const char* spriteConfig, const char* source = "string config");
+        void save(const char* spriteConfig);
+        std::string serialise();
+
         std::map<std::string, SDL_Texture*> textures;
         std::map<std::string, Sprite> sprites;
         std::map<std::string, Animation> animations;

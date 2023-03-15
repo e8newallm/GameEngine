@@ -84,7 +84,6 @@
     },
     "required": [
         "Textures",
-        "Sprites",
-        "Animations"
+        "Sprites"
     ]
 }
