@@ -35,14 +35,15 @@ file(GLOB src
     object/physicsobject.cpp
     object/image.cpp
     texture/texture.cpp
-    texture/spritemap.cpp
-    data/spritemapdata.cpp
+    texture/spritemap/spritemap.cpp
+    texture/spritemap/spritemapdata.cpp
     ${CMAKE_BINARY_DIR}/src/schema.cpp
 )
 
 file(GLOB headers
     object
     texture
+    texture/spritemap
     schema
     data
 )

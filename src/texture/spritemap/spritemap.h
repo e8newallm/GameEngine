@@ -12,6 +12,8 @@ class SpriteMap : public Texture
 {
     public:
         SpriteMap(SDL_Renderer* rend, const char* spriteConfig);
+        SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData);
+
         TexRequest getTexture() override;
         void setSprite(std::string name);
         void setAnimationSprite(std::string name);
@@ -23,7 +25,7 @@ class SpriteMap : public Texture
         Animation* currentAnimation;
         CurrentFrame currentFrame;
         Sprite* currentSprite;
-        SpriteMapData data;
+        SpriteMapData* data;
 };
 
 #endif

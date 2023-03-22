@@ -2,12 +2,21 @@
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
-    , data()
+    , data(new SpriteMapData())
     , currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
 {
-    data.loadFromFile(rend, spriteConfig);
+    data->loadFromFile(rend, spriteConfig);
+}
+
+SpriteMap::SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData) :
+    Texture(rend, nullptr)
+    , data(spriteData)
+    , currentAnimation(nullptr)
+    , currentFrame({0.0, 0})
+    , currentSprite(nullptr)
+{
 }
 
 TexRequest SpriteMap::getTexture()
@@ -20,29 +29,29 @@ TexRequest SpriteMap::getTexture()
 
 void SpriteMap::setAnimationSprite(std::string name)
 {
-    if(data.sprites.find(name) == data.sprites.end())
+    if(data->sprites.find(name) == data->sprites.end())
         return;
     
-    currentSprite = &data.sprites.find(name)->second;
+    currentSprite = &data->sprites.find(name)->second;
 
 }
 
 void SpriteMap::setSprite(std::string name)
 {
-    if(data.sprites.find(name) == data.sprites.end())
+    if(data->sprites.find(name) == data->sprites.end())
         return;
     
-    currentSprite = &data.sprites.find(name)->second;
+    currentSprite = &data->sprites.find(name)->second;
     currentFrame = {0.0, 0};
     currentAnimation = nullptr;
 }
 
 void SpriteMap::startAnimation(std::string animation)
 {
-    if(data.animations.find(animation) == data.animations.end())
+    if(data->animations.find(animation) == data->animations.end())
         return;
 
-    currentAnimation = &data.animations.find(animation)->second;
+    currentAnimation = &data->animations.find(animation)->second;
     currentFrame = {0.0, 0};
     setAnimationSprite(currentAnimation->sprites[currentFrame.frame]);
 }

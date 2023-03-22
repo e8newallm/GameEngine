@@ -39,9 +39,6 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
     rapidjson::SchemaDocument schemaDoc(schema);
     rapidjson::SchemaValidator validator(schemaDoc);
 
-
-
-    
     rapidjson::Document config;
     config.Parse(spriteConfig);
 
