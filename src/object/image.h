@@ -9,12 +9,12 @@ class Context;
 class Image : public Object
 {
     public:
-        Image(SDL_Rect body, Texture* texture, bool isForeground);
+        Image(SDL_Rect body, Texture* texture, Uint8 layer);
 
-        bool isForeground() { return foreground; };
+        Uint8 getLayer() { return layer; };
         
     private:
-        bool foreground;
+        Uint8 layer;
 };
 
 #endif

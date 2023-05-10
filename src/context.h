@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include <iostream>
+#include <array>
 
 #include "object/physicsobject.h"
 #include "object/object.h"
@@ -33,7 +34,7 @@ class Context
         KeyState& keyState;
         PhysicsContext* phyContext;
 
-        std::vector<Image*> backgroundImages, foregroundImages;
+        std::array<std::vector<Image*>, UINT8_MAX+1> images;
 };
 
 #endif

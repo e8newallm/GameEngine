@@ -1,7 +1,5 @@
 #include "mousestate.h"
 
-
-
 MouseState& MouseState::get()
 {
     static MouseState singleton;

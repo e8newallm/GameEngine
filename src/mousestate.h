@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_mouse.h>
 
 #include <vector>
 #include <array>

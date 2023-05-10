@@ -42,7 +42,7 @@ int main()
     Context state(rend, &viewport);
 
     PhysicsContext* phyContext = state.getPhysicsContext();
-    state.addImage(new Image({0, 0, 1000, 1000}, new Texture(rend, "tex/background.png"), false));
+    state.addImage(new Image({0, 0, 1000, 1000}, new Texture(rend, "tex/background.png"), UINT8_MAX));
     phyContext->addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
     phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture(rend, "tex/Tile.png")));
