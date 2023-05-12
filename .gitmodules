@@ -4,3 +4,6 @@
 [submodule "external/zlib"]
 	path = external/zlib
 	url = https://github.com/madler/zlib
+[submodule "external/lua"]
+	path = external/lua
+	url = git@github.com:lua/lua.git
