@@ -9,8 +9,7 @@
 #include <rapidjson/stringbuffer.h>
 
 #include "spritemapdata.h"
-
-extern const char* SpriteMapSchema;
+#include "SpriteMapSchema.h"
 
 SpriteMapData::SpriteMapData() :
     textures()

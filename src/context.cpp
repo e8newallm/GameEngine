@@ -53,12 +53,12 @@ void Context::draw()
 
 void Context::runLuaFile(std::string filename)
 {
-    luaL_dofile(luaState, filename);
+    luaL_dofile(luaState, filename.c_str());
 }
 
 void Context::runLuaStr(std::string luaScript)
 {
-    luaL_dostring(luaState, luaScript);
+    luaL_dostring(luaState, luaScript.c_str());
 }
 
 void Context::startPhysics()

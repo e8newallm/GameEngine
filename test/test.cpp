@@ -24,7 +24,7 @@
 #include "mousestate.h"
 #include "keystate.h"
 
-#include "catch_all.hpp"
+#include "Catch2/src/catch2/catch_all.hpp"
 
 extern const char* SpriteMapSchema;
 

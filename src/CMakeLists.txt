@@ -12,14 +12,8 @@ file(GLOB schemalist
 
 add_custom_target(SchemaGeneration
   ALL
-  DEPENDS ${CMAKE_BINARY_DIR}/src/schema.cpp
-)
-
-add_custom_command(
-    PRE_BUILD 
-    OUTPUT ${CMAKE_BINARY_DIR}/src/schema.cpp
-    COMMAND SchemaLoader ${CMAKE_BINARY_DIR}/src/schema.cpp ${schemalist}
-    DEPENDS ${schemalist} schemaloader.cpp
+  COMMAND SchemaLoader ${CMAKE_BINARY_DIR} ${schemalist}
+  DEPENDS ${schemalist} schemaloader.cpp SchemaLoader
 )
 
 add_subdirectory(tools)
@@ -37,7 +31,6 @@ file(GLOB src
     texture/texture.cpp
     texture/spritemap/spritemap.cpp
     texture/spritemap/spritemapdata.cpp
-    ${CMAKE_BINARY_DIR}/src/schema.cpp
 )
 
 file(GLOB headers
@@ -50,5 +43,5 @@ file(GLOB headers
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL2_LIBRARIES} SDL2_image lua)
-target_include_directories(GameEngine PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} ../external)
-add_dependencies(GameEngine SchemaLoader)
+target_include_directories(GameEngine PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} ../external ${CMAKE_BINARY_DIR})
+add_dependencies(GameEngine SchemaGeneration)
