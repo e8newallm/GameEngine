@@ -1,5 +1,4 @@
 add_subdirectory(example)
-add_subdirectory(Catch2)
 
 project(UnitTests LANGUAGES CXX)
 

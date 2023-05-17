@@ -10,6 +10,12 @@
 #include "keystate.h"
 #include "view.h"
 
+extern "C" {
+    #include "lua/lua.h"
+    #include "lua/lualib.h"
+    #include "lua/lauxlib.h"
+}
+
 class Context
 {
     public:
@@ -24,6 +30,8 @@ class Context
 
         void addImage(Image* newImage);
         
+        void runLuaFile(std::string filename);
+        void runLuaStr(std::string luaScript);
     private:
         bool phyRunning;
         SDL_ThreadFunction phyFunction;
@@ -33,6 +41,7 @@ class Context
         SDL_Renderer* rend;
         KeyState& keyState;
         PhysicsContext* phyContext;
+        lua_State* luaState;
 
         std::array<std::vector<Image*>, UINT8_MAX+1> images;
 };

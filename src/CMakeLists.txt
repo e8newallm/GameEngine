@@ -50,5 +50,5 @@ file(GLOB headers
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL2_LIBRARIES} SDL2_image lua)
-target_include_directories(GameEngine PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS})
+target_include_directories(GameEngine PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} ../external)
 add_dependencies(GameEngine SchemaLoader)

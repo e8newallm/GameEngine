@@ -19,12 +19,15 @@ Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunct
     , keyState(KeyState::get())
     , phyRunning(false)
     , phyFunction(phyFunction)
+    , luaState(luaL_newstate())
 {
     phyContext = new PhysicsContext();
     if(phyFunction == nullptr)
     {
         this->phyFunction = defaultPhysLoop;
     }
+
+    luaL_openlibs(luaState);
 }
 
 void Context::draw()
@@ -46,6 +49,16 @@ void Context::draw()
             image->draw(rend);
         }
     }
+}
+
+void Context::runLuaFile(std::string filename)
+{
+    luaL_dofile(luaState, filename);
+}
+
+void Context::runLuaStr(std::string luaScript)
+{
+    luaL_dostring(luaState, luaScript);
 }
 
 void Context::startPhysics()

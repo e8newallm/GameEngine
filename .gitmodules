@@ -1,5 +1,5 @@
 [submodule "test/Catch2"]
-	path = test/Catch2
+	path = external/Catch2
 	url = https://github.com/catchorg/Catch2
 [submodule "external/zlib"]
 	path = external/zlib
