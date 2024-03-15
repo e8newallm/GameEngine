@@ -2,9 +2,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(RapidJSON REQUIRED)
 
-project(SchemaLoader LANGUAGES CXX)
-
-add_executable(SchemaLoader schemaloader.cpp)
+add_subdirectory(tools)
 
 file(GLOB schemalist
     ${CMAKE_CURRENT_SOURCE_DIR}/schema/*.json
@@ -13,10 +11,8 @@ file(GLOB schemalist
 add_custom_target(SchemaGeneration
   ALL
   COMMAND SchemaLoader ${CMAKE_BINARY_DIR} ${schemalist}
-  DEPENDS ${schemalist} schemaloader.cpp SchemaLoader
+  DEPENDS ${schemalist} tools/schemaloader/schemaloader.cpp SchemaLoader
 )
-
-add_subdirectory(tools)
 
 project(GameEngine LANGUAGES CXX)
 
