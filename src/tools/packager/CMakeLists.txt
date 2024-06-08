@@ -5,8 +5,11 @@ project(packager LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(packager main.cpp)
+add_executable(packager packager.cpp main.cpp)
 set_target_properties(packager
     PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Game/"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tools/"
 )
+
+find_package(ZLIB)
+target_link_libraries(packager ZLIB::ZLIB)
