@@ -16,7 +16,9 @@ add_custom_command(
       ${CMAKE_BINARY_DIR}/bin/json
 )
 
-add_executable(UnitTests ${jsonfiles} test.cpp)
-target_link_libraries(UnitTests PRIVATE Catch2::Catch2WithMain GameEngine)
-target_include_directories(UnitTests PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} ${CMAKE_BINARY_DIR}/src Catch2/src/catch2)
+add_executable(UnitTests ${jsonfiles} test.cpp packager.cpp)
+target_link_libraries(UnitTests PRIVATE Catch2::Catch2WithMain GameEngine Packager)
+target_include_directories(UnitTests PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} Catch2/src/catch2)
 add_dependencies(UnitTests SchemaLoader)
+
+message(${CMAKE_SOURCE_DIR}/src)

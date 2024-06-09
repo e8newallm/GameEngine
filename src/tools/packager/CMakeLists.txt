@@ -1,15 +1,20 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(packager LANGUAGES CXX)
+project(Packager LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(packager packager.cpp main.cpp)
-set_target_properties(packager
+add_library(Packager STATIC packager.cpp)
+
+set_target_properties(Packager
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tools/"
 )
 
 find_package(ZLIB)
-target_link_libraries(packager ZLIB::ZLIB)
+target_link_libraries(Packager ZLIB::ZLIB)
+
+project(DataPackager LANGUAGES CXX)
+add_executable(DataPackager main.cpp)
+target_link_libraries(DataPackager ZLIB::ZLIB Packager)

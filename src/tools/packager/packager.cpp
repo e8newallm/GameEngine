@@ -71,48 +71,26 @@ std::string fileCompress(std::string file)
     return compressedData;
 }
 
-std::string stringCompress(std::string data)
+std::string numToStr(long long value)
 {
-    int ret, flush;
-    unsigned have;
-    z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
-    FILE* source = fopen(file.c_str(), "rb");
-    std::string compressedData = "";
-
-    /* allocate deflate state */
-    strm.zalloc = Z_NULL;
-    strm.zfree = Z_NULL;
-    strm.opaque = Z_NULL;
-    ret = deflateInit(&strm, 9);
-    if (ret != Z_OK)
-    {}    //return ret;
-
-    do
+    std::string result = "";
+    for(int i = 0; i <= 7; i++)
     {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source))
-        {
-            (void)deflateEnd(&strm);
-            //return Z_ERRNO;
-        }
-        flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
-        strm.next_in = in;
+        result += value & 0xff;
+        value /= 0x100;
+    }
+    return result;
+}
 
-        do
-        {
-            strm.avail_out = CHUNK;
-            strm.next_out = out;
-            ret = deflate(&strm, flush);    /* no bad return value */
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            have = CHUNK - strm.avail_out;
-            compressedData += std::string((char*)&out, have);
-        } while (strm.avail_out == 0);
-    } while(flush != Z_FINISH);
-
-    (void)deflateEnd(&strm);
-    return compressedData;
+long long strToNum(std::string value)
+{
+    long long result = 0;
+    for(int i = 7; i >= 0; i--)
+    {
+        result *= 0x100;
+        result += ((unsigned char)value[i]);
+    }
+    return result;
 }
 
 int dataCompress(std::string directory, std::string file)
@@ -139,6 +117,8 @@ int dataCompress(std::string directory, std::string file)
     std::string headData = "";
     for(FileEntry data : dataHeader)
     {
+        headData += data.name;
+
         std::cout << data.name << " : length: " << data.length << " file position: "
                     << data.start << " compressed size: " << data.compressedLength << "\r\n";
     }

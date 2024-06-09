@@ -64,7 +64,7 @@ TEST_CASE("Spritemap parse testing", "[basic]")
         rapidjson::Document d;
         d.Parse(spriteMapJSON);
         REQUIRE(!d.HasParseError());
-        
+
         rapidjson::Document schema;
         schema.Parse(SpriteMapSchema);
         REQUIRE(!schema.HasParseError());
