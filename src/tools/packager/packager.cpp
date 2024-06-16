@@ -1,7 +1,9 @@
+#include <iterator>
 #include <stdio.h>
 #include <assert.h>
 #include <cstdint>
 
+#include <algorithm>
 #include <string>
 #include <filesystem>
 #include <vector>
@@ -71,26 +73,64 @@ std::string fileCompress(std::string file)
     return compressedData;
 }
 
-std::string numToStr(long long value)
+void numToByte(std::vector<uint8_t>& data, uint64_t value)
 {
-    std::string result = "";
     for(int i = 0; i <= 7; i++)
     {
-        result += value & 0xff;
-        value /= 0x100;
+        data.push_back(value & 0xff);
+        value = value >> 8;
+    }
+}
+
+uint64_t byteToNum(std::vector<uint8_t>& data)
+{
+    assert(data.size() >= 8);
+    uint64_t result = 0;
+    for(int i = 7; i >= 0; i--)
+    {
+        result *= 0x100;
+        result += data.back();
+        data.pop_back();
     }
     return result;
 }
 
-long long strToNum(std::string value)
+std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList)
 {
-    long long result = 0;
-    for(int i = 7; i >= 0; i--)
+    std::vector<uint8_t> headData;
+    for(FileEntry data : fileList)
     {
-        result *= 0x100;
-        result += ((unsigned char)value[i]);
+        headData.push_back('\0');
+        std::copy(data.name.begin(), data.name.end(), std::back_inserter(headData));
+        numToByte(headData, data.start);
+        numToByte(headData, data.compressedLength);
+        numToByte(headData, data.length);
     }
-    return result;
+    return headData;
+}
+
+std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
+{
+    std::vector<FileEntry> fileList;
+    while(data.size() > 0)
+    {
+        FileEntry newEntry;
+        newEntry.length = byteToNum(data);
+        newEntry.compressedLength = byteToNum(data);
+        newEntry.start = byteToNum(data);
+        for(std::vector<uint8_t>::iterator pos = data.end()-1; pos >= data.begin(); pos--)
+        {
+            if(*pos == '\0')
+            {
+                newEntry.name = std::string(pos+1, data.end());
+                data.erase(pos, data.end());
+                break;
+            }
+        }
+        fileList.push_back(newEntry);
+    }
+    std::reverse(fileList.begin(), fileList.end());
+    return fileList;
 }
 
 int dataCompress(std::string directory, std::string file)
@@ -112,15 +152,6 @@ int dataCompress(std::string directory, std::string file)
         currentPosition += newData.compressedLength;
         fwrite(compressedData.c_str(), 1, compressedData.length(), dest);
         dataHeader.push_back(newData);
-    }
-
-    std::string headData = "";
-    for(FileEntry data : dataHeader)
-    {
-        headData += data.name;
-
-        std::cout << data.name << " : length: " << data.length << " file position: "
-                    << data.start << " compressed size: " << data.compressedLength << "\r\n";
     }
 
     //fopen(file.c_str(), "wb");

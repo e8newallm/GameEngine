@@ -10,9 +10,13 @@ struct FileEntry
     uint64_t length;
 };
 
-std::string numToStr(long long value);
-long long strToNum(std::string value);
-
 std::vector<std::string> getFileList(std::string directory);
+std::string fileCompress(std::string file);
+void numToByte(std::vector<uint8_t>& data, uint64_t value);
+uint64_t byteToNum(std::vector<uint8_t>& value);
+
+std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList);
+std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data);
+
 std::string fileCompress(std::string file);
 int dataCompress(std::string directory, std::string file);
