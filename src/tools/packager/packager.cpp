@@ -14,6 +14,112 @@
 
 #define CHUNK (256 * 1024)
 
+PackageManager::PackageManager(std::string file) :
+    packageFile(file)
+{
+    FILE* openFile = fopen(file.c_str(), "rb");
+    fseek(openFile, 0L, SEEK_SET);
+    if(openFile == NULL)
+    {
+        fclose(openFile);
+        throw;
+    }
+    std::vector<uint8_t> data;
+    data.resize(8);
+    int readSize = fread(data.data(), 1, 8, openFile);
+    dataStart = byteToNum(data);
+    data.resize(dataStart - 8);
+    readSize = fread(data.data(), 1, dataStart - 8, openFile);
+    if(readSize != dataStart - 8)
+    {
+        fclose(openFile);
+        throw;
+    }
+
+    fileList = headerDecompress(data);
+    fclose(openFile);
+}
+
+std::vector<std::string> PackageManager::getFileList()
+{
+    std::vector<std::string> fileListStr;
+    for(FileEntry entry : fileList) fileListStr.push_back(entry.name);
+    return fileListStr;
+}
+
+std::vector<uint8_t> PackageManager::getFile(std::string path)
+{
+    for(FileEntry file : fileList)
+    {
+        if(file.name == path)
+        {
+            std::vector<uint8_t> data;
+            data.reserve(file.length);
+            FILE* package = fopen(packageFile.c_str(), "rb");
+            fseek(package, dataStart + file.start, SEEK_SET);
+
+            int ret;
+            unsigned have;
+            z_stream strm;
+            unsigned char in[CHUNK];
+            unsigned char out[CHUNK];
+
+            /* allocate inflate state */
+            strm.zalloc = Z_NULL;
+            strm.zfree = Z_NULL;
+            strm.opaque = Z_NULL;
+            strm.avail_in = 0;
+            strm.next_in = Z_NULL;
+            ret = inflateInit(&strm);
+            if (ret != Z_OK)
+            {
+                fclose(package);
+                throw;
+            }
+            /* decompress until deflate stream ends or end of file */
+            do {
+                strm.avail_in = fread(in, 1, CHUNK, package);
+                if (ferror(package)) {
+                    (void)inflateEnd(&strm);
+                    fclose(package);
+                    throw;
+                }
+                if (strm.avail_in == 0)
+                    break;
+                strm.next_in = in;
+
+                /* run inflate() on input until output buffer not full */
+                do {
+                    strm.avail_out = CHUNK;
+                    strm.next_out = out;
+                    ret = inflate(&strm, Z_NO_FLUSH);
+                    assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+                    switch (ret) {
+                    case Z_NEED_DICT:
+                        ret = Z_DATA_ERROR;     /* and fall through */
+                    case Z_DATA_ERROR:
+                    case Z_MEM_ERROR:
+                        (void)inflateEnd(&strm);
+                        fclose(package);
+                        throw;
+                    }
+                    have = CHUNK - strm.avail_out;
+                    std::copy(out, out+have, std::back_inserter(data));
+                } while (strm.avail_out == 0);
+
+                /* done when inflate() says it's done */
+            } while (ret != Z_STREAM_END);
+
+            /* clean up and return */
+            (void)inflateEnd(&strm);
+            fclose(package);
+            return data;
+        }
+    }
+    throw;
+    return {};
+}
+
 std::vector<std::string> getFileList(std::string directory)
 {
     std::vector<std::string> list;
@@ -70,6 +176,7 @@ std::string fileCompress(std::string file)
     } while(flush != Z_FINISH);
 
     (void)deflateEnd(&strm);
+    fclose(source);
     return compressedData;
 }
 
@@ -135,14 +242,13 @@ std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
 
 int dataCompress(std::string directory, std::string file)
 {
-    FILE* dest = std::tmpfile();
+    FILE* compData = std::tmpfile();
 
     std::vector<std::string> list = getFileList(directory);
     std::vector<FileEntry> dataHeader;
     long currentPosition = 0;
     for(std::string filename : list)
     {
-        std::cout << "compressing " <<  directory + filename << "\r\n";
         std::string compressedData = fileCompress(directory + filename);
         FileEntry newData;
         newData.name = filename;
@@ -150,19 +256,30 @@ int dataCompress(std::string directory, std::string file)
         newData.start = currentPosition;
         newData.compressedLength = compressedData.length();
         currentPosition += newData.compressedLength;
-        fwrite(compressedData.c_str(), 1, compressedData.length(), dest);
+        fwrite(compressedData.c_str(), 1, compressedData.length(), compData);
         dataHeader.push_back(newData);
     }
 
-    //fopen(file.c_str(), "wb");
-    return 0;
-}
+    //Write header data to file
+    FILE* openFile = fopen(file.c_str(), "wb");
+    std::vector<uint8_t> header = headerCompress(dataHeader);
+    std::vector<uint8_t> fullHeader;
+    int size = header.size() + 8;
+    numToByte(fullHeader, size);
+    std::copy(header.begin(), header.end(), std::back_inserter(fullHeader));
+    assert(fullHeader.size() == size);
+    fwrite(fullHeader.data(), 1, fullHeader.size(), openFile);
 
-std::string dataDecompress(std::string dataFile, std::string file)
-{
-    FILE* src = fopen(dataFile.c_str(), "rb");
-
-
-    fclose(src);
+    //Write compressed files to file
+    std::fseek(compData, 0, SEEK_SET);
+    unsigned char buffer[CHUNK];
+    int readSize = CHUNK;
+    while(readSize == CHUNK)
+    {
+        readSize = fread(&buffer, 1, CHUNK, compData);
+        fwrite(buffer, 1, readSize, openFile);
+    }
+    fclose(openFile);
+    fclose(compData);
     return 0;
 }

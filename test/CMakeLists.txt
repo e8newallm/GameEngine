@@ -10,10 +10,17 @@ add_custom_target(TestJSON
 )
 
 add_custom_command(
-    TARGET TestJSON POST_BUILD 
+    TARGET TestJSON POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_CURRENT_SOURCE_DIR}/json
       ${CMAKE_BINARY_DIR}/bin/json
+)
+
+add_custom_command(
+    TARGET TestJSON POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_SOURCE_DIR}/example
+      ${CMAKE_BINARY_DIR}/bin/packagerTest
 )
 
 add_executable(UnitTests ${jsonfiles} test.cpp packager.cpp)
