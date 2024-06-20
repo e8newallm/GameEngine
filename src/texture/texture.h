@@ -15,7 +15,7 @@ class Texture
     public:
         Texture(SDL_Renderer* rend, const char* texturePath);
         virtual TexRequest getTexture();
-        virtual void update(double deltaT) {};
+        virtual void update(double deltaT) {(void) deltaT;};
     protected:
         SDL_Texture* texture;
 };

@@ -49,9 +49,9 @@ class MouseState
     private:
         Uint32 xMouse, yMouse;
         Sint32 xDeltaMouse, yDeltaMouse;
+        Sint32 scrollAmount;
         std::array<bool, SDL_BUTTON_X2+1> mouseButtonDown;
         std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;
-        Sint32 scrollAmount;
         MouseState();
 };
 

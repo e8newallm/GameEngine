@@ -31,8 +31,8 @@ class View
 
     private:
         double zoom = 1.0;
-        double xZoomOffset, yZoomOffset;
         SDL_Point resolution;
         SDL_Point position;
+        double xZoomOffset, yZoomOffset;
 };
 #endif

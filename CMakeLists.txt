@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 project(Project)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_options(-Wall -Wextra -Wpedantic)
+
 include(ProcessorCount)
 ProcessorCount(N)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${N})

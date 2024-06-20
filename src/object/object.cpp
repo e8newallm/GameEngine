@@ -35,6 +35,7 @@ void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT)
 
 void Object::update(double deltaTime)
 {
+    (void)deltaTime;
 }
 
 void Object::move(double x, double y)

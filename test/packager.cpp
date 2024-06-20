@@ -2,12 +2,11 @@
 #include <cstdint>
 #include <unistd.h>
 #include <vector>
-#include <iostream>
 #include <filesystem>
 
 #include "tools/packager/packager.h"
 
-#include "Catch2/src/catch2/catch_all.hpp"
+#include "Catch2/src/catch2/catch_test_macros.hpp"
 
 inline void conversionTest(uint64_t value) {
 	std::vector<uint8_t> data = {};
@@ -26,7 +25,7 @@ inline void fileEntryTest(const FileEntry lhs, const FileEntry rhs)
 inline void headerTest(std::vector<FileEntry> data) {
 	std::vector<FileEntry> result = headerDecompress(headerCompress(data));
 	REQUIRE(result.size() == data.size());
-	for(int i = 0; i < result.size(); i++) fileEntryTest(result[i], data[i]);
+	for(uint64_t i = 0; i < result.size(); i++) fileEntryTest(result[i], data[i]);
 
 }
 
@@ -57,12 +56,12 @@ TEST_CASE("Packager/FullTest", "[packager]")
 	PackageManager testPackage = PackageManager("packagerTest.bin");
 	std::vector<std::string> packageFiles = testPackage.getFileList();
 	REQUIRE(packageFiles.size() == dirFiles.size());
-	for(int i = 0; i < packageFiles.size(); i++)
+	for(uint64_t i = 0; i < packageFiles.size(); i++)
 	{
 		REQUIRE(packageFiles[i] == dirFiles[i]);
 	}
 
-	for(int i = 0; i < packageFiles.size(); i++)
+	for(uint64_t i = 0; i < packageFiles.size(); i++)
 	{
 		std::vector<uint8_t> fileReturn = testPackage.getFile(dirFiles[i]);
 		FILE* originalFile = fopen(("packagerTest/"+dirFiles[i]).c_str(), "rb");

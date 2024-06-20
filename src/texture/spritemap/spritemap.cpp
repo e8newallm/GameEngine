@@ -2,20 +2,20 @@
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
-    , data(new SpriteMapData())
     , currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
+    , data(new SpriteMapData())
 {
     data->loadFromFile(rend, spriteConfig);
 }
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData) :
     Texture(rend, nullptr)
-    , data(spriteData)
     , currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
+    , data(spriteData)
 {
 }
 

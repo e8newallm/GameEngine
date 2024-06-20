@@ -26,7 +26,7 @@ PackageManager::PackageManager(std::string file) :
     }
     std::vector<uint8_t> data;
     data.resize(8);
-    int readSize = fread(data.data(), 1, 8, openFile);
+    uint64_t readSize = fread(data.data(), 1, 8, openFile);
     dataStart = byteToNum(data);
     data.resize(dataStart - 8);
     readSize = fread(data.data(), 1, dataStart - 8, openFile);
@@ -97,6 +97,7 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
                     switch (ret) {
                     case Z_NEED_DICT:
                         ret = Z_DATA_ERROR;     /* and fall through */
+                        __attribute__ ((fallthrough));
                     case Z_DATA_ERROR:
                     case Z_MEM_ERROR:
                         (void)inflateEnd(&strm);
@@ -264,7 +265,7 @@ int dataCompress(std::string directory, std::string file)
     FILE* openFile = fopen(file.c_str(), "wb");
     std::vector<uint8_t> header = headerCompress(dataHeader);
     std::vector<uint8_t> fullHeader;
-    int size = header.size() + 8;
+    uint64_t size = header.size() + 8;
     numToByte(fullHeader, size);
     std::copy(header.begin(), header.end(), std::back_inserter(fullHeader));
     assert(fullHeader.size() == size);

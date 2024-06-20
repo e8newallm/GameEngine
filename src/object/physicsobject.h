@@ -19,8 +19,10 @@ class PhysicsObject : public Object
         ~PhysicsObject();
 
         void preUpdate();
-        virtual void update(double deltaTime, PhysicsContext* context);
+        using Object::draw;
+        using Object::update;
         virtual void draw(SDL_Renderer* rend, double percent, double deltaT, View viewport);
+        virtual void update(double deltaTime, PhysicsContext* context);
 
         bool detectCollision(PhysicsContext* context);
         virtual void collision(SDL_Rect* other);

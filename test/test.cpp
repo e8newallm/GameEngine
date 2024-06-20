@@ -171,7 +171,9 @@ TEST_CASE("MouseState testing", "[basic]")
         10,
         SDL_MOUSEWHEEL_FLIPPED,
         5.1,
-        10.2
+        10.2,
+        0,
+        0
     });
 
     REQUIRE(mouseState.clicked(SDL_BUTTON_LEFT) == true);
@@ -226,8 +228,8 @@ TEST_CASE("Basic functionality", "[physics]")
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
     SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
-    KeyState& keyState = KeyState::get();
-    MouseState& mouseState = MouseState::get();
+    //KeyState& keyState = KeyState::get();
+    //MouseState& mouseState = MouseState::get();
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);

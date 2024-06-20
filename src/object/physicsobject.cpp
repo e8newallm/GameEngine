@@ -9,9 +9,9 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture* texture) :
     Object(body, texture)
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)
+   ,prevBody()
    ,currentVelocity()
    ,nextVelocity()
-   ,prevBody()
 {
     prevBody.x = body.x;
     prevBody.y = body.y;
@@ -61,7 +61,7 @@ void PhysicsObject::groundCheck(PhysicsContext* context)
     groundCheck.w = body.w;
     groundCheck.h = 2;
     std::vector<PhysicsObject*> collisionObjects = context->getCollisionObjects();
-    for(int i = 0; i < collisionObjects.size(); i++)
+    for(uint64_t i = 0; i < collisionObjects.size(); i++)
     {
         if(SDL_HasIntersection(&groundCheck, collisionObjects[i]->getBody()))
         {
@@ -80,6 +80,7 @@ void PhysicsObject::preUpdate()
     currentVelocity.x = nextVelocity.x;
     currentVelocity.y = nextVelocity.y;
 }
+
 void PhysicsObject::draw(SDL_Renderer* rend, double percent, double deltaT, View viewport)
 {
     SDL_Rect body = calcDrawBody(percent, viewport);
@@ -137,7 +138,7 @@ bool PhysicsObject::detectCollision(PhysicsContext* context)
 {
     bool collisionFound = false;
     std::vector<PhysicsObject*> collisionObjects = context->getCollisionObjects();
-    for(int i = 0; i < collisionObjects.size(); i++)
+    for(uint64_t i = 0; i < collisionObjects.size(); i++)
     {
         if(SDL_HasIntersection(getBody(), collisionObjects[i]->getBody()) && this != collisionObjects[i])
         {
@@ -228,13 +229,13 @@ void PhysicsContext::updateObjects(bool instant)
 {
     SDL_LockMutex(usageLock);
     Uint64 startTime = SDL_GetPerformanceCounter();
-    for(int i = 0; i < collisionObjects.size(); i++)
+    for(uint64_t i = 0; i < collisionObjects.size(); i++)
     {
         collisionObjects[i]->groundCheck(this);
         collisionObjects[i]->preUpdate();
         collisionObjects[i]->update(phyTick, this);
     }
-    for(int i = 0; i < noncollisionObjects.size(); i++)
+    for(uint64_t i = 0; i < noncollisionObjects.size(); i++)
     {
         collisionObjects[i]->preUpdate();
         noncollisionObjects[i]->update(phyTick, this);
@@ -251,16 +252,16 @@ void PhysicsContext::drawObjects(SDL_Renderer* rend, View viewport)
 {
     SDL_LockMutex(usageLock);
     double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());
-    double fps = 1.0f / (double)((SDL_GetPerformanceCounter() - lastRender) / (double)SDL_GetPerformanceFrequency());
+    //double fps = 1.0f / (double)((SDL_GetPerformanceCounter() - lastRender) / (double)SDL_GetPerformanceFrequency());
     lastRender = SDL_GetPerformanceCounter();
     //std::cout << "\r\nFPS: " << fps << "\r\n";
     double percent = deltaTime / (1000.0f / phyTick);
-    for(int i = 0; i < collisionObjects.size(); i++)
+    for(uint64_t i = 0; i < collisionObjects.size(); i++)
     {
         collisionObjects[i]->draw(rend, percent, deltaTime, viewport);
     }
 
-    for(int i = 0; i < noncollisionObjects.size(); i++)
+    for(uint64_t i = 0; i < noncollisionObjects.size(); i++)
     {
         noncollisionObjects[i]->draw(rend, percent, deltaTime, viewport);
     }

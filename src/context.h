@@ -21,7 +21,7 @@ class Context
     public:
         Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction = nullptr);
         void draw();
-        
+
         PhysicsContext* getPhysicsContext() { return phyContext; };
         void startPhysics();
         void stepPhysics();
@@ -33,14 +33,13 @@ class Context
         void runLuaFile(std::string filename);
         void runLuaStr(std::string luaScript);
     private:
-        bool phyRunning;
-        SDL_ThreadFunction phyFunction;
-        SDL_Thread* physThread;
-
         View* viewport;
         SDL_Renderer* rend;
         KeyState& keyState;
         PhysicsContext* phyContext;
+        bool phyRunning;
+        SDL_ThreadFunction phyFunction;
+        SDL_Thread* physThread;
         lua_State* luaState;
 
         std::array<std::vector<Image*>, UINT8_MAX+1> images;

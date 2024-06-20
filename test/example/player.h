@@ -10,7 +10,8 @@ class Player : public PhysicsObject
         Player(SDL_Rect body, int flags, Texture* texture) :
         PhysicsObject(body, flags, texture)
         {((SpriteMap*)texture)->setSprite("sprite01");};
-
+        
+        using PhysicsObject::draw;
         void draw(SDL_Renderer* rend, double percent, View viewport);
         virtual void update(double deltaTime, PhysicsContext* context) override;
 
