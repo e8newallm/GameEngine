@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <vector>
 
 struct TexRequest
 {
@@ -13,7 +14,9 @@ struct TexRequest
 class Texture
 {
     public:
+        Texture(SDL_Renderer* rend);
         Texture(SDL_Renderer* rend, const char* texturePath);
+        Texture(SDL_Renderer* rend, std::vector<uint8_t> data);
         virtual TexRequest getTexture();
         virtual void update(double deltaT) {(void) deltaT;};
     protected:

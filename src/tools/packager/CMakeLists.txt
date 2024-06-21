@@ -15,6 +15,6 @@ set_target_properties(Packager
 find_package(ZLIB)
 target_link_libraries(Packager ZLIB::ZLIB)
 
-project(DataPackager LANGUAGES CXX)
-add_executable(DataPackager main.cpp)
-target_link_libraries(DataPackager ZLIB::ZLIB Packager)
+project(PackagerBin LANGUAGES CXX)
+add_executable(PackagerBin main.cpp)
+target_link_libraries(PackagerBin ZLIB::ZLIB Packager)
