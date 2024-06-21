@@ -1,3 +1,6 @@
+#ifndef PACKAGE_H
+#define PACKAGE_H
+
 #include <string>
 #include <cstdint>
 #include <vector>
@@ -17,6 +20,7 @@ class PackageManager
 
         std::vector<std::string> getFileList();
         std::vector<uint8_t> getFile(std::string path);
+        std::string getPackageName();
 
     private:
         std::string packageFile;
@@ -33,3 +37,5 @@ std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList);
 std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data);
 
 int dataCompress(std::string directory, std::string file);
+
+#endif

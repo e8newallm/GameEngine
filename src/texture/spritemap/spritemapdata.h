@@ -11,6 +11,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "tools/packager/packager.h"
+
 struct Sprite
 {
     SDL_Texture* texture;
@@ -36,9 +38,12 @@ class SpriteMapData
         SpriteMapData();
 
         void loadFromFile(SDL_Renderer* rend, const char* configLocation);
+        void loadFromPackage(SDL_Renderer* rend, PackageManager* package, const char* spriteConfig);
         void loadFromString(SDL_Renderer* rend, const char* spriteConfig, const char* source = "string config");
         void save(const char* spriteConfig);
         std::string serialise();
+
+        PackageManager* package;
 
         std::map<std::string, SDL_Texture*> textures;
         std::map<std::string, Sprite> sprites;

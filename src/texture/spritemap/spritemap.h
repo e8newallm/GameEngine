@@ -7,11 +7,13 @@
 
 #include "texture.h"
 #include "spritemapdata.h"
+#include "tools/packager/packager.h"
 
 class SpriteMap : public Texture
 {
     public:
         SpriteMap(SDL_Renderer* rend, const char* spriteConfig);
+        SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path);
         SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData);
 
         TexRequest getTexture() override;

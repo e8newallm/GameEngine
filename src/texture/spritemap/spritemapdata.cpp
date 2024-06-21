@@ -11,10 +11,13 @@
 #include "spritemapdata.h"
 #include "SpriteMapSchema.h"
 
+#include "tools/packager/packager.h"
+
 SpriteMapData::SpriteMapData() :
-    textures()
-    , sprites()
-    , animations()
+    package()
+    ,textures()
+    ,sprites()
+    ,animations()
 {
 }
 
@@ -29,6 +32,13 @@ void SpriteMapData::loadFromFile(SDL_Renderer* rend, const char* configLocation)
     std::ostringstream ss;
     ss << file.rdbuf();
     loadFromString(rend, ss.str().c_str(), configLocation);
+}
+
+void SpriteMapData::loadFromPackage(SDL_Renderer* rend, PackageManager* package, const char* path)
+{
+    this->package = package;
+    std::vector<uint8_t> data = package->getFile(path);
+    loadFromString(rend, std::string(data.begin(), data.end()).c_str(), (package->getPackageName() + ":" + path).c_str());
 }
 
 void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig, const char* source)
@@ -57,7 +67,17 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
     {
         for(rapidjson::Value& value : config["Textures"].GetArray())
         {
-            SDL_Surface* surface = IMG_Load(value.GetString());
+            SDL_Surface* surface;
+            if(package)
+            {
+                std::vector<uint8_t> data = package->getFile(value.GetString());
+                SDL_RWops* dataBuffer = SDL_RWFromMem(data.data(), data.size());
+                surface = IMG_Load_RW(dataBuffer, 1);
+            }
+            else
+            {
+                surface = IMG_Load(value.GetString());
+            }
             if(surface == nullptr)
             {
                 throw std::runtime_error(std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
@@ -70,7 +90,17 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
     }
     else
     {
-        SDL_Surface* surface = IMG_Load(config["Textures"].GetString());
+        SDL_Surface* surface;
+        if(package)
+        {
+            std::vector<uint8_t> data = package->getFile(config["Textures"].GetString());
+            SDL_RWops* dataBuffer = SDL_RWFromMem(data.data(), data.size());
+            surface = IMG_Load_RW(dataBuffer, 1);
+        }
+        else
+        {
+            surface = IMG_Load(config["Textures"].GetString());
+        }
         if(surface == nullptr)
         {
             throw std::runtime_error(std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");

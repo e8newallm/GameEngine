@@ -121,6 +121,8 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
     return {};
 }
 
+std::string PackageManager::getPackageName() { return packageFile; }
+
 std::vector<std::string> getFileList(std::string directory)
 {
     std::vector<std::string> list;

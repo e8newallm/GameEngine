@@ -1,4 +1,5 @@
 #include "spritemap.h"
+#include "tools/packager/packager.h"
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     Texture(rend, nullptr)
@@ -8,6 +9,16 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     , data(new SpriteMapData())
 {
     data->loadFromFile(rend, spriteConfig);
+}
+
+SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path) :
+    Texture(rend, nullptr)
+    , currentAnimation(nullptr)
+    , currentFrame({0.0, 0})
+    , currentSprite(nullptr)
+    , data(new SpriteMapData())
+{
+    data->loadFromPackage(rend, package, path);
 }
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData) :
