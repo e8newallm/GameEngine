@@ -3,15 +3,19 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_thread.h>
 
+#include <cstdlib>
+#include <ios>
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
 
+#include <cstdio>
 #include <iostream>
 #include <ctime>
 #include <source_location>
 #include <fstream>
 #include <sstream>
+#include <string>
 
 #include "object.h"
 #include "physicsobject.h"
@@ -23,12 +27,54 @@
 
 #include "mousestate.h"
 #include "keystate.h"
+#include "logging.h"
 
 #include "Catch2/src/catch2/catch_all.hpp"
 
 extern const char* SpriteMapSchema;
 
-TEST_CASE("Spritemap parse testing", "[basic]")
+void loggingTestFunc(std::string message)
+{
+    Logger::message(message);
+}
+
+TEST_CASE("Logging", "[base]")
+{
+    SECTION("ostream test")
+    {
+        std::ostringstream testStream;
+        Logger::init(&testStream);
+        loggingTestFunc("TEST MESSAGE");
+        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r\n");
+        loggingTestFunc("NEW MESSAGE");
+        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r\n"
+                                    "(void loggingTestFunc(std::string): line 38) INFO: NEW MESSAGE\r\n");
+    }
+
+    std::string filename = tmpnam(NULL);
+    std::fstream testFile;
+
+    SECTION("file test")
+    {
+        testFile.open(filename, std::ios_base::out | std::ios_base::binary);
+        Logger::init(&testFile);
+        loggingTestFunc("TEST MESSAGE");
+        loggingTestFunc("NEW MESSAGE");
+        testFile.close();
+        testFile.open(filename, std::ios_base::in | std::ios_base::binary);
+        std::string line = "";
+        std::getline(testFile, line);
+
+        REQUIRE(line == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r");
+        std::getline(testFile, line);
+        REQUIRE(line == "(void loggingTestFunc(std::string): line 38) INFO: NEW MESSAGE\r");
+    }
+
+    testFile.close();
+    std::remove(filename.c_str());
+}
+
+TEST_CASE("Spritemap parse testing", "[base]")
 {
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
@@ -112,7 +158,7 @@ TEST_CASE("Spritemap parse testing", "[basic]")
     }
 }
 
-TEST_CASE("KeyState testing", "[basic]")
+TEST_CASE("KeyState testing", "[base]")
 {
     KeyState& keyState = KeyState::get();
     keyState.update(SDL_SCANCODE_1, SDL_KEYDOWN);
@@ -133,7 +179,7 @@ TEST_CASE("KeyState testing", "[basic]")
     REQUIRE(keyState[SDL_SCANCODE_A] == SDL_KEYDOWN);
 }
 
-TEST_CASE("MouseState testing", "[basic]")
+TEST_CASE("MouseState testing", "[base]")
 {
     MouseState& mouseState = MouseState::get();
 

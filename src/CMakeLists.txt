@@ -21,6 +21,7 @@ file(GLOB src
     mousestate.cpp
     context.cpp
     view.cpp
+    logging.cpp
     object/object.cpp
     object/physicsobject.cpp
     object/image.cpp
