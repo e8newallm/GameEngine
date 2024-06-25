@@ -1,4 +1,5 @@
 #include <iterator>
+#include <new>
 #include <stdio.h>
 #include <assert.h>
 #include <cstdint>
@@ -11,29 +12,47 @@
 
 #include "zlib.h"
 #include "packager.h"
+#include "geerror.h"
+#include "logging.h"
 
 #define CHUNK (256 * 1024)
 
 PackageManager::PackageManager(std::string file) :
     packageFile(file)
+    ,fileList({})
 {
+    if(!std::filesystem::exists(file))
+        throw GameEngineException(GEError::FILE_NOT_FOUND, "File " + file + " not found");
+
     FILE* openFile = fopen(file.c_str(), "rb");
-    fseek(openFile, 0L, SEEK_SET);
     if(openFile == NULL)
     {
         fclose(openFile);
-        throw;
+        throw GameEngineException(GEError::FILE_NOT_FOUND, "Could not open " + file);
     }
+    fseek(openFile, 0L, SEEK_SET);
+
+    //Get the size of the header data
     std::vector<uint8_t> data;
     data.resize(8);
     uint64_t readSize = fread(data.data(), 1, 8, openFile);
+    if(readSize != 8)
+    {
+        fclose(openFile);
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Could not read header size of " + file);
+    }
     dataStart = byteToNum(data);
-    data.resize(dataStart - 8);
+
+    //Reading the header data of the package
+    try{ data.resize(dataStart - 8); }
+    catch(std::bad_alloc const& err){
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Unable to allocate " + std::to_string(dataStart - 8) + " bytes for " + file);
+    }
     readSize = fread(data.data(), 1, dataStart - 8, openFile);
     if(readSize != dataStart - 8)
     {
         fclose(openFile);
-        throw;
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Could not read entire header of " + file);
     }
 
     fileList = headerDecompress(data);
@@ -56,6 +75,10 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
             std::vector<uint8_t> data;
             data.reserve(file.length);
             FILE* package = fopen(packageFile.c_str(), "rb");
+            if (!package)
+            {
+                throw GameEngineException(GEError::FILE_IO, "Could not open package: " + packageFile);
+            }
             fseek(package, dataStart + file.start, SEEK_SET);
 
             int ret;
@@ -74,7 +97,7 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
             if (ret != Z_OK)
             {
                 fclose(package);
-                throw;
+                throw GameEngineException(GEError::FILE_IO, "Could not initialise file inflation");
             }
             /* decompress until deflate stream ends or end of file */
             do {
@@ -82,7 +105,7 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
                 if (ferror(package)) {
                     (void)inflateEnd(&strm);
                     fclose(package);
-                    throw;
+                    throw GameEngineException(GEError::FILE_IO, "Could not read from package: " + packageFile);
                 }
                 if (strm.avail_in == 0)
                     break;
@@ -102,7 +125,7 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
                     case Z_MEM_ERROR:
                         (void)inflateEnd(&strm);
                         fclose(package);
-                        throw;
+                        throw GameEngineException(GEError::FILE_IO, "Could not inflate file from package: " + path);
                     }
                     have = CHUNK - strm.avail_out;
                     std::copy(out, out+have, std::back_inserter(data));
@@ -117,7 +140,7 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
             return data;
         }
     }
-    throw;
+    throw GameEngineException(GEError::FILE_NOT_FOUND, "File " + path + " not found in package " + packageFile);
     return {};
 }
 
@@ -126,16 +149,23 @@ std::string PackageManager::getPackageName() { return packageFile; }
 std::vector<std::string> getFileList(std::string directory)
 {
     std::vector<std::string> list;
-    for (const auto & entry : std::filesystem::recursive_directory_iterator(directory))
+    try
     {
-        if(!entry.is_directory())
+        for (const auto & entry : std::filesystem::recursive_directory_iterator(directory))
         {
-            std::string filename = entry.path();
-            filename.erase(0, directory.length());
-            list.push_back(filename);
+            if(!entry.is_directory())
+            {
+                std::string filename = entry.path();
+                filename.erase(0, directory.length());
+                list.push_back(filename);
+            }
         }
+        return list;
     }
-    return list;
+    catch(std::filesystem::filesystem_error const& err)
+    {
+        throw GameEngineException(GEError::FILE_NOT_FOUND, "Could not get file list of " + directory + ": " + err.code().message());
+    }
 }
 
 std::string fileCompress(std::string file)
@@ -146,6 +176,10 @@ std::string fileCompress(std::string file)
     unsigned char in[CHUNK];
     unsigned char out[CHUNK];
     FILE* source = fopen(file.c_str(), "rb");
+    if(!source)
+    {
+        throw GameEngineException(GEError::FILE_IO, "Could not open file to compress: " + file);
+    }
     std::string compressedData = "";
 
     /* allocate deflate state */
@@ -154,7 +188,9 @@ std::string fileCompress(std::string file)
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, 9);
     if (ret != Z_OK)
-    {}    //return ret;
+    {
+        throw GameEngineException(GEError::FILE_IO, "Could not initialise deflation in zlib: " + std::to_string(ret));
+    }
 
     do
     {
@@ -162,7 +198,7 @@ std::string fileCompress(std::string file)
         if (ferror(source))
         {
             (void)deflateEnd(&strm);
-            //return Z_ERRNO;
+            throw GameEngineException(GEError::FILE_IO, "Could not read file to compress: " + file);
         }
         flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
         strm.next_in = in;
@@ -210,6 +246,7 @@ std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList)
     std::vector<uint8_t> headData;
     for(FileEntry data : fileList)
     {
+        //Make strings start with a null for reverse parsing
         headData.push_back('\0');
         std::copy(data.name.begin(), data.name.end(), std::back_inserter(headData));
         numToByte(headData, data.start);
@@ -236,9 +273,12 @@ std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
                 data.erase(pos, data.end());
                 break;
             }
+            else if(pos == data.begin()) throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Header data appears corrupted");
         }
         fileList.push_back(newEntry);
     }
+
+    //Reverse fileList so it's in the same order as it was at creation
     std::reverse(fileList.begin(), fileList.end());
     return fileList;
 }
@@ -247,6 +287,7 @@ int dataCompress(std::string directory, std::string file)
 {
     FILE* compData = std::tmpfile();
 
+    //Populate file list for compression
     std::vector<std::string> list = getFileList(directory);
     std::vector<FileEntry> dataHeader;
     long currentPosition = 0;
@@ -265,22 +306,39 @@ int dataCompress(std::string directory, std::string file)
 
     //Write header data to file
     FILE* openFile = fopen(file.c_str(), "wb");
+    if(!openFile)
+    {
+        fclose(compData);
+        throw GameEngineException(GEError::FILE_IO, "Could not open package file: " + file);
+    }
     std::vector<uint8_t> header = headerCompress(dataHeader);
     std::vector<uint8_t> fullHeader;
     uint64_t size = header.size() + 8;
     numToByte(fullHeader, size);
     std::copy(header.begin(), header.end(), std::back_inserter(fullHeader));
     assert(fullHeader.size() == size);
-    fwrite(fullHeader.data(), 1, fullHeader.size(), openFile);
+    size_t writeCount = fwrite(fullHeader.data(), 1, fullHeader.size(), openFile);
+    if(writeCount != fullHeader.size())
+    {
+        fclose(openFile);
+        fclose(compData);
+        throw GameEngineException(GEError::FILE_IO, "Could not write entire header to package file: " + file);
+    }
 
     //Write compressed files to file
     std::fseek(compData, 0, SEEK_SET);
     unsigned char buffer[CHUNK];
-    int readSize = CHUNK;
+    size_t readSize = CHUNK;
     while(readSize == CHUNK)
     {
         readSize = fread(&buffer, 1, CHUNK, compData);
-        fwrite(buffer, 1, readSize, openFile);
+        size_t writeCount = fwrite(buffer, 1, readSize, openFile);
+        if(writeCount != readSize)
+        {
+            fclose(openFile);
+            fclose(compData);
+            throw GameEngineException(GEError::FILE_IO, "Could not write entire compressed data to package file: " + file);
+        }
     }
     fclose(openFile);
     fclose(compData);

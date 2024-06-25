@@ -22,6 +22,7 @@ file(GLOB src
     context.cpp
     view.cpp
     logging.cpp
+    geerror.cpp
     object/object.cpp
     object/physicsobject.cpp
     object/image.cpp

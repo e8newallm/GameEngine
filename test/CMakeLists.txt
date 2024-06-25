@@ -12,8 +12,8 @@ add_custom_target(TestJSON
 add_custom_command(
     TARGET TestJSON POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-      ${CMAKE_CURRENT_SOURCE_DIR}/json
-      ${CMAKE_BINARY_DIR}/bin/json
+      ${CMAKE_CURRENT_SOURCE_DIR}/testfiles
+      ${CMAKE_BINARY_DIR}/bin/testfiles
 )
 
 add_custom_command(

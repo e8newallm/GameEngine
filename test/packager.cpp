@@ -5,8 +5,11 @@
 #include <filesystem>
 
 #include "tools/packager/packager.h"
+#include "geerror.h"
 
-#include "Catch2/src/catch2/catch_test_macros.hpp"
+#include "catch2/catch_test_macros.hpp"
+#include "catch2/matchers/catch_matchers.hpp"
+#include "catch2/matchers/catch_matchers_exception.hpp"
 
 inline void conversionTest(uint64_t value) {
 	std::vector<uint8_t> data = {};
@@ -69,5 +72,34 @@ TEST_CASE("Packager/FullTest", "[packager]")
 		fread(originalData.data(), 1, std::filesystem::file_size("packagerTest/"+dirFiles[i]), originalFile);
 		fclose(originalFile);
 		REQUIRE(fileReturn == originalData);
+	}
+}
+
+TEST_CASE("Packager/Exceptions", "[packager][exceptions]")
+{
+	dataCompress("packagerTest/", "test.file");
+		PackageManager pack("test.file");
+
+	SECTION("FILE_NOT_FOUND")
+	{
+		REQUIRE_THROWS_MATCHES(getFileList("/NOTADIR/"), GameEngineException,
+			Catch::Matchers::Message("Could not get file list of /NOTADIR/: No such file or directory"));
+		REQUIRE_THROWS_MATCHES(PackageManager("missingFile.bin"), GameEngineException,
+			Catch::Matchers::Message("File missingFile.bin not found"));
+
+		REQUIRE_THROWS_MATCHES(pack.getFile("FILEDOESNOTEXIST"), GameEngineException,
+			Catch::Matchers::Message("File FILEDOESNOTEXIST not found in package test.file"));
+	}
+
+	SECTION("INVALID_FILE_FORMAT")
+	{
+		REQUIRE_THROWS_MATCHES(PackageManager("testfiles/packager/invalidHeaderSize.bin"), GameEngineException,
+			Catch::Matchers::Message("Could not read header size of testfiles/packager/invalidHeaderSize.bin"));
+
+		REQUIRE_THROWS_MATCHES(PackageManager("testfiles/packager/oversizedHeaderSize.bin"), GameEngineException,
+			Catch::Matchers::Message("Unable to allocate 7378428322150573407 bytes for testfiles/packager/oversizedHeaderSize.bin"));
+
+		REQUIRE_THROWS_MATCHES(PackageManager("testfiles/packager/invalidHeaderData.bin"), GameEngineException,
+			Catch::Matchers::Message("Could not read entire header of testfiles/packager/invalidHeaderData.bin"));
 	}
 }

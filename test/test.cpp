@@ -28,14 +28,29 @@
 #include "mousestate.h"
 #include "keystate.h"
 #include "logging.h"
+#include "geerror.h"
 
 #include "Catch2/src/catch2/catch_all.hpp"
 
 extern const char* SpriteMapSchema;
 
+uint64_t lineNumber;
 void loggingTestFunc(std::string message)
 {
-    Logger::message(message);
+    Logger::message(message); lineNumber = __LINE__;
+}
+
+TEST_CASE("Error", "[base]")
+{
+    SECTION("Error testing")
+    {
+        try {
+            throw GameEngineException(GEError::NO_ERROR, "No error occurred");
+        } catch (GameEngineException& err) {
+            REQUIRE(err.code() == GEError::NO_ERROR);
+            REQUIRE(std::string(err.what()) == "No error occurred");
+        }
+    }
 }
 
 TEST_CASE("Logging", "[base]")
@@ -45,10 +60,9 @@ TEST_CASE("Logging", "[base]")
         std::ostringstream testStream;
         Logger::init(&testStream);
         loggingTestFunc("TEST MESSAGE");
-        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r\n");
         loggingTestFunc("NEW MESSAGE");
-        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r\n"
-                                    "(void loggingTestFunc(std::string): line 38) INFO: NEW MESSAGE\r\n");
+        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: TEST MESSAGE\r\n"
+                                    "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: NEW MESSAGE\r\n");
     }
 
     std::string filename = tmpnam(NULL);
@@ -62,12 +76,12 @@ TEST_CASE("Logging", "[base]")
         loggingTestFunc("NEW MESSAGE");
         testFile.close();
         testFile.open(filename, std::ios_base::in | std::ios_base::binary);
+
         std::string line = "";
         std::getline(testFile, line);
-
-        REQUIRE(line == "(void loggingTestFunc(std::string): line 38) INFO: TEST MESSAGE\r");
+        REQUIRE(line == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: TEST MESSAGE\r");
         std::getline(testFile, line);
-        REQUIRE(line == "(void loggingTestFunc(std::string): line 38) INFO: NEW MESSAGE\r");
+        REQUIRE(line == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: NEW MESSAGE\r");
     }
 
     testFile.close();
@@ -122,7 +136,7 @@ TEST_CASE("Spritemap parse testing", "[base]")
     SECTION("JSON load/save sanity check")
     {
         SpriteMapData test, testTwo;
-        test.loadFromFile(rend, "json/spritemap/spritemap.json");
+        test.loadFromFile(rend, "testfiles/json/spritemap/spritemap.json");
         std::string result = R"TEST({"Textures":["tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
         REQUIRE(test.serialise() == result);
         REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));
@@ -130,31 +144,31 @@ TEST_CASE("Spritemap parse testing", "[base]")
 
     SECTION("SpriteMap schema test")
     {
-        REQUIRE_NOTHROW(SpriteMap(rend, "json/spritemap/spritemap.json"));
+        REQUIRE_NOTHROW(SpriteMap(rend, "testfiles/json/spritemap/spritemap.json"));
 
         REQUIRE_THROWS_WITH(SpriteMap(rend, "UNKNOWN FILE"), 
                             "Could not open Spritemap JSON \"UNKNOWN FILE\"");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/invalidjson.json"), 
-                            "\"json/invalidjson.json\" is invalid JSON");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/invalidjson.json"),
+                            "\"testfiles/json/invalidjson.json\" is invalid JSON");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/badspritemap.json"), 
-                            "\"json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/badspritemap.json"),
+                            "\"testfiles/json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/texturenotfound.json"), 
-                            "\"json/spritemap/texturenotfound.json\" could not load texture file \"texspritemap.png\"");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/texturenotfound.json"),
+                            "\"testfiles/json/spritemap/texturenotfound.json\" could not load texture file \"texspritemap.png\"");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/mismatchedsprite.json"), 
-                            "\"json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/mismatchedsprite.json"),
+                            "\"testfiles/json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
         
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/mismatchedanimation.json"), 
-                            "\"json/spritemap/mismatchedanimation.json\" has a animation (explosion) referencing a sprite not named in the JSON");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/mismatchedanimation.json"),
+                            "\"testfiles/json/spritemap/mismatchedanimation.json\" has a animation (explosion) referencing a sprite not named in the JSON");
         
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/duplicatedsprite.json"), 
-                            "\"json/spritemap/duplicatedsprite.json\" has two sprites named (sprite01)");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/duplicatedsprite.json"),
+                            "\"testfiles/json/spritemap/duplicatedsprite.json\" has two sprites named (sprite01)");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "json/spritemap/duplicatedanimation.json"), 
-                            "\"json/spritemap/duplicatedanimation.json\" has two animations named (explosion)");
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/duplicatedanimation.json"),
+                            "\"testfiles/json/spritemap/duplicatedanimation.json\" has two animations named (explosion)");
     }
 }
 

@@ -5,7 +5,7 @@ project(Packager LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(Packager STATIC packager.cpp)
+add_library(Packager STATIC packager.cpp ../../geerror.cpp)
 
 set_target_properties(Packager
     PROPERTIES
@@ -14,6 +14,7 @@ set_target_properties(Packager
 
 find_package(ZLIB)
 target_link_libraries(Packager ZLIB::ZLIB)
+target_include_directories(Packager PUBLIC . ../..)
 
 project(PackagerBin LANGUAGES CXX)
 add_executable(PackagerBin main.cpp)

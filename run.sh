@@ -7,5 +7,5 @@ fi
 ./build.sh
 if [ $? -eq 0 ];
 then
-  (cd ./build/bin && clear && ./$bin)
+  (cd ./bin/bin && clear && ./$bin ${@:2})
 fi
