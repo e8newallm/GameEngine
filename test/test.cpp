@@ -65,7 +65,7 @@ TEST_CASE("Logging", "[base]")
                                     "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: NEW MESSAGE\r\n");
     }
 
-    std::string filename = tmpnam(NULL);
+    std::string filename = "./testlog.log";
     std::fstream testFile;
 
     SECTION("file test")
