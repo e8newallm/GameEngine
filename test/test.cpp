@@ -37,7 +37,8 @@ extern const char* SpriteMapSchema;
 uint64_t lineNumber;
 void loggingTestFunc(std::string message)
 {
-    Logger::message(message); lineNumber = __LINE__;
+    Logger::message(message);
+    lineNumber = __LINE__ - 1;
 }
 
 TEST_CASE("Error", "[base][exceptions]")
