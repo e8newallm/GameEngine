@@ -23,4 +23,5 @@ Cleanup
  - Better handling of nullptrs
 
 General
+ - Versioning
  - Doxygen

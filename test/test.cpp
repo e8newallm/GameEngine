@@ -30,7 +30,7 @@
 #include "logging.h"
 #include "geerror.h"
 
-#include "Catch2/src/catch2/catch_all.hpp"
+#include "catch2/catch_all.hpp"
 
 extern const char* SpriteMapSchema;
 
@@ -40,7 +40,7 @@ void loggingTestFunc(std::string message)
     Logger::message(message); lineNumber = __LINE__;
 }
 
-TEST_CASE("Error", "[base]")
+TEST_CASE("Error", "[base][exceptions]")
 {
     SECTION("Error testing")
     {
@@ -53,7 +53,7 @@ TEST_CASE("Error", "[base]")
     }
 }
 
-TEST_CASE("Logging", "[base]")
+TEST_CASE("Logging", "[base][logging]")
 {
     SECTION("ostream test")
     {
@@ -88,7 +88,7 @@ TEST_CASE("Logging", "[base]")
     std::remove(filename.c_str());
 }
 
-TEST_CASE("Spritemap parse testing", "[base]")
+TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
@@ -133,7 +133,7 @@ TEST_CASE("Spritemap parse testing", "[base]")
         REQUIRE(d.Accept(validator));
     }
 
-    SECTION("JSON load/save sanity check")
+    SECTION("JSON load/save sanity check", "[spritemap]")
     {
         SpriteMapData test, testTwo;
         test.loadFromFile(rend, "testfiles/json/spritemap/spritemap.json");
@@ -142,7 +142,7 @@ TEST_CASE("Spritemap parse testing", "[base]")
         REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));
     }
 
-    SECTION("SpriteMap schema test")
+    SECTION("SpriteMap schema test", "[spritemap][exceptions]")
     {
         REQUIRE_NOTHROW(SpriteMap(rend, "testfiles/json/spritemap/spritemap.json"));
 

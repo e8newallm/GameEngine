@@ -10,6 +10,7 @@
 
 #include "spritemapdata.h"
 #include "SpriteMapSchema.h"
+#include "geerror.h"
 
 #include "tools/packager/packager.h"
 
@@ -27,7 +28,7 @@ void SpriteMapData::loadFromFile(SDL_Renderer* rend, const char* configLocation)
 
     if(!file.is_open())
     {
-        throw std::runtime_error(std::string("Could not open Spritemap JSON \"") + configLocation + "\"");
+        throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("Could not open Spritemap JSON \"") + configLocation + "\"");
     }
     std::ostringstream ss;
     ss << file.rdbuf();
@@ -53,14 +54,14 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
 
     if(config.HasParseError())
     {
-        throw std::runtime_error(std::string("\"") + source + "\" is invalid JSON");
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" is invalid JSON");
     }
 
     if(!config.Accept(validator))
     {
         rapidjson::StringBuffer sb;
         validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
-        throw std::runtime_error(std::string("\"") + source + "\" has failed to pass SpriteMap schema");
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has failed to pass SpriteMap schema");
     }
 
     if(config["Textures"].IsArray())
@@ -80,7 +81,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
             }
             if(surface == nullptr)
             {
-                throw std::runtime_error(std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
+                throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
             }
 
             std::pair<const char*, SDL_Texture*> newTexture = std::make_pair(value.GetString(),
@@ -103,7 +104,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
         }
         if(surface == nullptr)
         {
-            throw std::runtime_error(std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
+            throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
         }
         std::pair<const char*, SDL_Texture*> newTexture = std::make_pair(config["Textures"].GetString(),
                                             SDL_CreateTextureFromSurface(rend, surface));
@@ -116,11 +117,11 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
         rapidjson::GenericObject<false, rapidjson::Value> sprite = value.GetObject();
         if(sprites.find(sprite.FindMember("name")->value.GetString()) != sprites.end())
         {
-            throw std::runtime_error(std::string("\"") + source + "\" has two sprites named (" + sprite.FindMember("name")->value.GetString() + ")");
+            throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has two sprites named (" + sprite.FindMember("name")->value.GetString() + ")");
         }
         if(textures.find(sprite.FindMember("texture")->value.GetString()) == textures.end())
         {
-            throw std::runtime_error(std::string("\"") + source + "\" has a sprite (" + 
+            throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has a sprite (" +
                                     sprite.FindMember("name")->value.GetString() + ") referencing a texture not named in the JSON");
         }
 
@@ -141,7 +142,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
             rapidjson::GenericObject<false, rapidjson::Value> animation = value.GetObject();
             if(animations.find(animation.FindMember("name")->value.GetString()) != animations.end())
             {
-                throw std::runtime_error(std::string("\"") + source + "\" has two animations named (" + animation.FindMember("name")->value.GetString() + ")");
+                throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has two animations named (" + animation.FindMember("name")->value.GetString() + ")");
             }
 
             newAni.FPS = animation.FindMember("FPS")->value.GetDouble();
@@ -149,7 +150,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
             {
                 if(sprites.find(i.GetString()) == sprites.end())
                 {
-                    throw std::runtime_error(std::string("\"") + source + "\" has a animation (" + 
+                    throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has a animation (" +
                                         animation.FindMember("name")->value.GetString() + ") referencing a sprite not named in the JSON");
                 }
 
@@ -183,7 +184,7 @@ std::string SpriteMapData::serialise()
 
     if(textures.size() == 0)
     {
-        throw std::runtime_error("Serialise: Spritemap JSON has no textures defined!");
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Serialise: Spritemap JSON has no textures defined!");
     }
 
     rapidjson::Value texArray(rapidjson::kArrayType);
@@ -232,7 +233,7 @@ std::string SpriteMapData::serialise()
     {
         rapidjson::StringBuffer sb;
         validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
-        throw std::runtime_error("Serialise: Spritemap JSON has failed to pass SpriteMap schema");
+        throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Serialise: Spritemap JSON has failed to pass SpriteMap schema");
     }
 
     rapidjson::StringBuffer buffer;

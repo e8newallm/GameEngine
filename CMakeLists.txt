@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+find_package(Catch2 3 REQUIRED)
+
 add_subdirectory(external)
 add_subdirectory(src)
 add_subdirectory(test)

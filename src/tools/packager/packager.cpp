@@ -8,7 +8,6 @@
 #include <string>
 #include <filesystem>
 #include <vector>
-#include <iostream>
 
 #include "zlib.h"
 #include "packager.h"
