@@ -139,15 +139,17 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
         SpriteMapData test, testTwo;
         test.loadFromFile(rend, "testfiles/json/spritemap/spritemap.json");
         std::string result = R"TEST({"Textures":["tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
+
         REQUIRE(test.serialise() == result);
         REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));
+        REQUIRE(test.serialise() == testTwo.serialise());
     }
 
     SECTION("SpriteMap schema test", "[spritemap][exceptions]")
     {
         REQUIRE_NOTHROW(SpriteMap(rend, "testfiles/json/spritemap/spritemap.json"));
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "UNKNOWN FILE"), 
+        REQUIRE_THROWS_WITH(SpriteMap(rend, "UNKNOWN FILE"),
                             "Could not open Spritemap JSON \"UNKNOWN FILE\"");
 
         REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/invalidjson.json"),
@@ -301,7 +303,7 @@ TEST_CASE("Basic functionality", "[physics]")
 
     SECTION("Box drop")
     {
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
         phyContext->addPhyObj(box);
 
         box->velocityDelta(0.0, 0.5);
@@ -339,9 +341,9 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Collision")
     {
         phyContext->setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
         phyContext->addPhyObj(box);
-        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
+        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
         phyContext->addPhyObj(boxCollide);
 
         box->velocityDelta(1.0, 0.0);
@@ -371,7 +373,7 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Correct interpolation and viewpoint adjustment for drawing")
     {
         phyContext->setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture(rend, nullptr));
+        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
         phyContext->addPhyObj(box);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});

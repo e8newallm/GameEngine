@@ -29,10 +29,8 @@ class Context
         bool physicsRunning() { return phyRunning; };
 
         void addImage(Image* newImage);
-        
-        void runLuaFile(std::string filename);
-        void runLuaStr(std::string luaScript);
     private:
+    
         View* viewport;
         SDL_Renderer* rend;
         KeyState& keyState;
@@ -40,8 +38,6 @@ class Context
         bool phyRunning;
         SDL_ThreadFunction phyFunction;
         SDL_Thread* physThread;
-        lua_State* luaState;
-
         std::array<std::vector<Image*>, UINT8_MAX+1> images;
 };
 

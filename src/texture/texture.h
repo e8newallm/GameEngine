@@ -3,7 +3,9 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <vector>
+#include <SDL2/SDL_render.h>
+
+#include "datastore.h"
 
 struct TexRequest
 {
@@ -11,16 +13,18 @@ struct TexRequest
     SDL_Rect position;
 };
 
-class Texture
+class Texture : public DataStore<SDL_Texture>
 {
     public:
-        Texture(SDL_Renderer* rend);
-        Texture(SDL_Renderer* rend, const char* texturePath);
-        Texture(SDL_Renderer* rend, std::vector<uint8_t> data);
+        Texture();
+        Texture(std::string name);
+
         virtual TexRequest getTexture();
         virtual void update(double deltaT) {(void) deltaT;};
+
     protected:
         SDL_Texture* texture;
+        SDL_Rect texturePosition;
 };
 
 #endif
