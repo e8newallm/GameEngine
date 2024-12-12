@@ -5,7 +5,7 @@
 #include "keystate.h"
 #include "texture.h"
 
-PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture* texture) :
+PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     Object(body, texture)
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)

@@ -2,8 +2,7 @@
 #include "tools/packager/packager.h"
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
-    Texture()
-    , currentAnimation(nullptr)
+    currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
     , data(new SpriteMapData())
@@ -12,8 +11,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
 }
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path) :
-    Texture()
-    , currentAnimation(nullptr)
+    currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
     , data(new SpriteMapData())
@@ -22,8 +20,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* pa
 }
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData) :
-    Texture()
-    , currentAnimation(nullptr)
+    currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
     , data(spriteData)

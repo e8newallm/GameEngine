@@ -5,15 +5,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_render.h>
 
+#include "texture_base.h"
 #include "datastore.h"
 
-struct TexRequest
-{
-    SDL_Texture* texture;
-    SDL_Rect position;
-};
-
-class Texture : public DataStore<SDL_Texture>
+class Texture : public Texture_base, public DataStore<SDL_Texture, Texture>
 {
     public:
         Texture();

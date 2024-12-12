@@ -1,15 +1,15 @@
 #ifndef SPRITEMAP_H
 #define SPRITEMAP_H
 
-#include <map>
-#include <vector>
 #include <string>
 
-#include "texture.h"
+#include "texture_base.h"
 #include "spritemapdata.h"
+#include "datastore.h"
+
 #include "tools/packager/packager.h"
 
-class SpriteMap : public Texture
+class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap>
 {
     public:
         SpriteMap(SDL_Renderer* rend, const char* spriteConfig);

@@ -1,7 +1,10 @@
+#ifndef DATASTORE_H
+#define DATASTORE_H
+
 #include <map>
 #include <string>
 
-template <class T> class DataStore
+template <class T, class> class DataStore
 {
     public:
         static void add(T* data, std::string name)
@@ -18,9 +21,9 @@ template <class T> class DataStore
         {
             return Data.contains(name);
         }
-        
-    protected:
-        static std::map<std::string, T*> Data;
+
+    private:
+        static inline std::map<std::string, T*> Data;
 };
 
-//texture = SDL_CreateTextureFromSurface(rend, IMG_Load(texturePath));
+#endif

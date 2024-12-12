@@ -7,7 +7,7 @@
 class Player : public PhysicsObject
 {
     public:
-        Player(SDL_Rect body, int flags, Texture* texture) :
+        Player(SDL_Rect body, int flags, Texture_base* texture) :
         PhysicsObject(body, flags, texture)
         {((SpriteMap*)texture)->setSprite("sprite01");};
         
@@ -19,7 +19,6 @@ class Player : public PhysicsObject
         const float speed = 0.2f;
         const float jump = 0.2f;
         double MAXHEIGHT = 99999.0f;
-
 };
 
 #endif

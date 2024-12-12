@@ -2,14 +2,14 @@
 #define IMAGE_H
 
 #include "object.h"
-#include "texture.h"
+#include "texture_base.h"
 
 class Context;
 
 class Image : public Object
 {
     public:
-        Image(SDL_Rect body, Texture* texture, Uint8 layer);
+        Image(SDL_Rect body, Texture_base* texture, Uint8 layer);
 
         Uint8 getLayer() { return layer; };
         

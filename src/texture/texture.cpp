@@ -21,5 +21,3 @@ TexRequest Texture::getTexture()
 {
     return {texture, texturePosition};
 }
-
-template <class SDL_Texture> std::map<std::string, SDL_Texture*> Texture::DataStore<SDL_Texture>::Data;

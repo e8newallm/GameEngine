@@ -3,7 +3,7 @@
 #include "object.h"
 #include "keystate.h"
 
-Object::Object(SDL_Rect body, Texture* texture) :
+Object::Object(SDL_Rect body, Texture_base* texture) :
     body(body)
    ,updateBody()
    ,tex(texture)

@@ -4,12 +4,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "texture.h"
+#include "texture_base.h"
 
 class Object
 {
     public:
-        Object(SDL_Rect body, Texture* texture);
+        Object(SDL_Rect body, Texture_base* texture);
         Object() : Object({0, 0, 0, 0}, NULL) {};
         ~Object();
 
@@ -30,7 +30,7 @@ class Object
     protected:
         SDL_Rect body;
         SDL_FRect updateBody;
-        Texture* tex;
+        Texture_base* tex;
 };
 
 #endif
