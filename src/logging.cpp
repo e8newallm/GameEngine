@@ -19,6 +19,16 @@ void Logger::message(std::string msg, const std::source_location location)
     getInstance().log("INFO: " + msg, location);
 }
 
+void Logger::debug(std::string msg, const std::source_location location)
+{
+#ifdef DEBUG
+    getInstance().log("DEBUG: " + msg, location);
+#else
+    (void)msg;
+    (void)location;
+#endif
+}
+
 void Logger::init(std::ostream* output)
 {
     getInstance().output = output;
@@ -32,7 +42,12 @@ Logger& Logger::getInstance()
 
 void Logger::log(std::string msg, const std::source_location location)
 {
-    std::string fullMsg = std::string("(") + location.function_name() + ": line " + std::to_string(location.line()) + ") " + msg + "\r\n";
+    std::string fullMsg = msg + "\r\n";
+#ifdef DEBUG
+    fullMsg = std::string("(") + location.function_name() + ": line " + std::to_string(location.line()) + ") " + fullMsg;
+#else
+    (void)location;
+#endif
     output->write(fullMsg.c_str(), fullMsg.length());
     output->flush();
 }

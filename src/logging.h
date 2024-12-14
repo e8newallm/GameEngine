@@ -7,6 +7,7 @@ class Logger
         static void error(std::string msg, const std::source_location location = std::source_location::current());
         static void warning(std::string msg, const std::source_location location = std::source_location::current());
         static void message(std::string msg, const std::source_location location = std::source_location::current());
+        static void debug(std::string msg, const std::source_location location = std::source_location::current());
         static void init(std::ostream* output);
 
     private:

@@ -4,6 +4,10 @@
 #include <map>
 #include <string>
 
+#ifdef DEBUG
+#include <vector>
+#endif
+
 template <class T, class> class DataStore
 {
     public:
@@ -21,6 +25,19 @@ template <class T, class> class DataStore
         {
             return Data.contains(name);
         }
+
+#ifdef DEBUG
+        static std::vector<std::string> getList()
+        {
+            std::vector<std::string> list;
+            for(std::pair<std::string, T*> name : Data)
+            {
+                list.push_back(name);
+            }
+
+            return list;
+        }
+#endif
 
     private:
         static inline std::map<std::string, T*> Data;

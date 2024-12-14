@@ -1,4 +1,5 @@
 #include "spritemap.h"
+#include "spritemapdata.h"
 #include "tools/packager/packager.h"
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
@@ -7,19 +8,39 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     , currentSprite(nullptr)
     , data(new SpriteMapData())
 {
-    data->loadFromFile(rend, spriteConfig);
+    std::string storeName = std::string(spriteConfig);
+    if(!exists(storeName))
+    {
+        data = new SpriteMapData();
+        data->loadFromFile(rend, spriteConfig);
+        add(data, storeName);
+    }
+    else
+    {
+        data = get(storeName);
+    }
 }
 
 SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
-    , data(new SpriteMapData())
 {
-    data->loadFromPackage(rend, package, path);
+    std::string storeName = package->getPackageName() + ":" + std::string(path);
+    if(!exists(storeName))
+    {
+        data = new SpriteMapData();
+        data->loadFromPackage(rend, package, path);
+        add(data, storeName);
+    }
+    else
+    {
+        data = get(storeName);
+    }
+
 }
 
-SpriteMap::SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData) :
+SpriteMap::SpriteMap(SpriteMapData* spriteData) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)

@@ -43,3 +43,7 @@ add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL2_LIBRARIES} SDL2_image lua Packager)
 target_include_directories(GameEngine PUBLIC . ${GAMEENGINE_HEADERS} ${SDL2_INCLUDE_DIRS} ../external ${CMAKE_BINARY_DIR})
 add_dependencies(GameEngine SchemaGeneration)
+
+if(DEBUG)
+    target_compile_definitions(GameEngine PUBLIC DEBUG)
+endif()

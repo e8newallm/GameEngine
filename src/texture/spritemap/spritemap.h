@@ -14,7 +14,7 @@ class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap
     public:
         SpriteMap(SDL_Renderer* rend, const char* spriteConfig);
         SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path);
-        SpriteMap(SDL_Renderer* rend, SpriteMapData* spriteData);
+        SpriteMap(SpriteMapData* spriteData);
 
         TexRequest getTexture() override;
         void setSprite(std::string name);
