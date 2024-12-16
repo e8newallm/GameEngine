@@ -1,20 +1,12 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-#include <iostream>
 #include <array>
 
 #include "object/physicsobject.h"
-#include "object/object.h"
 #include "object/image.h"
 #include "keystate.h"
 #include "view.h"
-
-extern "C" {
-    #include "lua/lua.h"
-    #include "lua/lualib.h"
-    #include "lua/lauxlib.h"
-}
 
 class Context
 {

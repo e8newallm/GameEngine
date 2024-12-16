@@ -16,20 +16,18 @@ add_custom_target(SchemaGeneration
 
 project(GameEngine LANGUAGES CXX)
 
-file(GLOB src 
-    keystate.cpp
-    mousestate.cpp
-    context.cpp
-    view.cpp
-    logging.cpp
-    geerror.cpp
-    object/object.cpp
-    object/physicsobject.cpp
-    object/image.cpp
-    texture/texture.cpp
-    texture/spritemap/spritemap.cpp
-    texture/spritemap/spritemapdata.cpp
+file(GLOB src
+    global/*.cpp
+    object/*.cpp
+    texture/*.cpp
+    texture/*/*.cpp
+
 )
+
+if(DEBUG)
+    file(GLOB debugsrc debug/*.cpp)
+  list(APPEND src ${debugsrc})
+endif()
 
 file(GLOB GAMEENGINE_HEADERS
     object

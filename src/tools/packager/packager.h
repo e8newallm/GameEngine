@@ -32,6 +32,7 @@ std::vector<std::string> getFileList(std::string directory);
 std::string fileCompress(std::string file);
 void numToByte(std::vector<uint8_t>& data, uint64_t value);
 uint64_t byteToNum(std::vector<uint8_t>& value);
+std::string getExtension(std::string filename);
 
 std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList);
 std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data);

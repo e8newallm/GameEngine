@@ -5,10 +5,10 @@
 #include <string>
 
 #ifdef DEBUG
-#include <vector>
+#include <stdint.h>
 #endif
 
-template <class T, class> class DataStore
+template <class T, class storeID> class DataStore
 {
     public:
         static void add(T* data, std::string name)
@@ -27,14 +27,13 @@ template <class T, class> class DataStore
         }
 
 #ifdef DEBUG
-        static std::vector<std::string> getList()
+        static std::map<std::string, uint64_t> getList()
         {
-            std::vector<std::string> list;
+            std::map<std::string, uint64_t> list;
             for(std::pair<std::string, T*> name : Data)
             {
-                list.push_back(name);
+                list.insert({name.first, (uint64_t)name.second});
             }
-
             return list;
         }
 #endif

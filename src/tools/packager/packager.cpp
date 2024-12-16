@@ -26,7 +26,6 @@ PackageManager::PackageManager(std::string file) :
     FILE* openFile = fopen(file.c_str(), "rb");
     if(openFile == NULL)
     {
-        fclose(openFile);
         throw GameEngineException(GEError::FILE_NOT_FOUND, "Could not open " + file);
     }
     fseek(openFile, 0L, SEEK_SET);
@@ -238,6 +237,14 @@ uint64_t byteToNum(std::vector<uint8_t>& data)
         data.pop_back();
     }
     return result;
+}
+
+std::string getExtension(std::string filename) {
+    size_t pos = filename.find_last_of('.');
+    if (pos != std::string::npos && pos != filename.size() - 1) {
+        return filename.substr(pos + 1);
+    }
+    return "";
 }
 
 std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList)
