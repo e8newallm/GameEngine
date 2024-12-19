@@ -4,21 +4,20 @@
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_events.h>
 
-#include <vector>
+#include <array>
 
 class KeyState
 {
     public:
-        static KeyState& get();
-
-        void update(SDL_Scancode key, SDL_EventType keyEvent);
-        void update(SDL_Scancode key, Uint32 keyEvent);
-        SDL_EventType operator[](SDL_Scancode key);
+        static void update();
+        static void updateKey(SDL_Scancode key, SDL_EventType keyEvent);
+        static void updateKey(SDL_Scancode key, Uint32 keyEvent);
+        static SDL_EventType key(SDL_Scancode key);
 
     private:
-        std::vector<SDL_EventType> keys;
+        static inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keys;
         KeyState(const KeyState&) = delete;
-        KeyState();
 };
-
 #endif
+
+/*keys(SDL_NUM_SCANCODES, SDL_KEYUP)*/

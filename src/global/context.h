@@ -5,7 +5,6 @@
 
 #include "object/physicsobject.h"
 #include "object/image.h"
-#include "keystate.h"
 #include "view.h"
 
 class Context
@@ -25,7 +24,6 @@ class Context
     
         View* viewport;
         SDL_Renderer* rend;
-        KeyState& keyState;
         PhysicsContext* phyContext;
         bool phyRunning;
         SDL_ThreadFunction phyFunction;

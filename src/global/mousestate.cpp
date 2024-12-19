@@ -1,21 +1,7 @@
+#include <SDL_events.h>
+
 #include "mousestate.h"
-
-MouseState& MouseState::get()
-{
-    static MouseState singleton;
-    return singleton;
-}
-
-MouseState::MouseState() :
-    xMouse(0)
-    , yMouse(0)
-    , xDeltaMouse(0)
-    , yDeltaMouse(0)
-    , scrollAmount(0)
-    , mouseButtonDown()
-    , mouseButton()
-{
-}
+#include "logging.h"
 
 void MouseState::reset()
 {
@@ -26,6 +12,42 @@ void MouseState::reset()
     xDeltaMouse = 0;
     yDeltaMouse = 0;
     scrollAmount = 0;
+}
+
+void MouseState::update()
+{
+    reset();
+    while(1)
+    {
+        SDL_Event event;
+        SDL_PumpEvents();
+        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL);
+        if(count <= 0) break;
+
+        switch (event.type)
+        {
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+            {
+                updateButton(event.button);
+                break;
+            }
+            case SDL_MOUSEMOTION:
+            {
+                updateMove(event.motion);
+                break;
+            }
+            case SDL_MOUSEWHEEL:
+            {
+                updateWheel(event.wheel);
+                break;
+            }
+            default:
+            {
+                Logger::warning("Unhandled mouse event: " + std::format("{:x}", event.type));
+            }
+        }
+    }
 }
 
 void MouseState::updateButton(SDL_MouseButtonEvent buttonPress)

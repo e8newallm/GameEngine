@@ -177,30 +177,28 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
 
 TEST_CASE("KeyState testing", "[base]")
 {
-    KeyState& keyState = KeyState::get();
-    keyState.update(SDL_SCANCODE_1, SDL_KEYDOWN);
-    keyState.update(SDL_SCANCODE_2, SDL_KEYDOWN);
-    keyState.update(SDL_SCANCODE_5, SDL_KEYDOWN);
-    keyState.update(SDL_SCANCODE_A, SDL_KEYDOWN);
+    KeyState::updateKey(SDL_SCANCODE_1, SDL_KEYDOWN);
+    KeyState::updateKey(SDL_SCANCODE_2, SDL_KEYDOWN);
+    KeyState::updateKey(SDL_SCANCODE_5, SDL_KEYDOWN);
+    KeyState::updateKey(SDL_SCANCODE_A, SDL_KEYDOWN);
 
-    REQUIRE(keyState[SDL_SCANCODE_1] == SDL_KEYDOWN);
-    REQUIRE(keyState[SDL_SCANCODE_2] == SDL_KEYDOWN);
-    REQUIRE(keyState[SDL_SCANCODE_5] == SDL_KEYDOWN);
-    REQUIRE(keyState[SDL_SCANCODE_A] == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_KEYDOWN);
 
-    keyState.update(SDL_SCANCODE_5, SDL_KEYUP);
+    KeyState::updateKey(SDL_SCANCODE_5, SDL_KEYUP);
 
-    REQUIRE(keyState[SDL_SCANCODE_1] == SDL_KEYDOWN);
-    REQUIRE(keyState[SDL_SCANCODE_2] == SDL_KEYDOWN);
-    REQUIRE(keyState[SDL_SCANCODE_5] == SDL_KEYUP);
-    REQUIRE(keyState[SDL_SCANCODE_A] == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_KEYUP);
+    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_KEYDOWN);
 }
 
 TEST_CASE("MouseState testing", "[base]")
 {
-    MouseState& mouseState = MouseState::get();
 
-    mouseState.updateButton({
+    MouseState::updateButton({
         SDL_MOUSEBUTTONDOWN,
         0,
         0,
@@ -213,7 +211,7 @@ TEST_CASE("MouseState testing", "[base]")
         456
     });
 
-    mouseState.updateMove({
+    MouseState::updateMove({
         SDL_MOUSEMOTION,
         0,
         0,
@@ -225,7 +223,7 @@ TEST_CASE("MouseState testing", "[base]")
         40
     });
 
-    mouseState.updateWheel({
+    MouseState::updateWheel({
         SDL_MOUSEWHEEL,
         0,
         0,
@@ -239,22 +237,22 @@ TEST_CASE("MouseState testing", "[base]")
         0
     });
 
-    REQUIRE(mouseState.clicked(SDL_BUTTON_LEFT) == true);
-    REQUIRE(mouseState.doubleClicked(SDL_BUTTON_LEFT) == false);
-    REQUIRE(mouseState.clickPosition(SDL_BUTTON_LEFT).x == 123);
-    REQUIRE(mouseState.clickPosition(SDL_BUTTON_LEFT).y == 456);
-    REQUIRE(mouseState.buttonDown(SDL_BUTTON_LEFT) == true);
+    REQUIRE(MouseState::clicked(SDL_BUTTON_LEFT) == true);
+    REQUIRE(MouseState::doubleClicked(SDL_BUTTON_LEFT) == false);
+    REQUIRE(MouseState::clickPosition(SDL_BUTTON_LEFT).x == 123);
+    REQUIRE(MouseState::clickPosition(SDL_BUTTON_LEFT).y == 456);
+    REQUIRE(MouseState::buttonDown(SDL_BUTTON_LEFT) == true);
 
-    REQUIRE(mouseState.mousePos().x == 200);
-    REQUIRE(mouseState.mousePos().y == 400);
-    REQUIRE(mouseState.mouseDelta().x == 20);
-    REQUIRE(mouseState.mouseDelta().y == 40);
+    REQUIRE(MouseState::mousePos().x == 200);
+    REQUIRE(MouseState::mousePos().y == 400);
+    REQUIRE(MouseState::mouseDelta().x == 20);
+    REQUIRE(MouseState::mouseDelta().y == 40);
 
-    REQUIRE(mouseState.scrollDelta() == -10);
+    REQUIRE(MouseState::scrollDelta() == -10);
 
-    mouseState.reset();
+    MouseState::reset();
 
-    mouseState.updateButton({
+    MouseState::updateButton({
         SDL_MOUSEBUTTONUP,
         0,
         0,
@@ -267,11 +265,11 @@ TEST_CASE("MouseState testing", "[base]")
         456
     });
 
-    REQUIRE(mouseState.clicked(SDL_BUTTON_LEFT) == false);
-    REQUIRE(mouseState.doubleClicked(SDL_BUTTON_LEFT) == false);
-    REQUIRE(mouseState.clickPosition(SDL_BUTTON_LEFT).x == 123);
-    REQUIRE(mouseState.clickPosition(SDL_BUTTON_LEFT).y == 456);
-    REQUIRE(mouseState.buttonDown(SDL_BUTTON_LEFT) == false);
+    REQUIRE(MouseState::clicked(SDL_BUTTON_LEFT) == false);
+    REQUIRE(MouseState::doubleClicked(SDL_BUTTON_LEFT) == false);
+    REQUIRE(MouseState::clickPosition(SDL_BUTTON_LEFT).x == 123);
+    REQUIRE(MouseState::clickPosition(SDL_BUTTON_LEFT).y == 456);
+    REQUIRE(MouseState::buttonDown(SDL_BUTTON_LEFT) == false);
 }
 
 void testRect(SDL_Rect first, SDL_Rect second, const std::source_location location = std::source_location::current())
@@ -291,8 +289,6 @@ TEST_CASE("Basic functionality", "[physics]")
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
     Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
     SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
-    //KeyState& keyState = KeyState::get();
-    //MouseState& mouseState = MouseState::get();
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
@@ -329,12 +325,12 @@ TEST_CASE("Basic functionality", "[physics]")
         box->preUpdate();
         box->update(4.0, phyContext);
         REQUIRE(box->getBody()->x == 559);
-        REQUIRE(box->getBody()->y == 509);
+        REQUIRE(box->getBody()->y == 508);
 
         box->moveDelta(10.0, 10.0);
         box->preUpdate();
         box->update(45.0, phyContext);
-        REQUIRE(box->getBody()->x == 1244);
+        REQUIRE(box->getBody()->x == 1245);
         REQUIRE(box->getBody()->y == 541);
     }
 

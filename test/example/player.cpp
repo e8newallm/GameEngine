@@ -7,14 +7,12 @@
 
 void Player::update(double deltaTime, PhysicsContext* context)
 {
-    KeyState& keyState = KeyState::get();
-
     if(body.y < MAXHEIGHT)
     {
         MAXHEIGHT = body.y;
     }
     
-    if(onGround() && keyState[SDL_SCANCODE_SPACE] == SDL_KEYDOWN)
+    if(onGround() && KeyState::key(SDL_SCANCODE_SPACE) == SDL_KEYDOWN)
     {
         SDL_FPoint curVel = getVelocity();
         velocity(curVel.x, -jump);
@@ -27,11 +25,11 @@ void Player::update(double deltaTime, PhysicsContext* context)
     }
     
     SDL_FPoint vel = getVelocity();
-    if(keyState[SDL_SCANCODE_A] == SDL_KEYDOWN)
+    if(KeyState::key(SDL_SCANCODE_A) == SDL_KEYDOWN)
     {
         velocity(std::min(vel.x, -speed), vel.y);
     }
-    else if(keyState[SDL_SCANCODE_D] == SDL_KEYDOWN)
+    else if(KeyState::key(SDL_SCANCODE_D) == SDL_KEYDOWN)
     {
         velocity(std::max(vel.x, speed), vel.y);
     }

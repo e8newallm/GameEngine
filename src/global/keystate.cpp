@@ -1,30 +1,44 @@
 #include "keystate.h"
+#include "logging.h"
+#include <string>
 
-
-
-KeyState& KeyState::get()
+void KeyState::update()
 {
-    static KeyState singleton;
-    return singleton;
+    while(1)
+    {
+        SDL_Event event;
+        SDL_PumpEvents();
+        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYUP);
+        if(count <= 0) break;
+
+        switch (event.type)
+        {
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+            {
+                updateKey(event.key.keysym.scancode, event.type);
+                break;
+            }
+            default:
+            {
+                Logger::warning("Unhandled keyboard event: " + std::format("{:x}", event.type));
+            }
+        }
+    }
 }
 
-KeyState::KeyState() :
-    keys(SDL_NUM_SCANCODES, SDL_KEYUP)
-{
-}
-
-void KeyState::update(SDL_Scancode key, SDL_EventType keyEvent)
+void KeyState::updateKey(SDL_Scancode key, SDL_EventType keyEvent)
 {
     if(keyEvent == SDL_KEYUP || keyEvent == SDL_KEYDOWN)
         keys[key] = keyEvent;
 }
 
-void KeyState::update(SDL_Scancode key, Uint32 keyEvent)
+void KeyState::updateKey(SDL_Scancode key, Uint32 keyEvent)
 {
-    update(key, (SDL_EventType)keyEvent);
+    updateKey(key, (SDL_EventType)keyEvent);
 }
 
-SDL_EventType KeyState::operator[](SDL_Scancode key)
+SDL_EventType KeyState::key(SDL_Scancode key)
 {
     return keys[key];
 }

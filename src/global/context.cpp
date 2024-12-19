@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "context.h"
 
 int defaultPhysLoop(void* data)
@@ -16,7 +14,6 @@ int defaultPhysLoop(void* data)
 Context::Context(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction) :
     viewport(viewport)
     , rend(rend)
-    , keyState(KeyState::get())
     , phyRunning(false)
     , phyFunction(phyFunction)
 {

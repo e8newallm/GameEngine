@@ -17,42 +17,43 @@ struct mousePosition
 class MouseState
 {
     public:
-        static MouseState& get();
+        static void update();
+        static void updateButton(SDL_MouseButtonEvent buttonPress);
+        static void updateMove(SDL_MouseMotionEvent mouseMove);
+        static void updateWheel(SDL_MouseWheelEvent wheelScroll);
 
-        void updateButton(SDL_MouseButtonEvent buttonPress);
-        void updateMove(SDL_MouseMotionEvent mouseMove);
-        void updateWheel(SDL_MouseWheelEvent wheelScroll);
-        void reset();
-        SDL_EventType operator[](Uint8 button);
+        static void reset();
 
-        mousePosition mousePos() 
+        static mousePosition mousePos()
             { return {xMouse, yMouse}; };
-        
-        SDL_Point mouseDelta() 
+
+        static SDL_Point mouseDelta()
             { return {xDeltaMouse, yDeltaMouse}; };
 
-        Sint32 scrollDelta() 
+        static Sint32 scrollDelta()
             { return scrollAmount; };
 
-        bool buttonDown(Uint8 button) 
+        static bool buttonDown(Uint8 button)
             { return mouseButtonDown[button]; };
 
-        bool doubleClicked(Uint8 button)
+        static bool doubleClicked(Uint8 button)
             { return mouseButton[button].clicks == 2; };
 
-        bool clicked(Uint8 button) 
+        static bool clicked(Uint8 button)
             { return mouseButton[button].clicks == 1; };
 
-        SDL_Point clickPosition(Uint8 button) 
+        static SDL_Point clickPosition(Uint8 button)
             { return {mouseButton[button].x, mouseButton[button].y}; };
 
     private:
-        Uint32 xMouse, yMouse;
-        Sint32 xDeltaMouse, yDeltaMouse;
-        Sint32 scrollAmount;
-        std::array<bool, SDL_BUTTON_X2+1> mouseButtonDown;
-        std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;
-        MouseState();
+        static inline Uint32 xMouse, yMouse;
+        static inline Sint32 xDeltaMouse, yDeltaMouse;
+        static inline Sint32 scrollAmount;
+        static inline std::array<bool, SDL_BUTTON_X2+1> mouseButtonDown;
+        static inline std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;
+
+        MouseState() = delete;
+        MouseState(const MouseState&) = delete;
 };
 
 #endif
