@@ -13,7 +13,7 @@ class Player : public PhysicsObject
         
         using PhysicsObject::draw;
         void draw(SDL_Renderer* rend, double percent, View viewport);
-        virtual void update(double deltaTime, PhysicsContext* context) override;
+        virtual void update(double deltaTime, World& world) override;
 
     private:
         const float speed = 0.2f;

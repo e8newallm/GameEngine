@@ -9,8 +9,8 @@ class View
         View(SDL_Point resolution, SDL_Point position) :
             resolution(resolution)
             , position(position)
-            , xZoomOffset (resolution.x / 2 * (1.0 - zoom))
-            , yZoomOffset (resolution.y / 2 * (1.0 - zoom))
+            , xZoomOffset (resolution.x / 2. * (1.0 - zoom))
+            , yZoomOffset (resolution.y / 2. * (1.0 - zoom))
         {};
 
         double getZoom() { return zoom; };
@@ -19,8 +19,8 @@ class View
         void setZoom(double zoom)
         {
             this->zoom = zoom;
-            xZoomOffset = resolution.x / 2 * (1.0 - getZoom());
-            yZoomOffset = resolution.y / 2 * (1.0 - getZoom());
+            xZoomOffset = resolution.x / 2. * (1.0 - getZoom());
+            yZoomOffset = resolution.y / 2. * (1.0 - getZoom());
         };
 
         SDL_Point getResolution() { return resolution; };

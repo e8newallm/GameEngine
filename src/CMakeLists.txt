@@ -17,7 +17,8 @@ add_custom_target(SchemaGeneration
 project(GameEngine LANGUAGES CXX)
 
 file(GLOB src
-    global/*.cpp
+    core/*.cpp
+    utility/*.cpp
     object/*.cpp
     texture/*.cpp
     texture/*/*.cpp
@@ -35,6 +36,8 @@ file(GLOB GAMEENGINE_HEADERS
     texture/spritemap
     schema
     data
+    core
+    utility
 )
 
 add_library(GameEngine STATIC ${src})

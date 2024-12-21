@@ -1,6 +1,5 @@
 #include "keystate.h"
 #include "logging.h"
-#include <string>
 
 void KeyState::update()
 {

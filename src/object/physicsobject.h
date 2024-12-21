@@ -1,16 +1,13 @@
 #ifndef PHYSICSOBJECT_H
 #define PHYSICSOBJECT_H
 
-#include <vector>
-#include <SDL2/SDL_mutex.h>
-
 #include "object.h"
 #include "view.h"
+#include "world.h"
 
 #define PHYOBJ_STATIC 1<<0
 #define PHYOBJ_COLLIDE 1<<1
 
-class PhysicsContext;
 class PhysicsObject : public Object
 {
     public:
@@ -22,11 +19,11 @@ class PhysicsObject : public Object
         using Object::draw;
         using Object::update;
         virtual void draw(SDL_Renderer* rend, double percent, double deltaT, View viewport);
-        virtual void update(double deltaTime, PhysicsContext* context);
+        virtual void update(double deltaTime, World& world);
 
-        bool detectCollision(PhysicsContext* context);
+        bool detectCollision(World& context);
         virtual void collision(SDL_Rect* other);
-        void groundCheck(PhysicsContext* context);
+        void groundCheck(World& context);
 
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
@@ -49,36 +46,6 @@ class PhysicsObject : public Object
 
         SDL_FPoint currentVelocity;
         SDL_FPoint nextVelocity;
-};
-
-class PhysicsContext
-{
-    public:
-        PhysicsContext();
-        void addPhyObj(PhysicsObject* obj);
-
-        void updateObjects(bool instant = false);
-        void drawObjects(SDL_Renderer* rend, View viewport);
-
-        double getGravity() { return gravity; };
-        void setGravity(double newGravity) { gravity = newGravity; };
-
-        double getPhyTick() { return phyTick; };
-        void setPhyTick(double newPhyTick) { phyTick = newPhyTick; };
-
-        std::vector<PhysicsObject*>& getCollisionObjects() { return collisionObjects; };
-        std::vector<PhysicsObject*>& getnoncollisionObjects() { return noncollisionObjects; };
-
-    private:
-        Uint64 updateTime = 0;
-        Uint64 lastRender = 0;
-        SDL_mutex* usageLock = SDL_CreateMutex();
-
-        double gravity = 0.00005f;
-        double phyTick = 60.0f;
-
-        std::vector<PhysicsObject*> noncollisionObjects;
-        std::vector<PhysicsObject*> collisionObjects;
 };
 
 #endif

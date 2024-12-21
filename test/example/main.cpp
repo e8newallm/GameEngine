@@ -9,7 +9,7 @@
 #include "object.h"
 #include "physicsobject.h"
 #include "image.h"
-#include "context.h"
+#include "world.h"
 
 #include "texture.h"
 #include "spritemap.h"
@@ -37,17 +37,16 @@ int main()
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
 
-    Context state(rend, &viewport);
+    World world(rend, &viewport);
 
-    PhysicsContext* phyContext = state.getPhysicsContext();
-    state.addImage(new Image({0, 0, 1000, 1000}, new Texture("tex/background.png"), UINT8_MAX));
-    phyContext->addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
-    phyContext->addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
-    phyContext->addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
-    phyContext->addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
-    phyContext->addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
-    phyContext->addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.json")));
-    state.startPhysics();
+    world.addImage(new Image({0, 0, 1000, 1000}, new Texture("tex/background.png"), UINT8_MAX));
+    world.addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
+    world.addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
+    world.addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
+    world.addPhyObj(new PhysicsObject({700, 600, 200, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
+    world.addPhyObj(new PhysicsObject({0, 0, 50, 900}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
+    world.addPhyObj(new Player({500, 920, 40, 40}, PHYOBJ_COLLIDE, new SpriteMap(rend, "tex/spritemap.json")));
+    world.startPhysics();
 
     while (!close)
     {
@@ -104,13 +103,13 @@ int main()
             newPosition.x += delta.x / viewport.getZoom();
             viewport.setPosition(newPosition);
         }
-        
+
         SDL_RenderClear(rend);
-        state.draw();
+        world.draw();
         SDL_RenderPresent(rend);
         //SDL_Delay(10);
     }
-    state.stopPhysics();
+    world.stopPhysics();
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();

@@ -17,9 +17,8 @@
 #include <sstream>
 #include <string>
 
-#include "object.h"
 #include "physicsobject.h"
-#include "context.h"
+#include "world.h"
 
 #include "texture.h"
 #include "spritemap.h"
@@ -293,60 +292,58 @@ TEST_CASE("Basic functionality", "[physics]")
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
 
-    Context state(rend, &viewport);
-
-    PhysicsContext* phyContext = state.getPhysicsContext();
+    World world(rend, &viewport);
 
     SECTION("Box drop")
     {
         PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        phyContext->addPhyObj(box);
+        world.addPhyObj(box);
 
         box->velocityDelta(0.0, 0.5);
         box->preUpdate();
-        box->update(10.0, phyContext);
+        box->update(10.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 505);
         box->preUpdate();
-        box->update(2.0, phyContext);
+        box->update(2.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 506);
 
         box->preUpdate();
-        box->update(1.0, phyContext);
+        box->update(1.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 506);
         box->preUpdate();
-        box->update(1.0, phyContext);
+        box->update(1.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 507);
 
         box->velocityDelta(15.0, 0.0);
         box->preUpdate();
-        box->update(4.0, phyContext);
+        box->update(4.0, world);
         REQUIRE(box->getBody()->x == 559);
         REQUIRE(box->getBody()->y == 508);
 
         box->moveDelta(10.0, 10.0);
         box->preUpdate();
-        box->update(45.0, phyContext);
+        box->update(45.0, world);
         REQUIRE(box->getBody()->x == 1245);
         REQUIRE(box->getBody()->y == 541);
     }
 
     SECTION("Collision")
     {
-        phyContext->setGravity(0.0);
+        world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        phyContext->addPhyObj(box);
+        world.addPhyObj(box);
         PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        phyContext->addPhyObj(boxCollide);
+        world.addPhyObj(boxCollide);
 
         box->velocityDelta(1.0, 0.0);
         box->preUpdate();
-        box->update(5.0, phyContext);
+        box->update(5.0, world);
         boxCollide->preUpdate();
-        boxCollide->update(5.0, phyContext);
+        boxCollide->update(5.0, world);
         REQUIRE(box->getBody()->x == 505);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
@@ -355,9 +352,9 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->y == 500);
         
         box->preUpdate();
-        box->update(6.0, phyContext);
+        box->update(6.0, world);
         boxCollide->preUpdate();
-        boxCollide->update(6.0, phyContext);
+        boxCollide->update(6.0, world);
         REQUIRE(box->getBody()->x == 510);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
@@ -368,9 +365,9 @@ TEST_CASE("Basic functionality", "[physics]")
 
     SECTION("Correct interpolation and viewpoint adjustment for drawing")
     {
-        phyContext->setGravity(0.0);
+        world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
-        phyContext->addPhyObj(box);
+        world.addPhyObj(box);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 500, 50, 50});

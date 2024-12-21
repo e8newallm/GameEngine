@@ -5,7 +5,7 @@
 #include "keystate.h"
 #include "spritemap.h"
 
-void Player::update(double deltaTime, PhysicsContext* context)
+void Player::update(double deltaTime, World& world)
 {
     if(body.y < MAXHEIGHT)
     {
@@ -38,5 +38,5 @@ void Player::update(double deltaTime, PhysicsContext* context)
         velocity(vel.x/2.0f, vel.y);
     }
     
-    PhysicsObject::update(deltaTime, context);
+    PhysicsObject::update(deltaTime, world);
 }
