@@ -1,12 +1,28 @@
 #ifndef DATASTORE_H
 #define DATASTORE_H
 
+#include <iostream>
 #include <map>
 #include <string>
 
 #ifdef DEBUG
 #include <stdint.h>
 #endif
+
+template <class T> class Store : public std::map<std::string, T*>
+{
+    public:
+        ~Store()
+        {
+            std::cout << "Deconstructing Store of " << typeid(T*).name() << "\r\n" << std::flush;
+            for(std::pair<std::string, T*> value : *this)
+            {
+                std::cout << " - " << value.first << "\r\n";
+                delete value.second;
+            }
+            std::cout << "Deconstructed Store of " << typeid(T*).name() << "\r\n" << std::flush;
+        }
+};
 
 template <class T, class storeID> class DataStore
 {
@@ -39,7 +55,7 @@ template <class T, class storeID> class DataStore
 #endif
 
     private:
-        static inline std::map<std::string, T*> Data;
+        static inline Store<T> Data;
 };
 
 #endif

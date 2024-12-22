@@ -23,9 +23,14 @@ World::World(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction)
     , gravity(0.00005f)
     , phyTick(60.0f)
 {
-    if(phyFunction == nullptr)
+
+}
+
+World::~World()
+{
+    for(PhysicsObject* obj : phyObjects)
     {
-        this->phyFunction = defaultPhysLoop;
+        delete obj;
     }
 }
 

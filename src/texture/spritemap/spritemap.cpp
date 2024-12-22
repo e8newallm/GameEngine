@@ -48,14 +48,6 @@ SpriteMap::SpriteMap(SpriteMapData* spriteData) :
 {
 }
 
-TexRequest SpriteMap::getTexture()
-{
-    if(currentSprite == nullptr)
-        return {nullptr, {0, 0, 0, 0}};
-
-    return {currentSprite->texture, currentSprite->position};
-}
-
 void SpriteMap::setAnimationSprite(std::string name)
 {
     if(data->sprites.find(name) == data->sprites.end())
@@ -106,4 +98,10 @@ void SpriteMap::update(double deltaT)
         }
 
     }
+}
+
+void SpriteMap::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
+{
+    if(currentSprite != nullptr)
+        SDL_RenderCopyEx(rend, currentSprite->texture, &currentSprite->position, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
 }

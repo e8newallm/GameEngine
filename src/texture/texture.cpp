@@ -17,7 +17,19 @@ Texture::Texture(std::string name) :
     SDL_QueryTexture(texture, NULL, NULL, &texturePosition.w, &texturePosition.h);
 }
 
-TexRequest Texture::getTexture()
+void Texture::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
 {
-    return {texture, texturePosition};
+    SDL_RenderCopyEx(rend, texture, &texturePosition, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+}
+
+
+template <> Store<SDL_Texture>::~Store()
+{
+    std::cout << "Deconstructing Store of " << typeid(SDL_Texture*).name() << "\r\n" << std::flush;
+    for(std::pair<std::string, SDL_Texture*> value : *this)
+    {
+        std::cout << " - " << value.first << "\r\n";
+        SDL_DestroyTexture(value.second);
+    }
+    std::cout << "Deconstructed Store of " << typeid(SDL_Texture*).name() << "\r\n" << std::flush;
 }

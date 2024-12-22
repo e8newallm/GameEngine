@@ -13,7 +13,6 @@ class PhysicsObject : public Object
     public:
         PhysicsObject(SDL_Rect body, int flags, Texture_base* texture);
         PhysicsObject() : Object(){};
-        ~PhysicsObject();
 
         void preUpdate();
         using Object::draw;

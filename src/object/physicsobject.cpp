@@ -15,10 +15,6 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     prevBody.y = body.y;
 }
 
-PhysicsObject::~PhysicsObject()
-{
-}
-
 SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
 {
     SDL_Rect body = getInterBody(percent);

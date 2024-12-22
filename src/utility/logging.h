@@ -1,3 +1,6 @@
+#ifndef LOGGER_H
+#define LOGGER_H
+
 #include <iostream>
 #include <source_location>
 
@@ -20,3 +23,5 @@ class Logger
         static Logger* logFile;
         std::ostream* output;
 };
+
+#endif

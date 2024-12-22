@@ -8,12 +8,13 @@
 #include "view.h"
 
 class PhysicsObject;
+int defaultPhysLoop(void* data);
 
 class World
 {
     public:
-        World(SDL_Renderer *rend, View *viewport,
-                SDL_ThreadFunction phyFunction = nullptr);
+        World(SDL_Renderer *rend, View *viewport, SDL_ThreadFunction phyFunction = defaultPhysLoop);
+        ~World();
         void draw();
         void update();
 
@@ -40,12 +41,12 @@ class World
         View* viewport;
         SDL_Renderer* rend;
 
+        std::array<std::vector<Image*>, UINT8_MAX+1> images;
+        
         //Physics
         bool phyRunning;
         SDL_ThreadFunction phyFunction;
         SDL_Thread* physThread;
-        std::array<std::vector<Image*>, UINT8_MAX+1> images;
-
 
         Uint64 updateTime = 0;
         Uint64 lastRender = 0;

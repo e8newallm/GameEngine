@@ -3,17 +3,11 @@
 
 #include <SDL2/SDL_render.h>
 
-struct TexRequest
-{
-    SDL_Texture* texture;
-    SDL_Rect position;
-};
-
 class Texture_base
 {
     public:
-        virtual TexRequest getTexture() = 0;
         virtual void update(double deltaT) = 0;
+        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos) = 0;
 };
 
 #endif

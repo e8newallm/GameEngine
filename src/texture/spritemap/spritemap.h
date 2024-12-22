@@ -16,11 +16,12 @@ class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap
         SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path);
         SpriteMap(SpriteMapData* spriteData);
 
-        TexRequest getTexture() override;
+        virtual void update(double deltaT) override;
+        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos) override;
+
         void setSprite(std::string name);
         void setAnimationSprite(std::string name);
         void startAnimation(std::string animation);
-        void update(double deltaT) override;
         bool animationRunning() {return currentAnimation != nullptr; };
 
     private:

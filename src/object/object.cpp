@@ -8,8 +8,7 @@ Object::Object(SDL_Rect body, Texture_base* texture) :
    ,updateBody()
    ,tex(texture)
 {
-    SDL_QueryTexture(tex->getTexture().texture, NULL, NULL, NULL, NULL);
-    
+
     updateBody.x = body.x;
     updateBody.y = body.y;
     updateBody.h = body.h;
@@ -18,7 +17,6 @@ Object::Object(SDL_Rect body, Texture_base* texture) :
 
 Object::~Object()
 {
-    SDL_DestroyTexture(tex->getTexture().texture);
 }
 
 void Object::draw(SDL_Renderer* rend, double deltaT)
@@ -29,8 +27,8 @@ void Object::draw(SDL_Renderer* rend, double deltaT)
 void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT)
 {
     tex->update(deltaT);
-    TexRequest texture = tex->getTexture();
-    SDL_RenderCopyEx(rend, texture.texture, &(texture.position), bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+    tex->draw(rend, bodyPos);
+
 }
 
 void Object::update(double deltaTime)

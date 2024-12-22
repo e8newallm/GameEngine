@@ -11,7 +11,7 @@ class Object
     public:
         Object(SDL_Rect body, Texture_base* texture);
         Object() : Object({0, 0, 0, 0}, NULL) {};
-        ~Object();
+        virtual ~Object();
 
         virtual void draw(SDL_Renderer* rend, double deltaT = 0);
         virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT);
