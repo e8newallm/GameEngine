@@ -2,6 +2,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_image.h>
 
+#include "logging.h"
 #include "texture.h"
 
 Texture::Texture() :
@@ -25,11 +26,11 @@ void Texture::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
 
 template <> Store<SDL_Texture>::~Store()
 {
-    std::cout << "Deconstructing Store of " << typeid(SDL_Texture*).name() << "\r\n" << std::flush;
+    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_Texture*).name());
     for(std::pair<std::string, SDL_Texture*> value : *this)
     {
-        std::cout << " - " << value.first << "\r\n";
-        SDL_DestroyTexture(value.second);
+        Logger::debug(std::string(" - ") + value.first);
     }
-    std::cout << "Deconstructed Store of " << typeid(SDL_Texture*).name() << "\r\n" << std::flush;
+    this->clear();
+    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_Texture*).name());
 }

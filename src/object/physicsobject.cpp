@@ -82,7 +82,7 @@ void PhysicsObject::draw(SDL_Renderer* rend, double percent, double deltaT, View
 }
 
 void PhysicsObject::update(double deltaTime, World& world)
-{    
+{
     if(isStatic())
         return;
 

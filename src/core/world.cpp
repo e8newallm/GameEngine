@@ -1,5 +1,6 @@
 #include "world.h"
 #include "physicsobject.h"
+#include <SDL_mutex.h>
 
 int defaultPhysLoop(void* data)
 {
@@ -28,10 +29,18 @@ World::World(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction)
 
 World::~World()
 {
+    for(std::vector<Image*> level : images)
+    {
+        for(Image* image : level)
+        {
+            delete image;
+        }
+    }
     for(PhysicsObject* obj : phyObjects)
     {
         delete obj;
     }
+    SDL_DestroyMutex(usageLock);
 }
 
 void World::draw()

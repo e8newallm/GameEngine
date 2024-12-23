@@ -1,28 +1,29 @@
+#include <filesystem>
 #include <iostream>
 #include <source_location>
-#include <numeric>
+#include <fstream>
 
 #include "logging.h"
 
 void Logger::error(std::string msg, const std::source_location location)
 {
-    getInstance().log("ERRO: " + msg, location);
+    log("ERRO: " + msg, location);
 }
 
 void Logger::warning(std::string msg, const std::source_location location)
 {
-    getInstance().log("WARN: " + msg, location);
+    log("WARN: " + msg, location);
 }
 
 void Logger::message(std::string msg, const std::source_location location)
 {
-    getInstance().log("INFO: " + msg, location);
+    log("INFO: " + msg, location);
 }
 
 void Logger::debug(std::string msg, const std::source_location location)
 {
 #ifdef DEBUG
-    getInstance().log("DEBUG: " + msg, location);
+    log("DEBUG: " + msg, location);
 #else
     (void)msg;
     (void)location;
@@ -31,7 +32,15 @@ void Logger::debug(std::string msg, const std::source_location location)
 
 void Logger::init(std::ostream* output)
 {
-    getInstance().output = output;
+    logFile = output;
+    atexit(deinit);
+}
+
+void Logger::init(std::filesystem::path fileLocation)
+{
+    file = new std::ofstream(fileLocation);
+    logFile = file;
+    atexit(deinit);
 }
 
 Logger& Logger::getInstance()
@@ -48,11 +57,20 @@ void Logger::log(std::string msg, const std::source_location location)
 #else
     (void)location;
 #endif
-    output->write(fullMsg.c_str(), fullMsg.length());
-    output->flush();
+    logFile->write(fullMsg.c_str(), fullMsg.length());
+    logFile->flush();
 }
 
-Logger::Logger()
+void Logger::deinit()
 {
-    this->output = &std::cout;
+    logFile->flush();
+    if(file != nullptr)
+    {
+        file->close();
+        delete file;
+        file = nullptr;
+    }
+    std::cout << "\r\n" << std::flush;
+
+    logFile = &std::cout;
 }

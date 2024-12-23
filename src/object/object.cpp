@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "object.h"
-#include "keystate.h"
 
 Object::Object(SDL_Rect body, Texture_base* texture) :
     body(body)
@@ -17,6 +14,7 @@ Object::Object(SDL_Rect body, Texture_base* texture) :
 
 Object::~Object()
 {
+    delete tex;
 }
 
 void Object::draw(SDL_Renderer* rend, double deltaT)
@@ -30,7 +28,6 @@ void Object::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT)
     tex->draw(rend, bodyPos);
 
 }
-
 void Object::update(double deltaTime)
 {
     (void)deltaTime;

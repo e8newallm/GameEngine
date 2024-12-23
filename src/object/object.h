@@ -10,7 +10,7 @@ class Object
 {
     public:
         Object(SDL_Rect body, Texture_base* texture);
-        Object() : Object({0, 0, 0, 0}, NULL) {};
+        Object() : Object({0, 0, 0, 0}, nullptr) {};
         virtual ~Object();
 
         virtual void draw(SDL_Renderer* rend, double deltaT = 0);

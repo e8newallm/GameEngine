@@ -1,7 +1,6 @@
 #ifndef DATASTORE_H
 #define DATASTORE_H
 
-#include <iostream>
 #include <map>
 #include <string>
 
@@ -9,18 +8,20 @@
 #include <stdint.h>
 #endif
 
+#include "logging.h"
+
 template <class T> class Store : public std::map<std::string, T*>
 {
     public:
         ~Store()
         {
-            std::cout << "Deconstructing Store of " << typeid(T*).name() << "\r\n" << std::flush;
+            Logger::debug(std::string("Deconstructing Store of ") + typeid(T*).name());
             for(std::pair<std::string, T*> value : *this)
             {
-                std::cout << " - " << value.first << "\r\n";
+                Logger::debug(std::string(" - ") + value.first);
                 delete value.second;
             }
-            std::cout << "Deconstructed Store of " << typeid(T*).name() << "\r\n" << std::flush;
+            Logger::debug(std::string("Deconstructing Store of ") + typeid(T*).name());
         }
 };
 
