@@ -1,12 +1,12 @@
 #ifndef DATASTORE_H
 #define DATASTORE_H
 
-#include <map>
-#include <string>
-
 #ifdef DEBUG
 #include <stdint.h>
 #endif
+
+#include <map>
+#include <string>
 
 #include "logging.h"
 
@@ -21,7 +21,7 @@ template <class T> class Store : public std::map<std::string, T*>
                 Logger::debug(std::string(" - ") + value.first);
                 delete value.second;
             }
-            Logger::debug(std::string("Deconstructing Store of ") + typeid(T*).name());
+            Logger::debug(std::string("Deconstructed Store of ") + typeid(T*).name());
         }
 };
 

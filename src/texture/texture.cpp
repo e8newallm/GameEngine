@@ -32,5 +32,5 @@ template <> Store<SDL_Texture>::~Store()
         Logger::debug(std::string(" - ") + value.first);
     }
     this->clear();
-    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_Texture*).name());
+    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_Texture*).name());
 }

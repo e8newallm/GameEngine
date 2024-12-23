@@ -187,6 +187,7 @@ std::string fileCompress(std::string file)
     ret = deflateInit(&strm, 9);
     if (ret != Z_OK)
     {
+        fclose(source);
         throw GameEngineException(GEError::FILE_IO, "Could not initialise deflation in zlib: " + std::to_string(ret));
     }
 
@@ -195,6 +196,7 @@ std::string fileCompress(std::string file)
         strm.avail_in = fread(in, 1, CHUNK, source);
         if (ferror(source))
         {
+            fclose(source);
             (void)deflateEnd(&strm);
             throw GameEngineException(GEError::FILE_IO, "Could not read file to compress: " + file);
         }
