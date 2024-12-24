@@ -13,7 +13,7 @@ int defaultPhysLoop(void* data);
 class World
 {
     public:
-        World(SDL_Renderer *rend, View *viewport, SDL_ThreadFunction phyFunction = defaultPhysLoop);
+        World(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction = defaultPhysLoop);
         ~World();
         void draw();
         void update();
