@@ -6,6 +6,7 @@ Window::Window(std::string name, int width, int height, int flags)
                             SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED,
                             width, height, flags);
+
     rend = SDL_CreateRenderer(win, -1,
                               SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -17,6 +18,7 @@ Window::Window(std::string name, int flags)
                             SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED,
                             0, 0, SDL_WINDOW_FULLSCREEN | flags);
+                                
     rend = SDL_CreateRenderer(win, -1,
                               SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }

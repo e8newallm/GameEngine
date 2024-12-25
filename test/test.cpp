@@ -292,7 +292,7 @@ TEST_CASE("Basic functionality", "[physics]")
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
 
-    World world(rend, &viewport);
+    World world(rend, viewport);
 
     SECTION("Box drop")
     {

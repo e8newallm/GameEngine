@@ -15,6 +15,7 @@ class Window
 
         SDL_Renderer* getRend() const { return rend; };
         void render(World& world);
+        
     private:
         SDL_Window* win;
         SDL_Renderer* rend;

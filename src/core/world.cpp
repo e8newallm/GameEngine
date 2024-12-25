@@ -13,7 +13,7 @@ int defaultPhysLoop(void* data)
     return 0;
 }
 
-World::World(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction) :
+World::World(SDL_Renderer* rend, View viewport, SDL_ThreadFunction phyFunction) :
     viewport(viewport)
     , rend(rend)
     , phyRunning(false)
@@ -36,6 +36,7 @@ World::~World()
             delete image;
         }
     }
+
     for(PhysicsObject* obj : phyObjects)
     {
         delete obj;
@@ -53,7 +54,7 @@ void World::draw()
         }
     }
 
-    drawObjects(rend, *viewport);
+    drawObjects(rend, viewport);
 
     for(int i = 127; i >= 0; i--)
     {
@@ -63,8 +64,6 @@ void World::draw()
         }
     }
 }
-
-
 
 void World::startPhysics()
 {

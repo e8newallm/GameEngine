@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "logging.h"
 #include "texture_base.h"
 #include "spritemapdata.h"
 #include "datastore.h"

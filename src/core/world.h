@@ -13,7 +13,7 @@ int defaultPhysLoop(void* data);
 class World
 {
     public:
-        World(SDL_Renderer* rend, View* viewport, SDL_ThreadFunction phyFunction = defaultPhysLoop);
+        World(SDL_Renderer* rend, View viewport, SDL_ThreadFunction phyFunction = defaultPhysLoop);
         ~World();
         void draw();
         void update();
@@ -36,9 +36,11 @@ class World
         void setPhyTick(double newPhyTick) { phyTick = newPhyTick; };
 
         std::vector<PhysicsObject*> getphyObjects() { return phyObjects; };
+
+        View& getViewpoint() { return viewport; };
         
     private:
-        View* viewport;
+        View viewport;
         SDL_Renderer* rend;
 
         std::array<std::vector<Image*>, UINT8_MAX+1> images;

@@ -1,8 +1,22 @@
+#include <SDL_events.h>
+#include <iostream>
+
 #include "keystate.h"
 #include "logging.h"
 
+ inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit()
+ {
+    std::array<SDL_EventType, SDL_NUM_SCANCODES> init;
+    for(int i = 0; i < SDL_NUM_SCANCODES; i++)
+    {
+        init[i] = SDL_KEYUP;
+    }
+    return init;
+ }
+
 void KeyState::update()
 {
+    keysPrev = keys;
     while(1)
     {
         SDL_Event event;
@@ -40,4 +54,14 @@ void KeyState::updateKey(SDL_Scancode key, Uint32 keyEvent)
 SDL_EventType KeyState::key(SDL_Scancode key)
 {
     return keys[key];
+}
+
+bool KeyState::keyPressed(SDL_Scancode key)
+{
+    return keys[key] == SDL_KEYDOWN && keysPrev[key] == SDL_KEYUP;
+}
+
+bool KeyState::keyReleased(SDL_Scancode key)
+{
+    return keys[key] == SDL_KEYUP && keysPrev[key] == SDL_KEYDOWN;
 }

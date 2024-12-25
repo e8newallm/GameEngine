@@ -37,7 +37,7 @@ int main()
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
 
-    World world(rend, &viewport);
+    World world(rend, viewport);
 
     world.addImage(new Image({0, 0, 1000, 1000}, "tex/background.png", UINT8_MAX));
     world.addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
