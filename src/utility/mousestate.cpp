@@ -17,10 +17,10 @@ void MouseState::reset()
 void MouseState::update()
 {
     reset();
+    SDL_PumpEvents();
     while(1)
     {
         SDL_Event event;
-        SDL_PumpEvents();
         int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL);
         if(count <= 0) break;
 
