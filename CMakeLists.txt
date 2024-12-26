@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
-project(Project)
+
+function(VersionDefine ProjectName Major Minor Patch)
+    add_compile_definitions(${ProjectName}_MAJOR=${Major})
+    add_compile_definitions(${ProjectName}_MINOR=${Minor})
+    add_compile_definitions(${ProjectName}_PATCH=${Patch})
+endfunction()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_options(-Wall -Wextra -Wpedantic)

@@ -16,6 +16,8 @@ add_custom_target(SchemaGeneration
 
 project(GameEngine LANGUAGES CXX)
 
+VersionDefine(GAMEENGINE 0 0 1)
+
 file(GLOB src
     core/*.cpp
     utility/*.cpp
@@ -27,7 +29,7 @@ file(GLOB src
 
 if(DEBUG)
     file(GLOB debugsrc debug/*.cpp)
-  list(APPEND src ${debugsrc})
+    list(APPEND src ${debugsrc})
 endif()
 
 file(GLOB GAMEENGINE_HEADERS
