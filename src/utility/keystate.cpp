@@ -4,7 +4,7 @@
 #include "keystate.h"
 #include "logging.h"
 
- inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit()
+ std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit()
  {
     std::array<SDL_EventType, SDL_NUM_SCANCODES> init;
     for(int i = 0; i < SDL_NUM_SCANCODES; i++)
