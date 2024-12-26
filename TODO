@@ -5,9 +5,6 @@ PhysicsObject
  - Change gravity into editable vector
  - Handle deletion of physics objects
  - Make more versatile
- 
-Textures
- - Avoid duplicated texture loading
 
 spritemap
  - Better handing for fail states (If texture isn't found, handing of animation ending, etc)
