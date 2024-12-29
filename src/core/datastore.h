@@ -5,12 +5,12 @@
 #include <stdint.h>
 #endif
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "logging.h"
 
-template <class T> class Store : public std::map<std::string, T*>
+template <class T> class Store : public std::unordered_map<std::string, T*>
 {
     public:
         ~Store()
@@ -44,9 +44,9 @@ template <class T, class storeID> class DataStore
         }
 
 #ifdef DEBUG
-        static std::map<std::string, uint64_t> getList()
+        static std::unordered_map<std::string, uint64_t> getList()
         {
-            std::map<std::string, uint64_t> list;
+            std::unordered_map<std::string, uint64_t> list;
             for(std::pair<std::string, T*> name : Data)
             {
                 list.insert({name.first, (uint64_t)name.second});

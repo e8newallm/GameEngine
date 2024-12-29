@@ -3,7 +3,6 @@
 
 int main(int argc, char *argv[])
 {
-
     if(argc >= 2)
     {
         dataCompress(argv[1], argv[2]);

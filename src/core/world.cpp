@@ -1,6 +1,7 @@
 #include "world.h"
 #include "physicsobject.h"
 #include <SDL_mutex.h>
+#include <cstdint>
 
 int defaultPhysLoop(void* data)
 {
@@ -93,7 +94,7 @@ void World::stopPhysics()
 
 void World::addImage(Image* newImage)
 {
-    this->images[newImage->getLayer()].push_back(newImage);
+    this->images[UINT8_MAX].push_back(newImage);
 };
 
 void World::drawObjects(SDL_Renderer* rend, View viewport)

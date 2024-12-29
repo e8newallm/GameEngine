@@ -1,7 +1,7 @@
 #include <exception>
 #include <iostream>
 #include <unistd.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <sstream>
 
@@ -14,7 +14,7 @@ extern bool gameClosing;
 
 using commandFunc = void (*)(std::vector<std::string>);
 
-std::map<std::string, std::map<std::string, uint64_t> (*)()> storeList
+std::map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList
 {
     {"texture", Texture::getList},
     {"spritemap", SpriteMap::getList},

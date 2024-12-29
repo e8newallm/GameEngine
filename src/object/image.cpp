@@ -1,9 +1,8 @@
 #include "image.h"
 #include "texture.h"
 
-Image::Image(SDL_Rect body, std::string texture, Uint8 layer) :
+Image::Image(SDL_Rect body, std::string texture) :
     Object(body, new Texture(texture))
-    , layer(layer)
 {
 }
 

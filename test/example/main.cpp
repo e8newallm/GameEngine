@@ -39,7 +39,7 @@ int main()
 
     World world(rend, viewport);
 
-    world.addImage(new Image({0, 0, 1000, 1000}, "tex/background.png", UINT8_MAX));
+    world.addImage(new Image({0, 0, 1000, 1000}, "tex/background.png"));
     world.addPhyObj(new PhysicsObject({0, 960, 1000, 40}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
     world.addPhyObj(new PhysicsObject({0, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));
     world.addPhyObj(new PhysicsObject({700, 900, 500, 60}, PHYOBJ_STATIC | PHYOBJ_COLLIDE, new Texture("tex/Tile.png")));

@@ -19,3 +19,15 @@ target_include_directories(Packager PUBLIC . ../../{core,utility})
 project(PackagerBin LANGUAGES CXX)
 add_executable(PackagerBin main.cpp)
 target_link_libraries(PackagerBin ZLIB::ZLIB Packager)
+
+MACRO(package_gen folder file)
+IF(NOT PACKAGER_INT)
+    set(PACKAGER_INT 1)
+ENDIF()
+message("Running packager on folder " ${folder} " to make package " ${file} "TEST: " ${PACKAGER_INT})
+add_custom_target(DataPackager_${PACKAGER_INT}
+  ALL
+  COMMAND PackagerBin ${folder} ${file}
+)
+MATH(EXPR PACKAGER_INT "${PACKAGER_INT}+1")
+ENDMACRO()

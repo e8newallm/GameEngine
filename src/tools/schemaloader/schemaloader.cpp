@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        std::fstream header(headerFile);
+        std::ofstream header(headerFile);
         
         header << data;
         header.close();
