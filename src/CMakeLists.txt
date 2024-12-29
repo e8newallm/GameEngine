@@ -16,7 +16,7 @@ add_custom_target(SchemaGeneration
 
 project(GameEngine LANGUAGES CXX)
 
-VersionDefine(GAMEENGINE 0 0 1)
+version_define(GAMEENGINE 0 0 1)
 
 file(GLOB src
     core/*.cpp

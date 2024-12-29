@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-function(VersionDefine ProjectName Major Minor Patch)
+function(version_define ProjectName Major Minor Patch)
     add_compile_definitions(${ProjectName}_MAJOR=${Major})
     add_compile_definitions(${ProjectName}_MINOR=${Minor})
     add_compile_definitions(${ProjectName}_PATCH=${Patch})
