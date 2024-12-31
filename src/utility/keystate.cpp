@@ -27,7 +27,6 @@ void KeyState::update()
         switch (event.type)
         {
             case SDL_KEYDOWN:
-                std::cout << "KEY DOWN: " << event.key.keysym.scancode << "\r\n";
             case SDL_KEYUP:
             {
                 updateKey(event.key.keysym.scancode, event.type);

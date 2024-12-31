@@ -8,6 +8,7 @@ PhysicsObject
 
 spritemap
  - Better handing for fail states (If texture isn't found, handing of animation ending, etc)
+ - Callbacks/triggers for animations
 
 Features
  - Lua scripting(?)
