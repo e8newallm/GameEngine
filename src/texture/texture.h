@@ -15,7 +15,7 @@ class Texture : public Texture_base, public DataStore<SDL_Texture, Texture>
         Texture(std::string name);
 
         virtual void update(double deltaT) override {(void) deltaT;};
-        virtual void draw(SDL_Renderer* rend, SDL_Rect* bodyPos) override;
+        virtual void draw(World* world, SDL_Rect* bodyPos) override;
 
     protected:
         SDL_Texture* texture;

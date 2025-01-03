@@ -1,12 +1,13 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <SDL2/SDL.h>
 #include <vector>
 #include <array>
 
-#include "object/image.h"
 #include "view.h"
 
+class Image;
 class PhysicsObject;
 int defaultPhysLoop(void* data);
 
@@ -18,7 +19,7 @@ class World
         void draw();
         void update();
 
-        void addImage(Image *newImage);
+        void addImage(Image* newImage);
         void addPhyObj(PhysicsObject* obj);
 
         //Physics
@@ -27,7 +28,7 @@ class World
         void stopPhysics();
         bool physicsRunning() { return phyRunning; };
 
-        void drawObjects(SDL_Renderer* rend, View viewport);
+        void drawObjects();
 
         double getGravity() { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
@@ -38,6 +39,7 @@ class World
         std::vector<PhysicsObject*> getphyObjects() { return phyObjects; };
 
         View& getViewpoint() { return viewport; };
+        SDL_Renderer* getRend() { return rend; };
         
     private:
         View viewport;

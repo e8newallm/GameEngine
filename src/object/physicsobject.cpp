@@ -7,12 +7,12 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     Object(body, texture)
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)
-   ,prevBody()
+   ,nextBody(body)
    ,currentVelocity()
    ,nextVelocity()
 {
-    prevBody.x = body.x;
-    prevBody.y = body.y;
+    body.x = nextBody.x;
+    body.y = nextBody.y;
 }
 
 SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
@@ -28,8 +28,8 @@ SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
 SDL_Rect PhysicsObject::getInterBody(double percent)
 {
     SDL_Rect interBody;
-    interBody.x = prevBody.x + (body.x - prevBody.x) * percent;
-    interBody.y = prevBody.y + (body.y - prevBody.y) * percent;
+    interBody.x = body.x + (nextBody.x - body.x) * percent;
+    interBody.y = body.y + (nextBody.y - body.y) * percent;
     interBody.h = body.h;
     interBody.w = body.w;
     return interBody;
@@ -47,7 +47,7 @@ void PhysicsObject::velocityDelta(double x, double y)
     nextVelocity.y += y;
 }
 
-void PhysicsObject::groundCheck(World& world)
+bool PhysicsObject::onGround(World& world)
 {
     SDL_Rect groundCheck;
     groundCheck.x = body.x;
@@ -59,26 +59,24 @@ void PhysicsObject::groundCheck(World& world)
     {
         if(SDL_HasIntersection(&groundCheck, phyObjects[i]->getBody()))
         {
-            _onGround = true;
-            return;
+            return true;
         }
     }
-    _onGround = false;
-    return;
+    return false;
 }
 
 void PhysicsObject::preUpdate()
 {
-    prevBody.x = body.x;
-    prevBody.y = body.y;
+    body.x = nextBody.x;
+    body.y = nextBody.y;
     currentVelocity.x = nextVelocity.x;
     currentVelocity.y = nextVelocity.y;
 }
 
-void PhysicsObject::draw(SDL_Renderer* rend, double percent, double deltaT, View viewport)
+void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
-    SDL_Rect body = calcDrawBody(percent, viewport);
-    Object::draw(rend, &body, deltaT);
+    SDL_Rect body = calcDrawBody(percent, world->getViewpoint());
+    Object::draw(world, &body, deltaT);
 }
 
 void PhysicsObject::update(double deltaTime, World& world)
@@ -86,46 +84,14 @@ void PhysicsObject::update(double deltaTime, World& world)
     if(isStatic())
         return;
 
-    if(!onGround())
+    if(!onGround(world))
         velocityDelta(0, world.getGravity() * deltaTime);
 
     SDL_FPoint displacement;
     displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
     displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
-
-    float magnitude = sqrt(displacement.x * displacement.x + displacement.y * displacement.y);
-    if(magnitude > 5.0f)
-    {
-        SDL_FPoint tempDisplacement;
-        tempDisplacement.x = (displacement.x / magnitude) * 5.0f;
-        tempDisplacement.y = (displacement.y / magnitude) * 5.0f;
-        int loops = magnitude / 5.0f;
-        double remainder = magnitude / 5.0f - loops;
-        for(int i = 0; i < loops; i++)
-        {
-            moveDelta(tempDisplacement.x, tempDisplacement.y);
-            body.x = updateBody.x;
-            body.y = updateBody.y;
-            body.h = updateBody.h;
-            body.w = updateBody.w;
-            detectCollision(world);
-        }
-        moveDelta((displacement.x / magnitude) * remainder * 5.0f, (displacement.y / magnitude) * remainder * 5.0f);
-        body.x = updateBody.x;
-        body.y = updateBody.y;
-        body.h = updateBody.h;
-        body.w = updateBody.w;
-        detectCollision(world);
-    }
-    else
-    {
-        moveDelta(displacement.x, displacement.y);
-        body.x = updateBody.x;
-        body.y = updateBody.y;
-        body.h = updateBody.h;
-        body.w = updateBody.w;
-        detectCollision(world);
-    }
+    moveDelta(displacement.x, displacement.y);
+    detectCollision(world);
 }
 
 bool PhysicsObject::detectCollision(World& world)

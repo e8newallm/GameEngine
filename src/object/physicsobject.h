@@ -17,12 +17,12 @@ class PhysicsObject : public Object
         void preUpdate();
         using Object::draw;
         using Object::update;
-        virtual void draw(SDL_Renderer* rend, double percent, double deltaT, View viewport);
+        virtual void draw(World* world, double percent, double deltaT);
         virtual void update(double deltaTime, World& world);
 
         bool detectCollision(World& context);
         virtual void collision(SDL_Rect* other);
-        void groundCheck(World& context);
+        bool onGround(World& context);
 
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
@@ -31,17 +31,15 @@ class PhysicsObject : public Object
         virtual SDL_Rect getInterBody(double percent);
         SDL_Rect calcDrawBody(double percent, View viewport);
 
-        bool onGround() { return _onGround; };
         bool isStatic() { return _isStatic; };
         bool canCollide() { return _canCollide; };
 
     protected:
 
-        bool _onGround;
         bool _isStatic;
         bool _canCollide;
 
-        SDL_Rect prevBody;
+        SDL_Rect nextBody;
 
         SDL_FPoint currentVelocity;
         SDL_FPoint nextVelocity;

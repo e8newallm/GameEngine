@@ -377,7 +377,7 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->calcDrawBody(1.0, viewport), {500, 500, 50, 50});
 
         box->preUpdate();
-        box->moveDeltaInstantly(100.0, 100.0);
+        box->moveDelta(100.0, 100.0);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {550, 550, 50, 50});

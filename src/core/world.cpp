@@ -1,5 +1,6 @@
 #include "world.h"
 #include "physicsobject.h"
+#include "image.h"
 #include <SDL_mutex.h>
 #include <cstdint>
 
@@ -51,17 +52,17 @@ void World::draw()
     {
         for(Image* image : images[i])
         {
-            image->draw(rend);
+            image->draw(this);
         }
     }
 
-    drawObjects(rend, viewport);
+    drawObjects();
 
     for(int i = 127; i >= 0; i--)
     {
         for(Image* image : images[i])
         {
-            image->draw(rend);
+            image->draw(this);
         }
     }
 }
@@ -97,7 +98,7 @@ void World::addImage(Image* newImage)
     this->images[UINT8_MAX].push_back(newImage);
 };
 
-void World::drawObjects(SDL_Renderer* rend, View viewport)
+void World::drawObjects()
 {
     SDL_LockMutex(usageLock);
     double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());
@@ -107,7 +108,7 @@ void World::drawObjects(SDL_Renderer* rend, View viewport)
     double percent = deltaTime / (1000.0f / phyTick);
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        phyObjects[i]->draw(rend, percent, deltaTime, viewport);
+        phyObjects[i]->draw(this, percent, deltaTime);
     }
     SDL_UnlockMutex(usageLock);
 }
@@ -123,7 +124,6 @@ void World::update()
     Uint64 startTime = SDL_GetPerformanceCounter();
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        phyObjects[i]->groundCheck(*this);
         phyObjects[i]->preUpdate();
         phyObjects[i]->update(phyTick, *this);
     }

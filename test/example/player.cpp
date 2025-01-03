@@ -12,7 +12,7 @@ void Player::update(double deltaTime, World& world)
         MAXHEIGHT = body.y;
     }
     
-    if(onGround() && KeyState::key(SDL_SCANCODE_SPACE) == SDL_KEYDOWN)
+    if(onGround(world) && KeyState::key(SDL_SCANCODE_SPACE) == SDL_KEYDOWN)
     {
         SDL_FPoint curVel = getVelocity();
         velocity(curVel.x, -jump);

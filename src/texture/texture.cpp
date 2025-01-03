@@ -18,9 +18,9 @@ Texture::Texture(std::string name) :
     SDL_QueryTexture(texture, NULL, NULL, &texturePosition.w, &texturePosition.h);
 }
 
-void Texture::draw(SDL_Renderer* rend, SDL_Rect* bodyPos)
+void Texture::draw(World* world, SDL_Rect* bodyPos)
 {
-    SDL_RenderCopyEx(rend, texture, &texturePosition, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(world->getRend(), texture, &texturePosition, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 

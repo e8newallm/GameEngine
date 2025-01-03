@@ -12,7 +12,7 @@ class Player : public PhysicsObject
         {((SpriteMap*)texture)->setSprite("sprite01");};
         
         using PhysicsObject::draw;
-        void draw(SDL_Renderer* rend, double percent, View viewport);
+        void draw(World* world, double percent, View viewport);
         virtual void update(double deltaTime, World& world) override;
 
     private:

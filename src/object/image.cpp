@@ -7,13 +7,13 @@ Image::Image(SDL_Rect body, std::string texture) :
 }
 
 
-void Image::draw(SDL_Renderer* rend, double deltaT)
+void Image::draw(World* world, double deltaT)
 {
-    draw(rend, &body, deltaT);
+    draw(world, &body, deltaT);
 }
 
-void Image::draw(SDL_Renderer* rend, SDL_Rect* bodyPos, double deltaT)
+void Image::draw(World* world, SDL_Rect* bodyPos, double deltaT)
 {
     tex->update(deltaT);
-    tex->draw(rend, bodyPos);
+    tex->draw(world, bodyPos);
 }
