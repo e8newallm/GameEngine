@@ -55,7 +55,7 @@ TEST_CASE("Packager/HeaderData", "[packager]")
 TEST_CASE("Packager/FullTest", "[packager]")
 {
 	std::vector<std::string> dirFiles = getFileList("packagerTest");
-	dataCompress("packagerTest", "packagerTest.bin");
+	dataCompress("testfiles", "packagerTest.bin");
 	PackageManager testPackage = PackageManager("packagerTest.bin");
 	std::vector<std::string> packageFiles = testPackage.getFileList();
 	REQUIRE(packageFiles.size() == dirFiles.size());
@@ -67,9 +67,9 @@ TEST_CASE("Packager/FullTest", "[packager]")
 	for(uint64_t i = 0; i < packageFiles.size(); i++)
 	{
 		std::vector<uint8_t> fileReturn = testPackage.getFile(dirFiles[i]);
-		FILE* originalFile = fopen(("packagerTest/"+dirFiles[i]).c_str(), "rb");
-		std::vector<uint8_t> originalData(std::filesystem::file_size("packagerTest/"+dirFiles[i]));
-		fread(originalData.data(), 1, std::filesystem::file_size("packagerTest/"+dirFiles[i]), originalFile);
+		FILE* originalFile = fopen(("testfiles/"+dirFiles[i]).c_str(), "rb");
+		std::vector<uint8_t> originalData(std::filesystem::file_size("testfiles/"+dirFiles[i]));
+		fread(originalData.data(), 1, std::filesystem::file_size("testfiles/"+dirFiles[i]), originalFile);
 		fclose(originalFile);
 		REQUIRE(fileReturn == originalData);
 	}
@@ -77,7 +77,7 @@ TEST_CASE("Packager/FullTest", "[packager]")
 
 TEST_CASE("Packager/Exceptions", "[packager][exceptions]")
 {
-	dataCompress("packagerTest/", "test.file");
+	dataCompress("testfiles/", "test.file");
 		PackageManager pack("test.file");
 
 	SECTION("FILE_NOT_FOUND")

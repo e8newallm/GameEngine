@@ -9,8 +9,7 @@
 
 #include "texture.h"
 #include "spritemap.h"
-
-extern bool gameClosing;
+#include "gamestate.h"
 
 using commandFunc = void (*)(std::vector<std::string>);
 
@@ -36,13 +35,27 @@ void printStore(std::vector<std::string> parameters)
 void exit(std::vector<std::string> parameters)
 {
     (void) parameters;
-    gameClosing = true;
+    GameState::closeGame();
+}
+
+void pause(std::vector<std::string> parameters)
+{
+    (void) parameters;
+    GameState::pause();
+}
+
+void unpause(std::vector<std::string> parameters)
+{
+    (void) parameters;
+    GameState::unpause();
 }
 
 std::map<std::string, commandFunc> commandList
 {
     {"printStore", printStore},
     {"exit", exit},
+    {"pause", pause},
+    {"unpause", unpause},
 };
 
 static void executeCommand(std::vector<std::string> input)
@@ -58,7 +71,7 @@ int debugConsole()
 {
     pollfd pol {STDIN_FILENO, POLLIN, 0};
     std::cout << "\r\ndebug: " << std::flush;
-    while(!gameClosing)
+    while(!GameState::gameClosing())
     {
         if(poll(&pol, POLLIN, 50))
         {
@@ -79,7 +92,7 @@ int debugConsole()
                 std::cout << "exception caught: " << e.what() << "\r\n";
             }
 
-            if(!gameClosing) std::cout << "\r\ndebug: " << std::flush;
+            if(!GameState::gameClosing()) std::cout << "\r\ndebug: " << std::flush;
         }
     }
     return 0;

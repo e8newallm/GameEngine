@@ -9,6 +9,10 @@
 class Window
 {
     public:
+        Window() = delete;
+        Window(const Window&) = delete;
+        Window& operator=(const Window&) = delete;
+
         Window(std::string name, int width, int height, int flags);
         Window(std::string name, int flags);
         ~Window();
@@ -19,6 +23,8 @@ class Window
     private:
         SDL_Window* win;
         SDL_Renderer* rend;
+        double fps = 165.0f;
+        timer lastRender = std::chrono::high_resolution_clock::now();
 };
 
 #endif

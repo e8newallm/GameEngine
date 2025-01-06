@@ -1,5 +1,3 @@
-add_subdirectory(example)
-
 project(UnitTests LANGUAGES CXX)
 
 file(GLOB_RECURSE jsonfiles "json/*")
@@ -14,13 +12,6 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_CURRENT_SOURCE_DIR}/testfiles
       ${CMAKE_BINARY_DIR}/bin/testfiles
-)
-
-add_custom_command(
-    TARGET TestJSON POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-      ${CMAKE_CURRENT_SOURCE_DIR}/example
-      ${CMAKE_BINARY_DIR}/bin/packagerTest
 )
 
 add_executable(UnitTests ${jsonfiles} test.cpp packager.cpp)

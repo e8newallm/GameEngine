@@ -1,30 +1,22 @@
+#include <SDL_mutex.h>
+#include <SDL_stdinc.h>
+#include <cstdint>
+#include <chrono>
+#include <iostream>
+#include <thread>
+
 #include "world.h"
 #include "physicsobject.h"
 #include "image.h"
-#include <SDL_mutex.h>
-#include <cstdint>
 
-int defaultPhysLoop(void* data)
-{
-    World* context = static_cast<World*>(data);
-    context->update();
-    while(context->physicsRunning())
-    {
-        context->update();
-    }
-    return 0;
-}
+#include "gamestate.h"
 
-World::World(SDL_Renderer* rend, View viewport, SDL_ThreadFunction phyFunction) :
+World::World(SDL_Renderer* rend, View viewport) :
     viewport(viewport)
     , rend(rend)
     , phyRunning(false)
-    , phyFunction(phyFunction)
-    , updateTime(0)
-    , lastRender(0)
+    , lastPhysics(std::chrono::high_resolution_clock::now())
     , usageLock(SDL_CreateMutex())
-    , gravity(0.00005f)
-    , phyTick(60.0f)
 {
 
 }
@@ -46,8 +38,13 @@ World::~World()
     SDL_DestroyMutex(usageLock);
 }
 
-void World::draw()
+void World::draw(timer lastRender)
 {
+    SDL_LockMutex(usageLock);
+
+    double deltaTime = std::chrono::duration<double, std::milli>(lastRender - lastPhysics).count();
+    double percent = deltaTime / (1000.0f / pps);
+
     for(int i = UINT8_MAX; i > 128; i--)
     {
         for(Image* image : images[i])
@@ -56,7 +53,10 @@ void World::draw()
         }
     }
 
-    drawObjects();
+    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    {
+        phyObjects[i]->draw(this, percent, deltaTime);
+    }
 
     for(int i = 127; i >= 0; i--)
     {
@@ -65,31 +65,41 @@ void World::draw()
             image->draw(this);
         }
     }
+
+    SDL_UnlockMutex(usageLock);
+}
+
+void World::update()
+{
+    SDL_LockMutex(usageLock);
+    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    {
+        phyObjects[i]->preUpdate();
+        phyObjects[i]->update(pps, *this);
+    }
+    SDL_UnlockMutex(usageLock);
 }
 
 void World::startPhysics()
 {
-    if(!phyRunning)
-    {
-        phyRunning = true;
-        physThread = SDL_CreateThread(phyFunction, "phyThread", this);
-    }
-}
-
-void World::stepPhysics()
-{
-    phyRunning = false;
-    if(!phyRunning)
-        physThread = SDL_CreateThread(phyFunction, "phyThread", this);
-    SDL_WaitThread(physThread, NULL);
+    phyRunning = true;
 }
 
 void World::stopPhysics()
 {
-    if(phyRunning)
+    phyRunning = false;
+}
+
+void World::runPhysics()
+{
+    if(((1.0f / pps) - std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - lastPhysics).count() <= 0))
     {
-        phyRunning = false;
-        SDL_WaitThread(physThread, NULL);
+        if(!GameState::gamePaused() && phyRunning) update();
+
+        timer newlastPhysics = std::chrono::high_resolution_clock::now();
+        double actualPPS = 1.0f / std::chrono::duration<double>(newlastPhysics - lastPhysics).count();
+        std::cout << "Physics: " << actualPPS << "\r\n";
+        lastPhysics = newlastPhysics;
     }
 }
 
@@ -98,39 +108,7 @@ void World::addImage(Image* newImage)
     this->images[UINT8_MAX].push_back(newImage);
 };
 
-void World::drawObjects()
-{
-    SDL_LockMutex(usageLock);
-    double deltaTime = (double)((SDL_GetPerformanceCounter() - updateTime)*1000 / (double)SDL_GetPerformanceFrequency());
-    //double fps = 1.0f / (double)((SDL_GetPerformanceCounter() - lastRender) / (double)SDL_GetPerformanceFrequency());
-    lastRender = SDL_GetPerformanceCounter();
-    //std::cout << "\r\nFPS: " << fps << "\r\n";
-    double percent = deltaTime / (1000.0f / phyTick);
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
-    {
-        phyObjects[i]->draw(this, percent, deltaTime);
-    }
-    SDL_UnlockMutex(usageLock);
-}
-
 void World::addPhyObj(PhysicsObject* obj)
 {
     phyObjects.push_back(obj);
 }
-
-void World::update()
-{
-    SDL_LockMutex(usageLock);
-    Uint64 startTime = SDL_GetPerformanceCounter();
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
-    {
-        phyObjects[i]->preUpdate();
-        phyObjects[i]->update(phyTick, *this);
-    }
-    updateTime = SDL_GetPerformanceCounter();
-    SDL_UnlockMutex(usageLock);
-
-    double phyTickDuration = (updateTime - startTime) * 1000 / (double)SDL_GetPerformanceFrequency();
-    SDL_Delay(std::max((1000.0f / phyTick) - phyTickDuration, 0.0));
-}
-

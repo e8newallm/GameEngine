@@ -1,7 +1,9 @@
+#include <string>
 #include <vector>
 #include <cmath>
 
 #include "physicsobject.h"
+#include "logging.h"
 
 PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     Object(body, texture)
@@ -75,6 +77,7 @@ void PhysicsObject::preUpdate()
 
 void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
+
     SDL_Rect body = calcDrawBody(percent, world->getViewpoint());
     Object::draw(world, &body, deltaT);
 }
@@ -85,28 +88,32 @@ void PhysicsObject::update(double deltaTime, World& world)
         return;
 
     if(!onGround(world))
+    {
         velocityDelta(0, world.getGravity() * deltaTime);
+    }
 
     SDL_FPoint displacement;
     displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
     displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
-    moveDelta(displacement.x, displacement.y);
-    detectCollision(world);
-}
-
-bool PhysicsObject::detectCollision(World& world)
-{
-    bool collisionFound = false;
     std::vector<PhysicsObject*> phyObjects = world.getphyObjects();
+
+    nextBody.x += displacement.x;
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
         if(SDL_HasIntersection(getBody(), phyObjects[i]->getBody()) && this != phyObjects[i])
         {
             collision(phyObjects[i]->getBody());
-            collisionFound = true;
         }
     }
-    return collisionFound;
+
+    nextBody.y += displacement.y;
+    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    {
+        if(SDL_HasIntersection(getBody(), phyObjects[i]->getBody()) && this != phyObjects[i])
+        {
+            collision(phyObjects[i]->getBody());
+        }
+    }
 }
 
 void PhysicsObject::collision(SDL_Rect* other)
@@ -118,46 +125,34 @@ void PhysicsObject::collision(SDL_Rect* other)
         {
             if(other->x < body.x)
             {
-                moveDelta(collisionArea.w, 0);
+                nextBody.x += collisionArea.w;
                 body.x += collisionArea.w;
-                if(nextVelocity.x < 0.0f)
-                {
-                    currentVelocity.x = 0;
-                    nextVelocity.x = 0;
-                }
+                currentVelocity.x = 0;
+                nextVelocity.x = 0;
             }
             else
             {
-                moveDelta(-collisionArea.w, 0);
+                nextBody.x -= collisionArea.w;
                 body.x -= collisionArea.w;
-                if(nextVelocity.x > 0.0f)
-                {
-                    currentVelocity.x = 0;
-                    nextVelocity.x = 0;
-                }
+                currentVelocity.x = 0;
+                nextVelocity.x = 0;
             }
         }
         else
         {
             if(other->y < body.y)
             {
-                moveDelta(0, collisionArea.h);
+                nextBody.y += collisionArea.h;
                 body.y += collisionArea.h;
-                if(nextVelocity.y < 0.0f)
-                {
-                    currentVelocity.y = 0;
-                    nextVelocity.y = 0;
-                }
+                currentVelocity.y = 0;
+                nextVelocity.y = 0;
             }
             else
             {
-                moveDelta(0, -collisionArea.h);
+                nextBody.y -= collisionArea.h;
                 body.y -= collisionArea.h;
-                if(nextVelocity.y > 0.0f)
-                {
-                    currentVelocity.y = 0;
-                    nextVelocity.y = 0;
-                }
+                currentVelocity.y = 0;
+                nextVelocity.y = 0;
             }
         }
     }
