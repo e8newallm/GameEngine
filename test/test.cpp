@@ -61,8 +61,8 @@ TEST_CASE("Logging", "[base][logging]")
         Logger::init(&testStream);
         loggingTestFunc("TEST MESSAGE");
         loggingTestFunc("NEW MESSAGE");
-        REQUIRE(testStream.str() == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: TEST MESSAGE\r\n"
-                                    "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: NEW MESSAGE\r\n");
+        REQUIRE(testStream.str() == "INFO: TEST MESSAGE\r\n"
+                                    "INFO: NEW MESSAGE\r\n");
     }
 
     std::string filename = "./testlog.log";
@@ -79,11 +79,12 @@ TEST_CASE("Logging", "[base][logging]")
 
         std::string line = "";
         std::getline(testFile, line);
-        REQUIRE(line == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: TEST MESSAGE\r");
+        REQUIRE(line == "INFO: TEST MESSAGE\r");
         std::getline(testFile, line);
-        REQUIRE(line == "(void loggingTestFunc(std::string): line "+std::to_string(lineNumber)+") INFO: NEW MESSAGE\r");
+        REQUIRE(line == "INFO: NEW MESSAGE\r");
     }
 
+    Logger::deinit();
     testFile.close();
     std::remove(filename.c_str());
 }
@@ -286,7 +287,7 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 TEST_CASE("Basic functionality", "[physics]")
 {
     REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
     SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
 
     View viewport( {1000, 1000}, {0, 0});
@@ -300,35 +301,37 @@ TEST_CASE("Basic functionality", "[physics]")
         world.addPhyObj(box);
 
         box->velocityDelta(0.0, 0.5);
-        box->preUpdate();
+        REQUIRE(box->getBody()->x == 500);
+        REQUIRE(box->getBody()->y == 500);
+
         box->update(10.0, world);
         REQUIRE(box->getBody()->x == 500);
+        REQUIRE(box->getBody()->y == 500);
+
+        box->update(2.0, world);
+        REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 505);
-        box->preUpdate();
+
         box->update(2.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 506);
 
-        box->preUpdate();
-        box->update(1.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 506);
-        box->preUpdate();
-        box->update(1.0, world);
+        box->update(2.0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 507);
 
         box->velocityDelta(15.0, 0.0);
-        box->preUpdate();
         box->update(4.0, world);
-        REQUIRE(box->getBody()->x == 559);
+        REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 508);
 
+        box->update(0.0, world);
+        REQUIRE(box->getBody()->x == 560);
+        REQUIRE(box->getBody()->y == 510);
+
         box->moveDelta(10.0, 10.0);
-        box->preUpdate();
-        box->update(45.0, world);
-        REQUIRE(box->getBody()->x == 1245);
-        REQUIRE(box->getBody()->y == 541);
+        REQUIRE(box->getBody()->x == 570);
+        REQUIRE(box->getBody()->y == 520);
     }
 
     SECTION("Collision")
@@ -340,25 +343,21 @@ TEST_CASE("Basic functionality", "[physics]")
         world.addPhyObj(boxCollide);
 
         box->velocityDelta(1.0, 0.0);
-        box->preUpdate();
         box->update(5.0, world);
-        boxCollide->preUpdate();
         boxCollide->update(5.0, world);
-        REQUIRE(box->getBody()->x == 505);
+        REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
         REQUIRE(box->getVelocity().x == 1.0);
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
-        
-        box->preUpdate();
+
         box->update(6.0, world);
-        boxCollide->preUpdate();
         boxCollide->update(6.0, world);
-        REQUIRE(box->getBody()->x == 510);
+        REQUIRE(box->getBody()->x == 505);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
-        REQUIRE(box->getVelocity().x == 0.0);
+        REQUIRE(box->getVelocity().x == 1.0);
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
     }
@@ -376,32 +375,32 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->calcDrawBody(0.5, viewport), {500, 500, 50, 50});
         testRect(box->calcDrawBody(1.0, viewport), {500, 500, 50, 50});
 
-        box->preUpdate();
-        box->moveDelta(100.0, 100.0);
+        box->velocityDelta(0.0, 100.0);
+        box->update(1.0f, world);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {550, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {600, 600, 50, 50});
+        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
+        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
         testRect(box->calcDrawBody(0, viewport), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {550, 550, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {600, 600, 50, 50});
+        testRect(box->calcDrawBody(0.5, viewport), {500, 550, 50, 50});
+        testRect(box->calcDrawBody(1.0, viewport), {500, 600, 50, 50});
 
         viewport.setPosition({200, 150});
         
         testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {550, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {600, 600, 50, 50});
+        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
+        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
         testRect(box->calcDrawBody(0, viewport), {700, 350, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {750, 400, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {800, 450, 50, 50});
+        testRect(box->calcDrawBody(0.5, viewport), {700, 400, 50, 50});
+        testRect(box->calcDrawBody(1.0, viewport), {700, 450, 50, 50});
 
         viewport.setZoom(0.27);
-        
+
         testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {550, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {600, 600, 50, 50});
+        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
+        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
         testRect(box->calcDrawBody(0, viewport), {554, 459, 14, 14});
-        testRect(box->calcDrawBody(0.5, viewport), {567, 473, 14, 14});
-        testRect(box->calcDrawBody(1.0, viewport), {581, 486, 14, 14});
+        testRect(box->calcDrawBody(0.5, viewport), {554, 473, 14, 14});
+        testRect(box->calcDrawBody(1.0, viewport), {554, 486, 14, 14});
     }
 }

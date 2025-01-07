@@ -1,9 +1,7 @@
 #include <SDL_mutex.h>
 #include <SDL_stdinc.h>
 #include <cstdint>
-#include <chrono>
 #include <iostream>
-#include <thread>
 
 #include "world.h"
 #include "physicsobject.h"
@@ -11,11 +9,13 @@
 
 #include "gamestate.h"
 
+double PPS = 0;
+
 World::World(SDL_Renderer* rend, View viewport) :
     viewport(viewport)
     , rend(rend)
     , phyRunning(false)
-    , lastPhysics(std::chrono::high_resolution_clock::now())
+    , lastPhysics()
     , usageLock(SDL_CreateMutex())
 {
 
@@ -38,11 +38,11 @@ World::~World()
     SDL_DestroyMutex(usageLock);
 }
 
-void World::draw(timer lastRender)
+void World::draw(Timer<> lastRender)
 {
     SDL_LockMutex(usageLock);
 
-    double deltaTime = std::chrono::duration<double, std::milli>(lastRender - lastPhysics).count();
+    double deltaTime = lastRender.getElapsed();
     double percent = deltaTime / (1000.0f / pps);
 
     for(int i = UINT8_MAX; i > 128; i--)
@@ -74,7 +74,6 @@ void World::update()
     SDL_LockMutex(usageLock);
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        phyObjects[i]->preUpdate();
         phyObjects[i]->update(pps, *this);
     }
     SDL_UnlockMutex(usageLock);
@@ -92,14 +91,14 @@ void World::stopPhysics()
 
 void World::runPhysics()
 {
-    if(((1.0f / pps) - std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - lastPhysics).count() <= 0))
+    if(lastPhysics.getElapsed() >= 900.0f / pps) //Check if physics loop is approaching the correct timing
     {
+        while(lastPhysics.getElapsed() < (1000.0f / pps)); //Busy loop to get the timing correct
+
         if(!GameState::gamePaused() && phyRunning) update();
 
-        timer newlastPhysics = std::chrono::high_resolution_clock::now();
-        double actualPPS = 1.0f / std::chrono::duration<double>(newlastPhysics - lastPhysics).count();
-        std::cout << "Physics: " << actualPPS << "\r\n";
-        lastPhysics = newlastPhysics;
+        PPS = 1000.0f / lastPhysics.getElapsed();
+        lastPhysics.update();
     }
 }
 

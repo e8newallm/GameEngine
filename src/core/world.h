@@ -4,22 +4,19 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include <array>
-#include <chrono>
 
+#include "timer.h"
 #include "view.h"
 
 class Image;
 class PhysicsObject;
-int defaultPhysLoop(void* data);
-
-using timer = std::chrono::high_resolution_clock::time_point;
 
 class World
 {
     public:
         World(SDL_Renderer* rend, View viewport);
         ~World();
-        void draw(timer lastRender);
+        void draw(Timer<> lastRender);
         void update();
         void addImage(Image* newImage);
         void addPhyObj(PhysicsObject* obj);
@@ -49,7 +46,7 @@ class World
         bool phyRunning;
         SDL_Thread* physThread;
 
-        timer lastPhysics;
+        Timer<> lastPhysics;
         SDL_mutex* usageLock = SDL_CreateMutex();
         double gravity = 0.00005f;
         const double pps = 60.0f;

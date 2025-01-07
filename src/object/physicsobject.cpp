@@ -67,14 +67,6 @@ bool PhysicsObject::onGround(World& world)
     return false;
 }
 
-void PhysicsObject::preUpdate()
-{
-    body.x = nextBody.x;
-    body.y = nextBody.y;
-    currentVelocity.x = nextVelocity.x;
-    currentVelocity.y = nextVelocity.y;
-}
-
 void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
 
@@ -86,6 +78,11 @@ void PhysicsObject::update(double deltaTime, World& world)
 {
     if(isStatic())
         return;
+
+    body.x = nextBody.x;
+    body.y = nextBody.y;
+    currentVelocity.x = nextVelocity.x;
+    currentVelocity.y = nextVelocity.y;
 
     if(!onGround(world))
     {

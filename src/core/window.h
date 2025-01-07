@@ -5,6 +5,7 @@
 #include <string>
 
 #include "world.h"
+#include "timer.h"
 
 class Window
 {
@@ -24,7 +25,7 @@ class Window
         SDL_Window* win;
         SDL_Renderer* rend;
         double fps = 165.0f;
-        timer lastRender = std::chrono::high_resolution_clock::now();
+        Timer<> lastRender;
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include <SDL_events.h>
-#include <iostream>
 
 #include "keystate.h"
 #include "logging.h"

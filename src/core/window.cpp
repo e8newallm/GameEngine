@@ -4,6 +4,8 @@
 #include "window.h"
 #include "gamestate.h"
 
+double FPS = 0;
+
 Window::Window(std::string name, int width, int height, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
@@ -22,23 +24,25 @@ Window::Window(std::string name, int flags)
                             SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED,
                             0, 0, SDL_WINDOW_FULLSCREEN | flags);
-                                
+
     rend = SDL_CreateRenderer(win, -1,
                               SDL_RENDERER_ACCELERATED);
 }
 
 void Window::render(World& world)
 {
-    if(((1.0f / fps) - std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - lastRender).count() <= 0))
+    //std::cout << "lastRender.getElapsed(): " << lastRender.getElapsed() << "\r\n";
+    if(lastRender.getElapsed() >= (900.0f / fps)) //Check if render loop is approaching the correct timing
     {
+        while(lastRender.getElapsed() < (1000.0f / fps)); //Busy loop to get the timing correct
+
+        FPS = 1000.0f / lastRender.getElapsed();
+        lastRender.update();
+
         SDL_RenderClear(rend);
         world.draw(lastRender);
         SDL_RenderPresent(rend);
 
-        timer newLastRender = std::chrono::high_resolution_clock::now();
-        double actualFPS = 1.0f / std::chrono::duration<double>(newLastRender - lastRender).count();
-        std::cout << "FPS: " << actualFPS << "\r\n";
-        lastRender = newLastRender;
     }
 }
 

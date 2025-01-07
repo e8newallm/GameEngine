@@ -14,7 +14,6 @@ class PhysicsObject : public Object
         PhysicsObject(SDL_Rect body, int flags, Texture_base* texture);
         PhysicsObject() : Object(){};
 
-        void preUpdate();
         using Object::draw;
         using Object::update;
         virtual void draw(World* world, double percent, double deltaT);
