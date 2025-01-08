@@ -158,7 +158,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
                                         animation.FindMember("name")->value.GetString() + ") referencing a sprite not named in the JSON");
                 }
 
-                newAni.sprites.push_back((char*)i.GetString());
+                newAni.sprites.push_back(i.GetString());
             }
             animations.insert(std::make_pair(animation.FindMember("name")->value.GetString(), newAni));
         }
@@ -192,14 +192,14 @@ std::string SpriteMapData::serialise()
     }
 
     rapidjson::Value texArray(rapidjson::kArrayType);
-    for (std::map<std::string, SDL_Texture*>::iterator it = textures.begin(); it != textures.end(); it++)
+    for (std::map<std::string, SDL_Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
     {
         texArray.PushBack(rapidjson::Value(it->first.c_str(), allocator), allocator);
     }
     config.AddMember("Textures", texArray, allocator);
 
     rapidjson::Value sprArray(rapidjson::kArrayType);
-    for (std::map<std::string, Sprite>::iterator it = sprites.begin(); it != sprites.end(); it++)
+    for (std::map<std::string, Sprite>::iterator it = sprites.begin(); it != sprites.end(); ++it)
     {
         rapidjson::Value value;
         value.SetObject();
@@ -216,14 +216,14 @@ std::string SpriteMapData::serialise()
     if(!animations.empty())
     {
         rapidjson::Value aniArray(rapidjson::kArrayType);
-        for (std::map<std::string, Animation>::iterator it = animations.begin(); it != animations.end(); it++)
+        for (std::map<std::string, Animation>::iterator it = animations.begin(); it != animations.end(); ++it)
         {
             rapidjson::Value value;
             value.SetObject();
             value.AddMember("name", rapidjson::Value().SetString(it->first.c_str(), allocator), allocator);
             value.AddMember("FPS", rapidjson::Value().SetFloat(it->second.FPS), allocator);
             rapidjson::Value frameArray(rapidjson::kArrayType);
-            for (std::vector<std::string>::iterator itTwo = it->second.sprites.begin(); itTwo != it->second.sprites.end(); itTwo++)
+            for (std::vector<std::string>::iterator itTwo = it->second.sprites.begin(); itTwo != it->second.sprites.end(); ++itTwo)
             {
                 frameArray.PushBack(rapidjson::Value().SetString(itTwo->c_str(), allocator), allocator);
             }

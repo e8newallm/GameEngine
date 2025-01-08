@@ -8,18 +8,17 @@
 class Logger
 {
     public:
-        static void error(std::string msg, const std::source_location location = std::source_location::current());
-        static void warning(std::string msg, const std::source_location location = std::source_location::current());
-        static void message(std::string msg, const std::source_location location = std::source_location::current());
-        static void debug(std::string msg, const std::source_location location = std::source_location::current());
+        static void error(const std::string& msg, const std::source_location location = std::source_location::current());
+        static void warning(const std::string& msg, const std::source_location location = std::source_location::current());
+        static void message(const std::string& msg, const std::source_location location = std::source_location::current());
+        static void debug(const std::string& msg, const std::source_location location = std::source_location::current());
 
         static void init(std::ostream* output);
         static void init(std::filesystem::path fileLocation);
         static void deinit();
 
     private:
-        static Logger& getInstance();
-        static void log(std::string msg,
+        static void log(const std::string& msg,
          const std::source_location location =
                std::source_location::current());
 

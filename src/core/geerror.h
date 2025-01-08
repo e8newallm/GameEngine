@@ -14,7 +14,7 @@ enum class GEError {
 class GameEngineException : public std::exception
 {
     public:
-        GameEngineException(GEError errorCode, std::string errorMessage);
+        GameEngineException(GEError errorCode, const std::string& errorMessage);
 
         const char* what() const noexcept override;
         GEError code() const noexcept;

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         std::string data = "";
         std::string path = argv[i];
         std::string schema = path.substr(path.find_last_of("/\\") + 1);
-        schema = schema.substr(0, schema.find_last_of('.'));
+        schema.resize(schema.find_last_of('.'));
 
         std::ifstream schemaFile(path);
         std::stringstream buffer;

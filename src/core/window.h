@@ -14,8 +14,8 @@ class Window
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
 
-        Window(std::string name, int width, int height, int flags);
-        Window(std::string name, int flags);
+        Window(const std::string& name, int width, int height, int flags);
+        Window(const std::string& name, int flags);
         ~Window();
 
         SDL_Renderer* getRend() const { return rend; };

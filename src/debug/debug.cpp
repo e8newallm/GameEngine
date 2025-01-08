@@ -11,7 +11,7 @@
 #include "spritemap.h"
 #include "gamestate.h"
 
-using commandFunc = void (*)(std::vector<std::string>);
+using commandFunc = void (*)(const std::vector<std::string>&);
 
 std::map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList
 {
@@ -19,7 +19,7 @@ std::map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList
     {"spritemap", SpriteMap::getList},
 };
 
-void printStore(std::vector<std::string> parameters)
+void printStore(const std::vector<std::string>& parameters)
 {
     if(parameters.size() >= 2 && storeList.contains(parameters[1]))
         for(std::pair<std::string, uint64_t> entry : storeList[parameters[1]]())
@@ -32,19 +32,19 @@ void printStore(std::vector<std::string> parameters)
     }
 }
 
-void exit(std::vector<std::string> parameters)
+void exit(const std::vector<std::string>& parameters)
 {
     (void) parameters;
     GameState::closeGame();
 }
 
-void pause(std::vector<std::string> parameters)
+void pause(const std::vector<std::string>& parameters)
 {
     (void) parameters;
     GameState::pause();
 }
 
-void unpause(std::vector<std::string> parameters)
+void unpause(const std::vector<std::string>& parameters)
 {
     (void) parameters;
     GameState::unpause();
@@ -58,7 +58,7 @@ std::map<std::string, commandFunc> commandList
     {"unpause", unpause},
 };
 
-static void executeCommand(std::vector<std::string> input)
+static void executeCommand(const std::vector<std::string>& input)
 {
     std::string command = input[0];
     if(commandList.contains(command))

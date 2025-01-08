@@ -1,6 +1,6 @@
 #include "geerror.h"
 
-GameEngineException::GameEngineException(GEError errorCode, std::string errorMessage) :
+GameEngineException::GameEngineException(GEError errorCode, const std::string& errorMessage) :
     errorCode(errorCode)
     ,errorMessage(errorMessage)
 {

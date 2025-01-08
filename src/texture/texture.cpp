@@ -11,7 +11,7 @@ Texture::Texture() :
 {
 }
 
-Texture::Texture(std::string name) :
+Texture::Texture(const std::string& name) :
     texture{Texture::get(name)},
     texturePosition{0, 0, 0, 0}
 {

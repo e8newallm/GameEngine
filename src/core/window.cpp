@@ -6,7 +6,7 @@
 
 double FPS = 0;
 
-Window::Window(std::string name, int width, int height, int flags)
+Window::Window(const std::string& name, int width, int height, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
                             SDL_WINDOWPOS_CENTERED,
@@ -18,7 +18,7 @@ Window::Window(std::string name, int width, int height, int flags)
 
 }
 
-Window::Window(std::string name, int flags)
+Window::Window(const std::string& name, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
                             SDL_WINDOWPOS_CENTERED,

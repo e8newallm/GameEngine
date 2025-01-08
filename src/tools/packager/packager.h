@@ -16,11 +16,11 @@ struct FileEntry
 class PackageManager
 {
     public:
-        PackageManager(std::string file);
+        explicit PackageManager(const std::string& file);
 
         std::vector<std::string> getFileList();
-        std::vector<uint8_t> getFile(std::string path);
-        std::string getPackageName();
+        std::vector<uint8_t> getFile(const std::string& path);
+        const std::string& getPackageName();
 
     private:
         std::string packageFile;
@@ -28,15 +28,15 @@ class PackageManager
         uint64_t dataStart;
 };
 
-std::vector<std::string> getFileList(std::string directory);
-std::string fileCompress(std::string file);
+std::vector<std::string> getFileList(const std::string& directory);
+std::string fileCompress(const std::string& file);
 void numToByte(std::vector<uint8_t>& data, uint64_t value);
 uint64_t byteToNum(std::vector<uint8_t>& value);
-std::string getExtension(std::string filename);
+std::string getExtension(const std::string& filename);
 
-std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList);
+std::vector<uint8_t> headerCompress(const std::vector<FileEntry>& fileList);
 std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data);
 
-int dataCompress(std::string directory, std::string file);
+int dataCompress(const std::string& directory, const std::string& file);
 
 #endif

@@ -10,10 +10,10 @@ class Context;
 class Image : public Object
 {
     public:
-        Image(SDL_Rect body, std::string texture);
+        Image(SDL_Rect body, const std::string& texture);
 
-        void draw(World* world, double deltaT = 0);
-        void draw(World* world, SDL_Rect* bodyPos, double deltaT);
+        void draw(World* world, double deltaT = 0) override;
+        void draw(World* world, SDL_Rect* bodyPos, double deltaT) override;
 };
 
 #endif

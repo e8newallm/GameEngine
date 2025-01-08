@@ -2,7 +2,7 @@
     "Sprites": [
         {
             "name": "sprite01",
-            "texture": "tex/spritemap.png",
+            "texture": "testfiles/tex/spritemap.png",
             "x": 0,
             "y": 0,
             "height": 150,

@@ -28,17 +28,17 @@ template <class T> class Store : public std::unordered_map<std::string, T*>
 template <class T, class storeID> class DataStore
 {
     public:
-        static void add(T* data, std::string name)
+        static void add(T* data, const std::string& name)
         {
             Data.insert({name, data});
         }
 
-        static T* get(std::string name)
+        static T* get(const std::string& name)
         {
             return Data[name];
         }
 
-        static bool exists(std::string name)
+        static bool exists(const std::string& name)
         {
             return Data.contains(name);
         }

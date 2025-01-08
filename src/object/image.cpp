@@ -1,7 +1,7 @@
 #include "image.h"
 #include "texture.h"
 
-Image::Image(SDL_Rect body, std::string texture) :
+Image::Image(SDL_Rect body, const std::string& texture) :
     Object(body, new Texture(texture))
 {
 }

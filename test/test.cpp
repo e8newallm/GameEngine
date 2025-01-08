@@ -53,6 +53,7 @@ TEST_CASE("Error", "[base][exceptions]")
     }
 }
 
+
 TEST_CASE("Logging", "[base][logging]")
 {
     SECTION("ostream test")
@@ -138,7 +139,7 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
     {
         SpriteMapData test, testTwo;
         test.loadFromFile(rend, "testfiles/json/spritemap/spritemap.json");
-        std::string result = R"TEST({"Textures":["tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
+        std::string result = R"TEST({"Textures":["testfiles/tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"testfiles/tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
 
         REQUIRE(test.serialise() == result);
         REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));

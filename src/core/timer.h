@@ -7,8 +7,7 @@
 template <class rep = double, class period = std::milli> class Timer
 {
     public:
-        rep getElapsed() { return std::chrono::duration<rep, period>(std::chrono::high_resolution_clock::now() - timer).count(); };
-        bool hasElapsed(rep time) { return getElapsed() >  time; };
+        rep getElapsed() const { return std::chrono::duration<rep, period>(std::chrono::high_resolution_clock::now() - timer).count(); };
         void update() { timer = std::chrono::high_resolution_clock::now(); };
 
     private:

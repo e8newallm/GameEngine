@@ -35,8 +35,8 @@ class PhysicsObject : public Object
 
     protected:
 
-        bool _isStatic;
-        bool _canCollide;
+        bool _isStatic = true;
+        bool _canCollide = false;
 
         SDL_Rect nextBody;
 

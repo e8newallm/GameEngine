@@ -16,7 +16,7 @@
 
 #define CHUNK (256 * 1024)
 
-PackageManager::PackageManager(std::string file) :
+PackageManager::PackageManager(const std::string& file) :
     packageFile(file)
     ,fileList({})
 {
@@ -59,14 +59,14 @@ PackageManager::PackageManager(std::string file) :
 
 std::vector<std::string> PackageManager::getFileList()
 {
-    std::vector<std::string> fileListStr;
-    for(FileEntry entry : fileList) fileListStr.push_back(entry.name);
+    std::vector<std::string> fileListStr(fileList.size());
+    std::transform(fileList.begin(), fileList.end(), fileListStr.begin(), [&](const FileEntry& entry){ return entry.name; });
     return fileListStr;
 }
 
-std::vector<uint8_t> PackageManager::getFile(std::string path)
+std::vector<uint8_t> PackageManager::getFile(const std::string& path)
 {
-    for(FileEntry file : fileList)
+    for(const FileEntry& file : fileList)
     {
         if(file.name == path)
         {
@@ -117,7 +117,6 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
                     assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
                     switch (ret) {
                     case Z_NEED_DICT:
-                        ret = Z_DATA_ERROR;     /* and fall through */
                         __attribute__ ((fallthrough));
                     case Z_DATA_ERROR:
                     case Z_MEM_ERROR:
@@ -139,16 +138,15 @@ std::vector<uint8_t> PackageManager::getFile(std::string path)
         }
     }
     throw GameEngineException(GEError::FILE_NOT_FOUND, "File " + path + " not found in package " + packageFile);
-    return {};
 }
 
-std::string PackageManager::getPackageName() { return packageFile; }
+const std::string& PackageManager::getPackageName() { return packageFile; }
 
-std::vector<std::string> getFileList(std::string directory)
+std::vector<std::string> getFileList(const std::string& directory)
 {
-    std::vector<std::string> list;
     try
     {
+        std::vector<std::string> list;
         for (const auto & entry : std::filesystem::recursive_directory_iterator(directory))
         {
             if(!entry.is_directory())
@@ -166,7 +164,7 @@ std::vector<std::string> getFileList(std::string directory)
     }
 }
 
-std::string fileCompress(std::string file)
+std::string fileCompress(const std::string& file)
 {
     int ret, flush;
     unsigned have;
@@ -210,7 +208,7 @@ std::string fileCompress(std::string file)
             ret = deflate(&strm, flush);    /* no bad return value */
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
             have = CHUNK - strm.avail_out;
-            compressedData += std::string((char*)&out, have);
+            compressedData += std::string(reinterpret_cast<char*>(out), have);
         } while (strm.avail_out == 0);
     } while(flush != Z_FINISH);
 
@@ -241,7 +239,7 @@ uint64_t byteToNum(std::vector<uint8_t>& data)
     return result;
 }
 
-std::string getExtension(std::string filename) {
+std::string getExtension(const std::string& filename) {
     size_t pos = filename.find_last_of('.');
     if (pos != std::string::npos && pos != filename.size() - 1) {
         return filename.substr(pos + 1);
@@ -249,7 +247,7 @@ std::string getExtension(std::string filename) {
     return "";
 }
 
-std::vector<uint8_t> headerCompress(std::vector<FileEntry> fileList)
+std::vector<uint8_t> headerCompress(const std::vector<FileEntry>& fileList)
 {
     std::vector<uint8_t> headData;
     for(FileEntry data : fileList)
@@ -273,7 +271,7 @@ std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
         newEntry.length = byteToNum(data);
         newEntry.compressedLength = byteToNum(data);
         newEntry.start = byteToNum(data);
-        for(std::vector<uint8_t>::iterator pos = data.end()-1; pos >= data.begin(); pos--)
+        for(std::vector<uint8_t>::iterator pos = data.end()-1; pos >= data.begin(); --pos)
         {
             if(*pos == '\0')
             {
@@ -291,7 +289,7 @@ std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
     return fileList;
 }
 
-int dataCompress(std::string directory, std::string file)
+int dataCompress(const std::string& directory, const std::string& file)
 {
     FILE* compData = std::tmpfile();
 
@@ -299,7 +297,7 @@ int dataCompress(std::string directory, std::string file)
     std::vector<std::string> list = getFileList(directory);
     std::vector<FileEntry> dataHeader;
     long currentPosition = 0;
-    for(std::string filename : list)
+    for(const std::string& filename : list)
     {
         std::string compressedData = fileCompress(directory + filename);
         FileEntry newData;
@@ -325,8 +323,8 @@ int dataCompress(std::string directory, std::string file)
     numToByte(fullHeader, size);
     std::copy(header.begin(), header.end(), std::back_inserter(fullHeader));
     assert(fullHeader.size() == size);
-    size_t writeCount = fwrite(fullHeader.data(), 1, fullHeader.size(), openFile);
-    if(writeCount != fullHeader.size())
+    size_t headerWriteCount = fwrite(fullHeader.data(), 1, fullHeader.size(), openFile);
+    if(headerWriteCount != fullHeader.size())
     {
         fclose(openFile);
         fclose(compData);

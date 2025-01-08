@@ -16,7 +16,7 @@ class World
     public:
         World(SDL_Renderer* rend, View viewport);
         ~World();
-        void draw(Timer<> lastRender);
+        void draw(const Timer<>& lastRender);
         void update();
         void addImage(Image* newImage);
         void addPhyObj(PhysicsObject* obj);
@@ -31,7 +31,7 @@ class World
         double getGravity() { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
 
-        std::vector<PhysicsObject*> getphyObjects() { return phyObjects; };
+        const std::vector<PhysicsObject*>& getphyObjects() { return phyObjects; };
 
         View& getViewpoint() { return viewport; };
         SDL_Renderer* getRend() { return rend; };
@@ -44,7 +44,6 @@ class World
         
         //Physics
         bool phyRunning;
-        SDL_Thread* physThread;
 
         Timer<> lastPhysics;
         SDL_mutex* usageLock = SDL_CreateMutex();

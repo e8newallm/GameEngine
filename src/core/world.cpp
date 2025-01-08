@@ -23,7 +23,7 @@ World::World(SDL_Renderer* rend, View viewport) :
 
 World::~World()
 {
-    for(std::vector<Image*> level : images)
+    for(const std::vector<Image*>& level : images)
     {
         for(Image* image : level)
         {
@@ -38,7 +38,7 @@ World::~World()
     SDL_DestroyMutex(usageLock);
 }
 
-void World::draw(Timer<> lastRender)
+void World::draw(const Timer<>& lastRender)
 {
     SDL_LockMutex(usageLock);
 

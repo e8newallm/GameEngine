@@ -11,6 +11,6 @@ class GameState
         inline static bool gameClosing() { return closing; };
 
     private:
-        inline static bool paused = false;
-        inline static bool closing = false;
+        static bool paused;
+        static bool closing;
 };

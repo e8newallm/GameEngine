@@ -48,7 +48,7 @@ SpriteMap::SpriteMap(SpriteMapData* spriteData) :
 {
 }
 
-void SpriteMap::setAnimationSprite(std::string name)
+void SpriteMap::setAnimationSprite(const std::string& name)
 {
     if(data->sprites.find(name) == data->sprites.end())
         return;
@@ -57,7 +57,7 @@ void SpriteMap::setAnimationSprite(std::string name)
 
 }
 
-void SpriteMap::setSprite(std::string name)
+void SpriteMap::setSprite(const std::string& name)
 {
     if(data->sprites.find(name) == data->sprites.end())
         return;
@@ -67,7 +67,7 @@ void SpriteMap::setSprite(std::string name)
     currentAnimation = nullptr;
 }
 
-void SpriteMap::startAnimation(std::string animation)
+void SpriteMap::startAnimation(const std::string& animation)
 {
     if(data->animations.find(animation) == data->animations.end())
         return;

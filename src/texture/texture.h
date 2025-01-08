@@ -12,7 +12,7 @@ class Texture : public Texture_base, public DataStore<SDL_Texture, Texture>
 {
     public:
         Texture();
-        Texture(std::string name);
+        explicit Texture(const std::string& name);
 
         virtual void update(double deltaT) override {(void) deltaT;};
         virtual void draw(World* world, SDL_Rect* bodyPos) override;
