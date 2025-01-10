@@ -346,6 +346,7 @@ TEST_CASE("Basic functionality", "[physics]")
         box->velocityDelta(1.0, 0.0);
         box->update(5.0, world);
         boxCollide->update(5.0, world);
+
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
@@ -358,7 +359,7 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(box->getBody()->x == 505);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
-        REQUIRE(box->getVelocity().x == 1.0);
+        REQUIRE(box->getVelocity().x == 0.0);
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
     }

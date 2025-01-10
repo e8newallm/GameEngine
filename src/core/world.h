@@ -41,7 +41,7 @@ class World
         SDL_Renderer* rend;
 
         std::array<std::vector<Image*>, UINT8_MAX+1> images;
-        
+
         //Physics
         bool phyRunning;
 

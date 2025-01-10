@@ -42,7 +42,7 @@ void World::draw(double deltaTime)
 {
     SDL_LockMutex(usageLock);
 
-    double percent = deltaTime / (1000.0f / pps);
+    double percent = lastPhysics.getElapsed() / (1000.0f / pps);
 
     for(int i = UINT8_MAX; i > 128; i--)
     {
@@ -64,7 +64,6 @@ void World::draw(double deltaTime)
             image->draw(this);
         }
     }
-
     SDL_UnlockMutex(usageLock);
 }
 
@@ -93,11 +92,10 @@ void World::runPhysics()
     if(lastPhysics.getElapsed() >= 900.0f / pps) //Check if physics loop is approaching the correct timing
     {
         while(lastPhysics.getElapsed() < (1000.0f / pps)); //Busy loop to get the timing correct
-
-        if(!GameState::gamePaused() && phyRunning) update();
-
         PPS = 1000.0f / lastPhysics.getElapsed();
         lastPhysics.update();
+
+        if(!GameState::gamePaused() && phyRunning) update();
     }
 }
 

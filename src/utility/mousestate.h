@@ -5,7 +5,6 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_mouse.h>
 
-#include <vector>
 #include <array>
 
 struct mousePosition
@@ -54,6 +53,7 @@ class MouseState
 
         MouseState() = delete;
         MouseState(const MouseState&) = delete;
+        MouseState& operator=(const MouseState&) = delete;
 };
 
 #endif

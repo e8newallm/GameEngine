@@ -6,6 +6,7 @@
 
 #include <array>
 
+
 std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit();
 
 class KeyState
@@ -22,7 +23,10 @@ class KeyState
     private:
         static inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keys = keyStateInit();
         static inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keysPrev = keyStateInit();
+
+        KeyState() = delete;
         KeyState(const KeyState&) = delete;
+        KeyState& operator=(const KeyState&) = delete;
 };
 #endif
 

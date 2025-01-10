@@ -19,12 +19,12 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
 
 SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
 {
-    SDL_Rect body = getInterBody(percent);
-    body.x = (body.x - viewport.window()->x) * viewport.getZoom();
-    body.y = (body.y - viewport.window()->y) * viewport.getZoom();
-    body.h = round((double)body.h * viewport.getZoom());
-    body.w = round((double)body.w * viewport.getZoom());
-    return body;
+    SDL_Rect interBody = getInterBody(percent);
+    interBody.x = (interBody.x - viewport.window()->x) * viewport.getZoom();
+    interBody.y = (interBody.y - viewport.window()->y) * viewport.getZoom();
+    interBody.h = round((double)interBody.h * viewport.getZoom());
+    interBody.w = round((double)interBody.w * viewport.getZoom());
+    return interBody;
 }
 
 SDL_Rect PhysicsObject::getInterBody(double percent)
@@ -69,7 +69,7 @@ bool PhysicsObject::onGround(World& world)
 
 void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
-
+    //std::cout << "percent: " << percent << "\r\n";
     SDL_Rect body = calcDrawBody(percent, world->getView());
     Object::draw(world, &body, deltaT);
 }
@@ -97,18 +97,18 @@ void PhysicsObject::update(double deltaTime, World& world)
     nextBody.x += displacement.x;
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        if(SDL_HasIntersection(getBody(), phyObjects[i]->getBody()) && this != phyObjects[i])
+        if(SDL_HasIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
         {
-            collision(phyObjects[i]->getBody());
+            collision(&phyObjects[i]->nextBody);
         }
     }
 
     nextBody.y += displacement.y;
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        if(SDL_HasIntersection(getBody(), phyObjects[i]->getBody()) && this != phyObjects[i])
+        if(SDL_HasIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
         {
-            collision(phyObjects[i]->getBody());
+            collision(&phyObjects[i]->nextBody);
         }
     }
 }
@@ -116,41 +116,36 @@ void PhysicsObject::update(double deltaTime, World& world)
 void PhysicsObject::collision(SDL_Rect* other)
 {
     SDL_Rect collisionArea;
-    if(SDL_IntersectRect(getBody(), other, &collisionArea))
+    if(SDL_IntersectRect(&nextBody, other, &collisionArea))
     {
+        //std::cout << "collision!\r\n";
         if(collisionArea.h > collisionArea.w)
         {
             if(other->x < body.x)
             {
                 nextBody.x += collisionArea.w;
-                body.x += collisionArea.w;
-                currentVelocity.x = 0;
-                nextVelocity.x = 0;
             }
             else
             {
                 nextBody.x -= collisionArea.w;
-                body.x -= collisionArea.w;
-                currentVelocity.x = 0;
-                nextVelocity.x = 0;
             }
+            currentVelocity.x = 0;
+            nextVelocity.x = 0;
         }
         else
         {
             if(other->y < body.y)
             {
                 nextBody.y += collisionArea.h;
-                body.y += collisionArea.h;
-                currentVelocity.y = 0;
-                nextVelocity.y = 0;
             }
             else
             {
                 nextBody.y -= collisionArea.h;
-                body.y -= collisionArea.h;
-                currentVelocity.y = 0;
-                nextVelocity.y = 0;
             }
+            currentVelocity.y = 0;
+            nextVelocity.y = 0;
         }
+        //std::cout << "new body: " << body.x << ", " << body.y << " - " << body.w << ", " << body.h << "\r\n";
+        //std::cout << "new nextBody: " << nextBody.x << ", " << nextBody.y << " - " << nextBody.w << ", " << nextBody.h << "\r\n";
     }
 }
