@@ -31,18 +31,17 @@ Window::Window(const std::string& name, int flags)
 
 void Window::render(World& world)
 {
-    //std::cout << "lastRender.getElapsed(): " << lastRender.getElapsed() << "\r\n";
-    if(lastRender.getElapsed() >= (900.0f / fps)) //Check if render loop is approaching the correct timing
+    if(lastRender.getElapsed() >= (800.0f / fps)) //Check if render loop is approaching the correct timing
     {
         while(lastRender.getElapsed() < (1000.0f / fps)); //Busy loop to get the timing correct
 
+        double deltaTime = lastRender.getElapsed();
         FPS = 1000.0f / lastRender.getElapsed();
         lastRender.update();
 
         SDL_RenderClear(rend);
-        world.draw(lastRender);
+        world.draw(deltaTime);
         SDL_RenderPresent(rend);
-
     }
 }
 

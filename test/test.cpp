@@ -386,7 +386,7 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->calcDrawBody(0.5, viewport), {500, 550, 50, 50});
         testRect(box->calcDrawBody(1.0, viewport), {500, 600, 50, 50});
 
-        viewport.setPosition({200, 150});
+        viewport.move({200, 150});
         
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 550, 50, 50});

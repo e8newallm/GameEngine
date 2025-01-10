@@ -16,7 +16,7 @@ class World
     public:
         World(SDL_Renderer* rend, View viewport);
         ~World();
-        void draw(const Timer<>& lastRender);
+        void draw(double deltaTime);
         void update();
         void addImage(Image* newImage);
         void addPhyObj(PhysicsObject* obj);
@@ -33,7 +33,7 @@ class World
 
         const std::vector<PhysicsObject*>& getphyObjects() { return phyObjects; };
 
-        View& getViewpoint() { return viewport; };
+        View& getView() { return viewport; };
         SDL_Renderer* getRend() { return rend; };
         
     private:

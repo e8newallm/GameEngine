@@ -2,37 +2,63 @@
 #define VIEW_H
 
 #include <SDL2/SDL_rect.h>
+#include <iostream>
 
 class View
 {
     public:
         View(SDL_Point resolution, SDL_Point position) :
-            resolution(resolution)
-            , position(position)
-            , xZoomOffset (resolution.x / 2. * (1.0 - zoom))
-            , yZoomOffset (resolution.y / 2. * (1.0 - zoom))
-        {};
+        zoom(1.0f)
+        ,center{(position.x + resolution.x)/2, (position.y + resolution.y)/2}
+        ,resolution(resolution)
+        {
+            calcWindow();
+        };
 
         double getZoom() { return zoom; };
-        double getZoomXOffset() { return xZoomOffset; };
-        double getZoomYOffset() { return yZoomOffset; };
         void setZoom(double zoom)
         {
             this->zoom = zoom;
-            xZoomOffset = resolution.x / 2. * (1.0 - getZoom());
-            yZoomOffset = resolution.y / 2. * (1.0 - getZoom());
+            std::cout << "new zoom: " << zoom << "\r\n";
+            calcWindow();
         };
 
-        SDL_Point getResolution() { return resolution; };
-        void setResolution(SDL_Point resolution) { this->resolution = resolution; };
+        void move(SDL_Point newPosition)
+        {
+            center.x = newPosition.x;
+            center.y = newPosition.y;
+            calcWindow();
+        }
 
-        SDL_Point getPosition() { return position; };
-        void setPosition(SDL_Point position) { this->position = position; };
+        void moveDelta(SDL_Point newPosition)
+        {
+            center.x -= newPosition.x/zoom;
+            center.y -= newPosition.y/zoom;
+            calcWindow();
+        }
+
+        SDL_Rect* window()
+        {
+            return &win;
+        };
 
     private:
-        double zoom = 1.0;
+
+        SDL_Rect calcWindow()
+        {
+            std::cout << "center:" << center.x << ", " << center.y << " resolution: " << resolution.x << ", " << resolution.y << " zoom: " << zoom << "\r\n";
+            win.w = resolution.x/zoom;
+            win.h = resolution.y/zoom;
+            win.x = center.x - resolution.x/zoom/2.0f;
+            win.y = center.y - resolution.x/zoom/2.0f;
+            std::cout << win.x << ", " << win.y << " - " << win.w << ", " << win.h << "\r\n";
+            return win;
+        }
+
+        double zoom;
+        SDL_Point center;
         SDL_Point resolution;
-        SDL_Point position;
-        double xZoomOffset, yZoomOffset;
+
+        SDL_Rect win;
 };
 #endif

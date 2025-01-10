@@ -38,11 +38,10 @@ World::~World()
     SDL_DestroyMutex(usageLock);
 }
 
-void World::draw(const Timer<>& lastRender)
+void World::draw(double deltaTime)
 {
     SDL_LockMutex(usageLock);
 
-    double deltaTime = lastRender.getElapsed();
     double percent = deltaTime / (1000.0f / pps);
 
     for(int i = UINT8_MAX; i > 128; i--)

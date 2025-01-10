@@ -20,8 +20,8 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
 SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
 {
     SDL_Rect body = getInterBody(percent);
-    body.x = (body.x + viewport.getPosition().x) * viewport.getZoom() + viewport.getZoomXOffset();
-    body.y = (body.y - viewport.getPosition().y) * viewport.getZoom() + viewport.getZoomYOffset();
+    body.x = (body.x - viewport.window()->x) * viewport.getZoom();
+    body.y = (body.y - viewport.window()->y) * viewport.getZoom();
     body.h = round((double)body.h * viewport.getZoom());
     body.w = round((double)body.w * viewport.getZoom());
     return body;
@@ -70,7 +70,7 @@ bool PhysicsObject::onGround(World& world)
 void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
 
-    SDL_Rect body = calcDrawBody(percent, world->getViewpoint());
+    SDL_Rect body = calcDrawBody(percent, world->getView());
     Object::draw(world, &body, deltaT);
 }
 
