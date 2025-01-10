@@ -386,22 +386,22 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->calcDrawBody(0.5, viewport), {500, 550, 50, 50});
         testRect(box->calcDrawBody(1.0, viewport), {500, 600, 50, 50});
 
-        viewport.move({200, 150});
-        
+        viewport.moveDelta({200, 150});
+        std::cout << "VIEWPORT: " << viewport.window()->x << "\r\n";
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 550, 50, 50});
         testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {700, 350, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {700, 400, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {700, 450, 50, 50});
+        testRect(box->calcDrawBody(0, viewport), {300, 350, 50, 50});
+        testRect(box->calcDrawBody(0.5, viewport), {300, 400, 50, 50});
+        testRect(box->calcDrawBody(1.0, viewport), {300, 450, 50, 50});
 
         viewport.setZoom(0.27);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 550, 50, 50});
         testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {554, 459, 14, 14});
-        testRect(box->calcDrawBody(0.5, viewport), {554, 473, 14, 14});
-        testRect(box->calcDrawBody(1.0, viewport), {554, 486, 14, 14});
+        testRect(box->calcDrawBody(0, viewport), {445, 459, 14, 14});
+        testRect(box->calcDrawBody(0.5, viewport), {445, 472, 14, 14});
+        testRect(box->calcDrawBody(1.0, viewport), {445, 486, 14, 14});
     }
 }

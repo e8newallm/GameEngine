@@ -32,8 +32,8 @@ class View
 
         void moveDelta(SDL_Point newPosition)
         {
-            center.x -= newPosition.x/zoom;
-            center.y -= newPosition.y/zoom;
+            center.x += newPosition.x/zoom;
+            center.y += newPosition.y/zoom;
             calcWindow();
         }
 
@@ -51,7 +51,6 @@ class View
             win.h = resolution.y/zoom;
             win.x = center.x - resolution.x/zoom/2.0f;
             win.y = center.y - resolution.x/zoom/2.0f;
-            std::cout << win.x << ", " << win.y << " - " << win.w << ", " << win.h << "\r\n";
             return win;
         }
 
