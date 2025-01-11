@@ -1,14 +1,14 @@
-#include <SDL_events.h>
+#include <SDL3/SDL.h>
 
 #include "keystate.h"
 #include "logging.h"
 
- std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit()
+ std::array<SDL_EventType, SDL_SCANCODE_COUNT> keyStateInit()
  {
-    std::array<SDL_EventType, SDL_NUM_SCANCODES> init;
-    for(int i = 0; i < SDL_NUM_SCANCODES; i++)
+    std::array<SDL_EventType, SDL_SCANCODE_COUNT> init;
+    for(int i = 0; i < SDL_SCANCODE_COUNT; i++)
     {
-        init[i] = SDL_KEYUP;
+        init[i] = SDL_EVENT_KEY_UP;
     }
     return init;
  }
@@ -20,15 +20,15 @@ void KeyState::update()
     while(1)
     {
         SDL_Event event;
-        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYUP);
+        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP);
         if(count <= 0) break;
 
         switch (event.type)
         {
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP:
             {
-                updateKey(event.key.keysym.scancode, event.type);
+                updateKey(event.key.scancode, event.type);
                 break;
             }
             default:
@@ -41,7 +41,7 @@ void KeyState::update()
 
 void KeyState::updateKey(SDL_Scancode key, SDL_EventType keyEvent)
 {
-    if(keyEvent == SDL_KEYUP || keyEvent == SDL_KEYDOWN)
+    if(keyEvent == SDL_EVENT_KEY_UP || keyEvent == SDL_EVENT_KEY_DOWN)
         keys[key] = keyEvent;
 }
 
@@ -57,10 +57,10 @@ SDL_EventType KeyState::key(SDL_Scancode key)
 
 bool KeyState::keyPressed(SDL_Scancode key)
 {
-    return keys[key] == SDL_KEYDOWN && keysPrev[key] == SDL_KEYUP;
+    return keys[key] == SDL_EVENT_KEY_DOWN && keysPrev[key] == SDL_EVENT_KEY_UP;
 }
 
 bool KeyState::keyReleased(SDL_Scancode key)
 {
-    return keys[key] == SDL_KEYUP && keysPrev[key] == SDL_KEYDOWN;
+    return keys[key] == SDL_EVENT_KEY_UP && keysPrev[key] == SDL_EVENT_KEY_DOWN;
 }

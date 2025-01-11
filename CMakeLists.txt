@@ -21,5 +21,8 @@ set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 find_package(Catch2 3 REQUIRED)
 
+find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+find_package(SDL3_image REQUIRED)
+
 add_subdirectory(src)
 add_subdirectory(test)

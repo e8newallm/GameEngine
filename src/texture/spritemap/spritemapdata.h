@@ -8,8 +8,7 @@
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL3/SDL.h>
 
 #include "tools/packager/packager.h"
 
@@ -17,7 +16,7 @@ struct Sprite
 {
     SDL_Texture* texture;
     std::string textureName;
-    SDL_Rect position;
+    SDL_FRect position;
 };
 
 struct Animation

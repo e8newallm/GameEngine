@@ -1,6 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_image.h>
+#include <SDL3/SDL.h>
 
 #include "logging.h"
 #include "texture.h"
@@ -13,14 +11,16 @@ Texture::Texture() :
 
 Texture::Texture(const std::string& name) :
     texture{Texture::get(name)},
-    texturePosition{0, 0, 0, 0}
+    texturePosition{0, 0, (float)texture->w, (float)texture->h}
 {
-    SDL_QueryTexture(texture, NULL, NULL, &texturePosition.w, &texturePosition.h);
+
 }
 
 void Texture::draw(World* world, SDL_Rect* bodyPos)
 {
-    SDL_RenderCopyEx(world->getRend(), texture, &texturePosition, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+    SDL_FRect bPos;
+    SDL_RectToFRect(bodyPos, &bPos);
+    SDL_RenderTexture(world->getRend(), texture, &texturePosition, &bPos);
 }
 
 

@@ -1,7 +1,7 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#include <SDL2/SDL_rect.h>
+#include <SDL3/SDL.h>
 #include <iostream>
 
 class View

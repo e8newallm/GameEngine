@@ -1,13 +1,12 @@
 #ifndef KEYSTATE_H
 #define KEYSTATE_H
 
-#include <SDL2/SDL_scancode.h>
-#include <SDL2/SDL_events.h>
+#include <SDL3/SDL.h>
 
 #include <array>
 
 
-std::array<SDL_EventType, SDL_NUM_SCANCODES> keyStateInit();
+std::array<SDL_EventType, SDL_SCANCODE_COUNT> keyStateInit();
 
 class KeyState
 {
@@ -21,8 +20,8 @@ class KeyState
         static bool keyReleased(SDL_Scancode key);
         
     private:
-        static inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keys = keyStateInit();
-        static inline std::array<SDL_EventType, SDL_NUM_SCANCODES> keysPrev = keyStateInit();
+        static inline std::array<SDL_EventType, SDL_SCANCODE_COUNT> keys = keyStateInit();
+        static inline std::array<SDL_EventType, SDL_SCANCODE_COUNT> keysPrev = keyStateInit();
 
         KeyState() = delete;
         KeyState(const KeyState&) = delete;
@@ -30,4 +29,4 @@ class KeyState
 };
 #endif
 
-/*keys(SDL_NUM_SCANCODES, SDL_KEYUP)*/
+/*keys(SDL_SCANCODE_COUNT, SDL_EVENT_KEY_UP)*/

@@ -8,12 +8,13 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+
 #include "spritemapdata.h"
 #include "SpriteMapSchema.h"
 #include "geerror.h"
-
 #include "texture.h"
-
 #include "tools/packager/packager.h"
 
 SpriteMapData::SpriteMapData() :
@@ -74,8 +75,8 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
                 if(package)
                 {
                     std::vector<uint8_t> data = package->getFile(value.GetString());
-                    SDL_RWops* dataBuffer = SDL_RWFromMem(data.data(), data.size());
-                    surface = IMG_Load_RW(dataBuffer, 1);
+                    SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
+                    surface = IMG_Load_IO(dataBuffer, 1);
                 }
                 else
                 {
@@ -98,8 +99,8 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
             if(package)
             {
                 std::vector<uint8_t> data = package->getFile(config["Textures"].GetString());
-                SDL_RWops* dataBuffer = SDL_RWFromMem(data.data(), data.size());
-                surface = IMG_Load_RW(dataBuffer, 1);
+                SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
+                surface = IMG_Load_IO(dataBuffer, 1);
             }
             else
             {
@@ -129,10 +130,10 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
                                     sprite.FindMember("name")->value.GetString() + ") referencing a texture not named in the JSON");
         }
 
-        newEntry.position = { sprite.FindMember("x")->value.GetInt()
-                             , sprite.FindMember("y")->value.GetInt()
-                             , sprite.FindMember("height")->value.GetInt()
-                             , sprite.FindMember("width")->value.GetInt() };
+        newEntry.position = { sprite.FindMember("x")->value.GetFloat()
+                             , sprite.FindMember("y")->value.GetFloat()
+                             , sprite.FindMember("height")->value.GetFloat()
+                             , sprite.FindMember("width")->value.GetFloat() };
         newEntry.texture = Texture::get(sprite.FindMember("texture")->value.GetString());
         newEntry.textureName = sprite.FindMember("texture")->value.GetString();
         sprites.insert(std::make_pair(sprite.FindMember("name")->value.GetString(), newEntry));

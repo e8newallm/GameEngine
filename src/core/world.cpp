@@ -1,5 +1,4 @@
-#include <SDL_mutex.h>
-#include <SDL_stdinc.h>
+#include <SDL3/SDL.h>
 #include <cstdint>
 #include <iostream>
 

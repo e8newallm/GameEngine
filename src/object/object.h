@@ -1,8 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL3/SDL.h>
 
 #include "texture_base.h"
 #include "world.h"

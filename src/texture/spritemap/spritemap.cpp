@@ -104,5 +104,9 @@ void SpriteMap::update(double deltaT)
 void SpriteMap::draw(World* world, SDL_Rect* bodyPos)
 {
     if(currentSprite != nullptr)
-        SDL_RenderCopyEx(world->getRend(), currentSprite->texture, &currentSprite->position, bodyPos, 0.0, NULL, SDL_FLIP_NONE);
+    {
+        SDL_FRect bPos;
+        SDL_RectToFRect(bodyPos, &bPos);
+        SDL_RenderTexture(world->getRend(), currentSprite->texture, &currentSprite->position, &bPos);
+    }
 }

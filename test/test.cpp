@@ -1,7 +1,5 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_thread.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 #include <cstdlib>
 #include <ios>
@@ -92,9 +90,8 @@ TEST_CASE("Logging", "[base][logging]")
 
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
-    REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
+    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0);
+    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
 
     SECTION("Schema sanity check")
     {
@@ -178,34 +175,35 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
 
 TEST_CASE("KeyState testing", "[base]")
 {
-    KeyState::updateKey(SDL_SCANCODE_1, SDL_KEYDOWN);
-    KeyState::updateKey(SDL_SCANCODE_2, SDL_KEYDOWN);
-    KeyState::updateKey(SDL_SCANCODE_5, SDL_KEYDOWN);
-    KeyState::updateKey(SDL_SCANCODE_A, SDL_KEYDOWN);
+    KeyState::updateKey(SDL_SCANCODE_1, SDL_EVENT_KEY_DOWN);
+    KeyState::updateKey(SDL_SCANCODE_2, SDL_EVENT_KEY_DOWN);
+    KeyState::updateKey(SDL_SCANCODE_5, SDL_EVENT_KEY_DOWN);
+    KeyState::updateKey(SDL_SCANCODE_A, SDL_EVENT_KEY_DOWN);
 
-    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_KEYDOWN);
-    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_KEYDOWN);
-    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_KEYDOWN);
-    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_EVENT_KEY_DOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_EVENT_KEY_DOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_EVENT_KEY_DOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_EVENT_KEY_DOWN);
 
-    KeyState::updateKey(SDL_SCANCODE_5, SDL_KEYUP);
+    KeyState::updateKey(SDL_SCANCODE_5, SDL_EVENT_KEY_UP);
 
-    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_KEYDOWN);
-    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_KEYDOWN);
-    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_KEYUP);
-    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_KEYDOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_1) == SDL_EVENT_KEY_DOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_2) == SDL_EVENT_KEY_DOWN);
+    REQUIRE(KeyState::key(SDL_SCANCODE_5) == SDL_EVENT_KEY_UP);
+    REQUIRE(KeyState::key(SDL_SCANCODE_A) == SDL_EVENT_KEY_DOWN);
 }
 
 TEST_CASE("MouseState testing", "[base]")
 {
 
     MouseState::updateButton({
-        SDL_MOUSEBUTTONDOWN,
+        SDL_EVENT_MOUSE_BUTTON_DOWN,
+        0,
         0,
         0,
         0,
         SDL_BUTTON_LEFT,
-        SDL_PRESSED,
+        true,
         1,
         0,
         123,
@@ -213,7 +211,7 @@ TEST_CASE("MouseState testing", "[base]")
     });
 
     MouseState::updateMove({
-        SDL_MOUSEMOTION,
+        SDL_EVENT_MOUSE_MOTION,
         0,
         0,
         0,
@@ -221,19 +219,19 @@ TEST_CASE("MouseState testing", "[base]")
         200,
         400,
         20,
+        40,
         40
     });
 
     MouseState::updateWheel({
-        SDL_MOUSEWHEEL,
+        SDL_EVENT_MOUSE_WHEEL,
         0,
         0,
         0,
         5,
         10,
-        SDL_MOUSEWHEEL_FLIPPED,
         5.1,
-        10.2,
+        SDL_MOUSEWHEEL_FLIPPED,
         0,
         0
     });
@@ -254,12 +252,13 @@ TEST_CASE("MouseState testing", "[base]")
     MouseState::reset();
 
     MouseState::updateButton({
-        SDL_MOUSEBUTTONUP,
+        SDL_EVENT_MOUSE_BUTTON_UP,
+        0,
         0,
         0,
         0,
         SDL_BUTTON_LEFT,
-        SDL_RELEASED,
+        false,
         0,
         0,
         123,
@@ -287,9 +286,8 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 
 TEST_CASE("Basic functionality", "[physics]")
 {
-    REQUIRE(SDL_Init(SDL_INIT_EVERYTHING) == 0);
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
-    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, -1, render_flags);
+    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0);
+    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);

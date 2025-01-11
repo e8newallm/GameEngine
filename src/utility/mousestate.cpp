@@ -1,4 +1,4 @@
-#include <SDL_events.h>
+#include <SDL3/SDL.h>
 
 #include "mousestate.h"
 #include "logging.h"
@@ -21,23 +21,23 @@ void MouseState::update()
     while(1)
     {
         SDL_Event event;
-        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL);
+        int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_WHEEL);
         if(count <= 0) break;
 
         switch (event.type)
         {
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 updateButton(event.button);
                 break;
             }
-            case SDL_MOUSEMOTION:
+            case SDL_EVENT_MOUSE_MOTION:
             {
                 updateMove(event.motion);
                 break;
             }
-            case SDL_MOUSEWHEEL:
+            case SDL_EVENT_MOUSE_WHEEL:
             {
                 updateWheel(event.wheel);
                 break;
@@ -53,7 +53,7 @@ void MouseState::update()
 void MouseState::updateButton(SDL_MouseButtonEvent buttonPress)
 {
     mouseButton[buttonPress.button] = buttonPress;
-    mouseButtonDown[buttonPress.button] = (buttonPress.type == SDL_MOUSEBUTTONDOWN);
+    mouseButtonDown[buttonPress.button] = (buttonPress.type == SDL_EVENT_MOUSE_BUTTON_DOWN);
 }
 
 void MouseState::updateMove(SDL_MouseMotionEvent mouseMove)

@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <vector>
 #include <array>
 
@@ -46,7 +46,7 @@ class World
         bool phyRunning;
 
         Timer<> lastPhysics;
-        SDL_mutex* usageLock = SDL_CreateMutex();
+        SDL_Mutex* usageLock = SDL_CreateMutex();
         double gravity = 0.00005f;
         const double pps = 60.0f;
         std::vector<PhysicsObject*> phyObjects;

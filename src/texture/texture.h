@@ -1,9 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_render.h>
+#include <SDL3/SDL.h>
 
 #include "texture_base.h"
 #include "datastore.h"
@@ -19,7 +17,7 @@ class Texture : public Texture_base, public DataStore<SDL_Texture, Texture>
 
     protected:
         SDL_Texture* texture;
-        SDL_Rect texturePosition;
+        SDL_FRect texturePosition;
 };
 
 template <> Store<SDL_Texture>::~Store();

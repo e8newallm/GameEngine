@@ -1,7 +1,7 @@
 #ifndef TEXTURE_BASE_H
 #define TEXTURE_BASE_H
 
-#include <SDL2/SDL_render.h>
+#include <SDL3/SDL.h>
 
 #include "world.h"
 

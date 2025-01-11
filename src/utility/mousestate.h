@@ -1,9 +1,7 @@
 #ifndef MOUSESTATE_H
 #define MOUSESTATE_H
 
-#include <SDL2/SDL_scancode.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_mouse.h>
+#include <SDL3/SDL.h>
 
 #include <array>
 
@@ -42,7 +40,7 @@ class MouseState
             { return mouseButton[button].clicks == 1; };
 
         static SDL_Point clickPosition(Uint8 button)
-            { return {mouseButton[button].x, mouseButton[button].y}; };
+            { return {(int)mouseButton[button].x, (int)mouseButton[button].y}; };
 
     private:
         static inline Uint32 xMouse, yMouse;

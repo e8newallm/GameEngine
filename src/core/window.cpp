@@ -1,4 +1,4 @@
-#include <SDL_render.h>
+#include <SDL3/SDL.h>
 #include <iostream>
 
 #include "window.h"
@@ -9,24 +9,18 @@ double FPS = 0;
 Window::Window(const std::string& name, int width, int height, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
-                            SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED,
-                            width, height, flags);
+                            width, height,  SDL_WINDOW_VULKAN | flags);
 
-    rend = SDL_CreateRenderer(win, -1,
-                              SDL_RENDERER_ACCELERATED);
+    rend = SDL_CreateRenderer(win, NULL);
 
 }
 
 Window::Window(const std::string& name, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
-                            SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED,
-                            0, 0, SDL_WINDOW_FULLSCREEN | flags);
+                            0, 0, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_VULKAN | flags);
 
-    rend = SDL_CreateRenderer(win, -1,
-                              SDL_RENDERER_ACCELERATED);
+    rend = SDL_CreateRenderer(win, NULL);
 }
 
 void Window::render(World& world)

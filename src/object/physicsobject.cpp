@@ -59,7 +59,7 @@ bool PhysicsObject::onGround(World& world)
     std::vector<PhysicsObject*> phyObjects = world.getphyObjects();
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        if(SDL_HasIntersection(&groundCheck, phyObjects[i]->getBody()))
+        if(SDL_HasRectIntersection(&groundCheck, phyObjects[i]->getBody()))
         {
             return true;
         }
@@ -96,7 +96,7 @@ void PhysicsObject::update(double deltaTime, World& world)
     nextBody.x += displacement.x;
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        if(SDL_HasIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
+        if(SDL_HasRectIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
         {
             collision(&phyObjects[i]->nextBody);
         }
@@ -105,7 +105,7 @@ void PhysicsObject::update(double deltaTime, World& world)
     nextBody.y += displacement.y;
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        if(SDL_HasIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
+        if(SDL_HasRectIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
         {
             collision(&phyObjects[i]->nextBody);
         }
@@ -115,7 +115,7 @@ void PhysicsObject::update(double deltaTime, World& world)
 void PhysicsObject::collision(SDL_Rect* other)
 {
     SDL_Rect collisionArea;
-    if(SDL_IntersectRect(&nextBody, other, &collisionArea))
+    if(SDL_GetRectIntersection(&nextBody, other, &collisionArea))
     {
         //std::cout << "collision!\r\n";
         if(collisionArea.h > collisionArea.w)
