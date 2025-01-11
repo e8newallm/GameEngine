@@ -19,7 +19,6 @@ class View
         void setZoom(double zoom)
         {
             this->zoom = zoom;
-            std::cout << "new zoom: " << zoom << "\r\n";
             calcWindow();
         };
 
@@ -46,7 +45,7 @@ class View
 
         SDL_Rect calcWindow()
         {
-            std::cout << "center:" << center.x << ", " << center.y << " resolution: " << resolution.x << ", " << resolution.y << " zoom: " << zoom << "\r\n";
+            //std::cout << "center:" << center.x << ", " << center.y << " resolution: " << resolution.x << ", " << resolution.y << " zoom: " << zoom << "\r\n";
             win.w = resolution.x/zoom;
             win.h = resolution.y/zoom;
             win.x = center.x - resolution.x/zoom/2.0f;

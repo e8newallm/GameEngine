@@ -388,7 +388,6 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->calcDrawBody(1.0, viewport), {500, 600, 50, 50});
 
         viewport.moveDelta({200, 150});
-        std::cout << "VIEWPORT: " << viewport.window()->x << "\r\n";
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 550, 50, 50});
         testRect(box->getInterBody(1.0), {500, 600, 50, 50});

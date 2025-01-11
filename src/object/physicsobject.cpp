@@ -69,7 +69,6 @@ bool PhysicsObject::onGround(World& world)
 
 void PhysicsObject::draw(World* world, double percent, double deltaT)
 {
-    //std::cout << "percent: " << percent << "\r\n";
     SDL_Rect body = calcDrawBody(percent, world->getView());
     Object::draw(world, &body, deltaT);
 }
