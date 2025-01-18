@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <cstdint>
 #include <iostream>
+#include <mutex>
 
 #include "world.h"
 #include "physicsobject.h"
@@ -15,7 +16,7 @@ World::World(SDL_Renderer* rend, View viewport) :
     , rend(rend)
     , phyRunning(false)
     , lastPhysics()
-    , usageLock(SDL_CreateMutex())
+    , usageLock()
 {
 
 }
@@ -34,12 +35,11 @@ World::~World()
     {
         delete obj;
     }
-    SDL_DestroyMutex(usageLock);
 }
 
 void World::draw(double deltaTime)
 {
-    SDL_LockMutex(usageLock);
+    std::lock_guard<std::mutex> lock(usageLock);
 
     double percent = lastPhysics.getElapsed() / (1000.0f / pps);
 
@@ -63,17 +63,15 @@ void World::draw(double deltaTime)
             image->draw(this);
         }
     }
-    SDL_UnlockMutex(usageLock);
 }
 
 void World::update()
 {
-    SDL_LockMutex(usageLock);
+    std::lock_guard<std::mutex> lock(usageLock);
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
         phyObjects[i]->update(pps, *this);
     }
-    SDL_UnlockMutex(usageLock);
 }
 
 void World::startPhysics()
@@ -106,4 +104,14 @@ void World::addImage(Image* newImage)
 void World::addPhyObj(PhysicsObject* obj)
 {
     phyObjects.push_back(obj);
+}
+
+View& World::getView()
+{
+    return viewport;
+}
+
+SDL_Renderer* World::getRend()
+{
+    return rend;
 }

@@ -2,8 +2,10 @@
 #define WORLD_H
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
 #include <vector>
 #include <array>
+#include <mutex>
 
 #include "timer.h"
 #include "view.h"
@@ -33,8 +35,8 @@ class World
 
         const std::vector<PhysicsObject*>& getphyObjects() { return phyObjects; };
 
-        View& getView() { return viewport; };
-        SDL_Renderer* getRend() { return rend; };
+        View& getView();
+        SDL_Renderer* getRend();
         
     private:
         View viewport;
@@ -46,7 +48,7 @@ class World
         bool phyRunning;
 
         Timer<> lastPhysics;
-        SDL_Mutex* usageLock = SDL_CreateMutex();
+        std::mutex usageLock;
         double gravity = 0.00005f;
         const double pps = 60.0f;
         std::vector<PhysicsObject*> phyObjects;

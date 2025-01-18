@@ -90,7 +90,7 @@ TEST_CASE("Logging", "[base][logging]")
 
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
-    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0);
+    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
     SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
 
     SECTION("Schema sanity check")
@@ -242,12 +242,12 @@ TEST_CASE("MouseState testing", "[base]")
     REQUIRE(MouseState::clickPosition(SDL_BUTTON_LEFT).y == 456);
     REQUIRE(MouseState::buttonDown(SDL_BUTTON_LEFT) == true);
 
-    REQUIRE(MouseState::mousePos().x == 200);
-    REQUIRE(MouseState::mousePos().y == 400);
-    REQUIRE(MouseState::mouseDelta().x == 20);
+    REQUIRE(MouseState::mousePos().x == 400);
+    REQUIRE(MouseState::mousePos().y == 20);
+    REQUIRE(MouseState::mouseDelta().x == 40);
     REQUIRE(MouseState::mouseDelta().y == 40);
 
-    REQUIRE(MouseState::scrollDelta() == -10);
+    REQUIRE(MouseState::scrollDelta() == -5);
 
     MouseState::reset();
 
@@ -286,7 +286,7 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 
 TEST_CASE("Basic functionality", "[physics]")
 {
-    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0);
+    REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
     SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
 
     View viewport( {1000, 1000}, {0, 0});

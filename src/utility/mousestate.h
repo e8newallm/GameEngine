@@ -21,25 +21,25 @@ class MouseState
 
         static void reset();
 
-        static mousePosition mousePos()
+        static inline mousePosition mousePos()
             { return {xMouse, yMouse}; };
 
-        static SDL_Point mouseDelta()
+        static inline SDL_Point mouseDelta()
             { return {xDeltaMouse, yDeltaMouse}; };
 
-        static Sint32 scrollDelta()
+        static inline Sint32 scrollDelta()
             { return scrollAmount; };
 
-        static bool buttonDown(Uint8 button)
+        static inline bool buttonDown(Uint8 button)
             { return mouseButtonDown[button]; };
 
-        static bool doubleClicked(Uint8 button)
+        static inline bool doubleClicked(Uint8 button)
             { return mouseButton[button].clicks == 2; };
 
-        static bool clicked(Uint8 button)
+        static inline bool clicked(Uint8 button)
             { return mouseButton[button].clicks == 1; };
 
-        static SDL_Point clickPosition(Uint8 button)
+        static inline SDL_Point clickPosition(Uint8 button)
             { return {(int)mouseButton[button].x, (int)mouseButton[button].y}; };
 
     private:
