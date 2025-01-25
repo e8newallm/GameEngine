@@ -91,7 +91,7 @@ TEST_CASE("Logging", "[base][logging]")
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
+    SDL_GPUDevice* gpu = SDL_CreateRenderer(nullptr, NULL);
 
     SECTION("Schema sanity check")
     {
@@ -287,7 +287,7 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 TEST_CASE("Basic functionality", "[physics]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    SDL_Renderer* rend = SDL_CreateRenderer(nullptr, NULL);
+    SDL_GPUDevice* gpu = SDL_CreateRenderer(nullptr, NULL);
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);

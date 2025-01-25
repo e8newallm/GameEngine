@@ -2,7 +2,7 @@
 #include "spritemapdata.h"
 #include "tools/packager/packager.h"
 
-SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
+SpriteMap::SpriteMap(SDL_GPUDevice* gpu, const char* spriteConfig) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
@@ -12,7 +12,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     if(!exists(storeName))
     {
         data = new SpriteMapData();
-        data->loadFromFile(rend, spriteConfig);
+        data->loadFromFile(gpu, spriteConfig);
         add(data, storeName);
     }
     else
@@ -21,7 +21,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, const char* spriteConfig) :
     }
 }
 
-SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* path) :
+SpriteMap::SpriteMap(SDL_GPUDevice* gpu, PackageManager* package, const char* path) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
@@ -30,7 +30,7 @@ SpriteMap::SpriteMap(SDL_Renderer* rend, PackageManager* package, const char* pa
     if(!exists(storeName))
     {
         data = new SpriteMapData();
-        data->loadFromPackage(rend, package, path);
+        data->loadFromPackage(gpu, package, path);
         add(data, storeName);
     }
     else
@@ -107,6 +107,6 @@ void SpriteMap::draw(World* world, SDL_Rect* bodyPos)
     {
         SDL_FRect bPos;
         SDL_RectToFRect(bodyPos, &bPos);
-        SDL_RenderTexture(world->getRend(), currentSprite->texture, &currentSprite->position, &bPos);
+        //SDL_RenderTexture(world->getGPU(), currentSprite->texture, &currentSprite->position, &bPos);
     }
 }

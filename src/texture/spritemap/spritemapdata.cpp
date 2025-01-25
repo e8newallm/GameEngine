@@ -24,7 +24,7 @@ SpriteMapData::SpriteMapData() :
 {
 }
 
-void SpriteMapData::loadFromFile(SDL_Renderer* rend, const char* configLocation)
+void SpriteMapData::loadFromFile(SDL_GPUDevice* gpu, const char* configLocation)
 {
     std::ifstream file(configLocation);
 
@@ -34,17 +34,17 @@ void SpriteMapData::loadFromFile(SDL_Renderer* rend, const char* configLocation)
     }
     std::ostringstream ss;
     ss << file.rdbuf();
-    loadFromString(rend, ss.str().c_str(), configLocation);
+    loadFromString(gpu, ss.str().c_str(), configLocation);
 }
 
-void SpriteMapData::loadFromPackage(SDL_Renderer* rend, PackageManager* package, const char* path)
+void SpriteMapData::loadFromPackage(SDL_GPUDevice* gpu, PackageManager* package, const char* path)
 {
     this->package = package;
     std::vector<uint8_t> data = package->getFile(path);
-    loadFromString(rend, std::string(data.begin(), data.end()).c_str(), (package->getPackageName() + ":" + path).c_str());
+    loadFromString(gpu, std::string(data.begin(), data.end()).c_str(), (package->getPackageName() + ":" + path).c_str());
 }
 
-void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig, const char* source)
+void SpriteMapData::loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig, const char* source)
 {
     rapidjson::Document schema;
     schema.Parse(SpriteMapSchema);
@@ -86,7 +86,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
                 {
                     throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
                 }
-                Texture::add(SDL_CreateTextureFromSurface(rend, surface), value.GetString());
+                //Texture::add(SDL_CreateTextureFromSurface(gpu, surface), value.GetString());
             }
             textures.insert({value.GetString(), Texture::get(value.GetString())});
         }
@@ -110,7 +110,7 @@ void SpriteMapData::loadFromString(SDL_Renderer* rend, const char* spriteConfig,
             {
                 throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
             }
-            Texture::add(SDL_CreateTextureFromSurface(rend, surface), config["Textures"].GetString());
+            //Texture::add(SDL_CreateTextureFromSurface(gpu, surface), config["Textures"].GetString());
         }
         textures.insert({config["Textures"].GetString(), Texture::get(config["Textures"].GetString())});
     }
@@ -193,7 +193,7 @@ std::string SpriteMapData::serialise()
     }
 
     rapidjson::Value texArray(rapidjson::kArrayType);
-    for (std::map<std::string, SDL_Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+    for (std::map<std::string, SDL_GPUTexture*>::iterator it = textures.begin(); it != textures.end(); ++it)
     {
         texArray.PushBack(rapidjson::Value(it->first.c_str(), allocator), allocator);
     }

@@ -1,6 +1,7 @@
 #ifndef SPRITEMAPDATA_H
 #define SPRITEMAPDATA_H
 
+#include <SDL3/SDL_gpu.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -14,7 +15,7 @@
 
 struct Sprite
 {
-    SDL_Texture* texture;
+    SDL_GPUTexture* texture;
     std::string textureName;
     SDL_FRect position;
 };
@@ -36,15 +37,15 @@ class SpriteMapData
     public:
         SpriteMapData();
 
-        void loadFromFile(SDL_Renderer* rend, const char* configLocation);
-        void loadFromPackage(SDL_Renderer* rend, PackageManager* package, const char* spriteConfig);
-        void loadFromString(SDL_Renderer* rend, const char* spriteConfig, const char* source = "string config");
+        void loadFromFile(SDL_GPUDevice* gpu, const char* configLocation);
+        void loadFromPackage(SDL_GPUDevice* gpu, PackageManager* package, const char* spriteConfig);
+        void loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig, const char* source = "string config");
         void save(const char* spriteConfig);
         std::string serialise();
 
         PackageManager* package;
 
-        std::map<std::string, SDL_Texture*> textures;
+        std::map<std::string, SDL_GPUTexture*> textures;
         std::map<std::string, Sprite> sprites;
         std::map<std::string, Animation> animations;
 };

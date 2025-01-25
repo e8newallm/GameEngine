@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 #include <iostream>
 
 #include "window.h"
@@ -10,17 +11,29 @@ Window::Window(const std::string& name, int width, int height, int flags)
 {
     win = SDL_CreateWindow(name.c_str(),
                             width, height,  SDL_WINDOW_VULKAN | flags);
+    if (win == NULL)
+	{
+		SDL_Log("CreateWindow failed: %s", SDL_GetError());
+	}
+    gpu = SDL_CreateGPUDevice(
+		SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
+		false,
+		NULL);
+    if (gpu == NULL)
+	{
+		SDL_Log("GPUCreateDevice failed");
+	}
 
-    rend = SDL_CreateRenderer(win, NULL);
+    if (!SDL_ClaimWindowForGPUDevice(gpu, win))
+	{
+		SDL_Log("GPUClaimWindow failed");
+	}
 
 }
 
 Window::Window(const std::string& name, int flags)
 {
-    win = SDL_CreateWindow(name.c_str(),
-                            0, 0, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_VULKAN | flags);
-
-    rend = SDL_CreateRenderer(win, NULL);
+    Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags);
 }
 
 void Window::render(World& world)
@@ -33,14 +46,14 @@ void Window::render(World& world)
         FPS = 1000.0f / lastRender.getElapsed();
         lastRender.update();
 
-        SDL_RenderClear(rend);
+        ///SDL_RenderClear(rend);
         world.draw(deltaTime);
-        SDL_RenderPresent(rend);
+        //SDL_RenderPresent(rend);
     }
 }
 
 Window::~Window()
 {
-    SDL_DestroyRenderer(rend);
+    //SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
 }

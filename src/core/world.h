@@ -16,7 +16,7 @@ class PhysicsObject;
 class World
 {
     public:
-        World(SDL_Renderer* rend, View viewport);
+        World(SDL_GPUDevice* gpu, View viewport);
         ~World();
         void draw(double deltaTime);
         void update();
@@ -36,11 +36,11 @@ class World
         const std::vector<PhysicsObject*>& getphyObjects() { return phyObjects; };
 
         View& getView();
-        SDL_Renderer* getRend();
-        
+        SDL_GPUDevice* getGPU();
+
     private:
         View viewport;
-        SDL_Renderer* rend;
+        SDL_GPUDevice* gpu;
 
         std::array<std::vector<Image*>, UINT8_MAX+1> images;
 

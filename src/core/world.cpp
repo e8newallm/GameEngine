@@ -11,9 +11,9 @@
 
 double PPS = 0;
 
-World::World(SDL_Renderer* rend, View viewport) :
+World::World(SDL_GPUDevice* gpu, View viewport) :
     viewport(viewport)
-    , rend(rend)
+    , gpu(gpu)
     , phyRunning(false)
     , lastPhysics()
     , usageLock()
@@ -111,7 +111,7 @@ View& World::getView()
     return viewport;
 }
 
-SDL_Renderer* World::getRend()
+SDL_GPUDevice* World::getGPU()
 {
-    return rend;
+    return gpu;
 }

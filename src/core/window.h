@@ -18,12 +18,13 @@ class Window
         Window(const std::string& name, int flags);
         ~Window();
 
-        SDL_Renderer* getRend() const { return rend; };
+        SDL_GPUDevice* getGPU() const { return gpu; };
+        SDL_Window* getWin() const { return win; };
         void render(World& world);
         
     private:
         SDL_Window* win;
-        SDL_Renderer* rend;
+        SDL_GPUDevice* gpu;
         double fps = 165.0f;
         Timer<> lastRender;
 };
