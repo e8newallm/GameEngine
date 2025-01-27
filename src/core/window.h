@@ -20,11 +20,16 @@ class Window
 
         SDL_GPUDevice* getGPU() const { return gpu; };
         SDL_Window* getWin() const { return win; };
+
+        const SDL_Point* getResolution() const;
+
         void render(World& world);
-        
+
     private:
         SDL_Window* win;
         SDL_GPUDevice* gpu;
+        SDL_Point reso;
+
         double fps = 165.0f;
         Timer<> lastRender;
 };

@@ -28,12 +28,18 @@ Window::Window(const std::string& name, int width, int height, int flags)
 	{
 		SDL_Log("GPUClaimWindow failed");
 	}
+    reso = {width, height};
 
 }
 
 Window::Window(const std::string& name, int flags)
 {
     Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags);
+}
+
+const SDL_Point* Window::getResolution() const
+{
+    return &reso;
 }
 
 void Window::render(World& world)
