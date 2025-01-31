@@ -18,7 +18,7 @@ class World
     public:
         World(SDL_GPUDevice* gpu, View viewport);
         ~World();
-        void draw(double deltaTime);
+        void draw(double deltaTime, SDL_Window* win);
         void update();
         void addImage(Image* newImage);
         void addPhyObj(PhysicsObject* obj);
@@ -37,6 +37,12 @@ class World
 
         View& getView();
         SDL_GPUDevice* getGPU();
+
+    protected:
+        struct ShaderWorldData
+        {
+            SDL_Rect camera;
+        };
 
     private:
         View viewport;

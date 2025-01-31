@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "physicsobject.h"
+#include "graphics.h"
 #include "logging.h"
 
 PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
@@ -20,10 +21,10 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
 SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
 {
     SDL_Rect interBody = getInterBody(percent);
-    interBody.x = (interBody.x - viewport.window()->x) * viewport.getZoom();
-    interBody.y = (interBody.y - viewport.window()->y) * viewport.getZoom();
-    interBody.h = round((double)interBody.h * viewport.getZoom());
-    interBody.w = round((double)interBody.w * viewport.getZoom());
+    //interBody.x = (interBody.x - viewport.window()->x) * viewport.getZoom();
+    //interBody.y = (interBody.y - viewport.window()->y) * viewport.getZoom();
+    //interBody.h = round((double)interBody.h * viewport.getZoom());
+    //interBody.w = round((double)interBody.w * viewport.getZoom());
     return interBody;
 }
 
@@ -67,10 +68,10 @@ bool PhysicsObject::onGround(World& world)
     return false;
 }
 
-void PhysicsObject::draw(World* world, double percent, double deltaT)
+void PhysicsObject::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double percent, double deltaT)
 {
-    SDL_Rect body = calcDrawBody(percent, world->getView());
-    Object::draw(world, &body, deltaT);
+    ShaderObjData body {calcDrawBody(percent, world->getView())};
+    Object::draw(world, cmdbuf, renderPass, body, deltaT);
 }
 
 void PhysicsObject::update(double deltaTime, World& world)

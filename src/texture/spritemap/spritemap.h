@@ -17,7 +17,7 @@ class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap
         explicit SpriteMap(SpriteMapData* spriteData);
 
         virtual void update(double deltaT) override;
-        virtual void draw(World* world, SDL_Rect* bodyPos) override;
+        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData) override;
 
         void setSprite(const std::string& name);
         void setAnimationSprite(const std::string& name);

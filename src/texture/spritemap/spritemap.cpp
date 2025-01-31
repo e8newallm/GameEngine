@@ -101,12 +101,14 @@ void SpriteMap::update(double deltaT)
     }
 }
 
-void SpriteMap::draw(World* world, SDL_Rect* bodyPos)
+void SpriteMap::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData)
 {
     if(currentSprite != nullptr)
     {
-        SDL_FRect bPos;
-        SDL_RectToFRect(bodyPos, &bPos);
         //SDL_RenderTexture(world->getGPU(), currentSprite->texture, &currentSprite->position, &bPos);
+        SDL_PushGPUVertexUniformData(cmdbuf, 2, &objData, sizeof(ShaderObjData));
+        SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
+        SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = currentSprite->texture, .sampler = Sampler::get("default") }, 1);
+        SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
     }
 }

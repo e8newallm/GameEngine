@@ -4,6 +4,7 @@
 
 #include "logging.h"
 #include "texture.h"
+#include "graphics.h"
 
 Texture::Texture() :
     texture{nullptr},
@@ -17,13 +18,15 @@ Texture::Texture(const std::string& name) :
 {
 }
 
-void Texture::draw(World* world, SDL_Rect* bodyPos)
+void Texture::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData)
 {
-    SDL_FRect bPos;
-    SDL_RectToFRect(bodyPos, &bPos);
     //SDL_RenderTexture(world->getGPU(), texture, &texturePosition, &bPos);
-}
 
+    SDL_PushGPUVertexUniformData(cmdbuf, 2, &objData, sizeof(ShaderObjData));
+    SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
+    SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = texture, .sampler = Sampler::get("default") }, 1);
+    SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
+}
 
 template <> Store<SDL_GPUTexture>::~Store()
 {

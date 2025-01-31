@@ -1,6 +1,4 @@
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_video.h>
-#include <iostream>
 
 #include "window.h"
 #include "gamestate.h"
@@ -28,6 +26,14 @@ Window::Window(const std::string& name, int width, int height, int flags)
 	{
 		SDL_Log("GPUClaimWindow failed");
 	}
+
+	SDL_SetGPUSwapchainParameters(
+		gpu,
+		win,
+		SDL_GPU_SWAPCHAINCOMPOSITION_SDR,
+		SDL_GPU_PRESENTMODE_IMMEDIATE
+	);
+
     reso = {width, height};
 
 }
@@ -52,14 +58,12 @@ void Window::render(World& world)
         FPS = 1000.0f / lastRender.getElapsed();
         lastRender.update();
 
-        ///SDL_RenderClear(rend);
-        world.draw(deltaTime);
-        //SDL_RenderPresent(rend);
+        world.draw(deltaTime, getWin());
     }
 }
 
 Window::~Window()
 {
-    //SDL_DestroyRenderer(rend);
+    SDL_DestroyGPUDevice(gpu);
     SDL_DestroyWindow(win);
 }
