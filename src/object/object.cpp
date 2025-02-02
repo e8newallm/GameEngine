@@ -14,15 +14,10 @@ Object::~Object()
     delete tex;
 }
 
-void Object::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double deltaT)
-{
-    draw(world, cmdbuf, renderPass, ShaderObjData{body}, deltaT);
-}
-
-void Object::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData, double deltaT)
+void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
 {
     tex->update(deltaT);
-    tex->draw(world, cmdbuf, renderPass, objData);
+    tex->draw(world, buffer, renderPass);
 
 }
 void Object::update(double deltaTime)

@@ -13,8 +13,9 @@ class Object
         Object() : Object({0, 0, 0, 0}, nullptr) {};
         virtual ~Object();
 
-        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double deltaT = 0);
-        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData, double deltaT);
+        virtual ShaderObjData predraw() = 0;
+
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT = 0);
         virtual void update(double deltaTime);
 
         virtual void move(double x, double y);

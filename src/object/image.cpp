@@ -8,14 +8,21 @@ Image::Image(SDL_Rect body, const std::string& texture) :
 {
 }
 
-
-void Image::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double deltaT)
+ShaderObjData Image::predraw()
 {
-    draw(world, cmdbuf, renderPass, ShaderObjData{body}, deltaT);
+    struct ObjData {
+        SDL_Rect body;
+        SDL_FRect texBody;
+    };
+
+    ObjData* data = (ObjData*)malloc(sizeof(ObjData));
+    data->body = body;
+    data->texBody = tex->getUV();
+    return {data, sizeof(ObjData)};
 }
 
-void Image::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData, double deltaT)
+void Image::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
 {
     tex->update(deltaT);
-    tex->draw(world,cmdbuf, renderPass, objData);
+    tex->draw(world, buffer, renderPass);
 }

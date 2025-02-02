@@ -16,8 +16,9 @@ class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap
         SpriteMap(SDL_GPUDevice* gpu, PackageManager* package, const char* path);
         explicit SpriteMap(SpriteMapData* spriteData);
 
+        virtual SDL_FRect getUV() override;
         virtual void update(double deltaT) override;
-        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData) override;
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
         void setSprite(const std::string& name);
         void setAnimationSprite(const std::string& name);

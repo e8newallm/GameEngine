@@ -16,7 +16,8 @@ class PhysicsObject : public Object
 
         using Object::draw;
         using Object::update;
-        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double percent, double deltaT);
+        ShaderObjData predraw();
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double percent, double deltaT);
         virtual void update(double deltaTime, World& world);
 
         bool detectCollision(World& context);

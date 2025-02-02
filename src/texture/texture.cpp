@@ -18,13 +18,13 @@ Texture::Texture(const std::string& name) :
 {
 }
 
-void Texture::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData)
+void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
 {
     //SDL_RenderTexture(world->getGPU(), texture, &texturePosition, &bPos);
 
-    SDL_PushGPUVertexUniformData(cmdbuf, 2, &objData, sizeof(ShaderObjData));
     SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
     SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = texture, .sampler = Sampler::get("default") }, 1);
+    SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
     SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
 }
 

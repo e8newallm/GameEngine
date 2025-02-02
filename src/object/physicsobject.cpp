@@ -68,10 +68,22 @@ bool PhysicsObject::onGround(World& world)
     return false;
 }
 
-void PhysicsObject::draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, double percent, double deltaT)
+ShaderObjData PhysicsObject::predraw()
 {
-    ShaderObjData body {calcDrawBody(percent, world->getView())};
-    Object::draw(world, cmdbuf, renderPass, body, deltaT);
+    struct ObjData {
+        SDL_Rect body;
+        SDL_FRect texBody;
+    };
+
+    ObjData* data = (ObjData*)malloc(sizeof(ObjData));
+    data->body = body;
+    data->texBody = tex->getUV();
+    return {data, sizeof(ObjData)};
+}
+
+void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double percent, double deltaT)
+{
+    Object::draw(world, buffer, renderPass, deltaT);
 }
 
 void PhysicsObject::update(double deltaTime, World& world)

@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_video.h>
 #include <cstdint>
 #include <iostream>
@@ -9,6 +10,7 @@
 #include "image.h"
 #include "logging.h"
 #include "gamestate.h"
+#include "graphics.h"
 
 double PPS = 0;
 
@@ -53,6 +55,8 @@ void World::draw(double deltaTime, SDL_Window* win)
     if(swapchainTexture == NULL)
         return;
 
+
+
     SDL_GPUColorTargetInfo colorTargetInfo;
     SDL_zero(colorTargetInfo);
     colorTargetInfo.texture = swapchainTexture;
@@ -60,34 +64,133 @@ void World::draw(double deltaTime, SDL_Window* win)
     colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
     colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
-    ShaderWorldData worldData {*getView().window()};
-	SDL_PushGPUVertexUniformData(cmdbuf, 0, &worldData, sizeof(worldData));
-
-    SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, NULL);
+    std::vector<ShaderObjData> data{};
+    std::vector<Uint32> indexes{};
+    Uint32 dataSize = 0;
 
     for(int i = UINT8_MAX; i > 128; i--)
     {
         for(Image* image : images[i])
         {
-            image->draw(this, cmdbuf, renderPass);
+            ShaderObjData newData = image->predraw();
+            indexes.push_back(dataSize);
+            dataSize += newData.size;
+            data.push_back(newData);
         }
     }
 
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
-        phyObjects[i]->draw(this, cmdbuf, renderPass, percent, deltaTime);
+        ShaderObjData newData = phyObjects[i]->predraw();
+        indexes.push_back(dataSize);
+        dataSize += newData.size;
+        data.push_back(newData);
     }
 
     for(int i = 127; i >= 0; i--)
     {
         for(Image* image : images[i])
         {
-            image->draw(this, cmdbuf, renderPass);
+            ShaderObjData newData = image->predraw();
+            indexes.push_back(dataSize);
+            dataSize += newData.size;
+            data.push_back(newData);
+        }
+    }
+
+    //FUTURE FUNCTION
+
+    SDL_GPUTransferBuffer* transferBuffer;
+    SDL_GPUBuffer* objectDataBuffer;
+
+    transferBuffer = SDL_CreateGPUTransferBuffer(
+		gpu,
+		&(SDL_GPUTransferBufferCreateInfo) {
+			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+			.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32)
+		}
+	);
+
+    objectDataBuffer = SDL_CreateGPUBuffer(
+		gpu,
+		&(SDL_GPUBufferCreateInfo) {
+			.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ,
+			.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32)
+		}
+	);
+
+    Uint32* dataPtr = (Uint32*)SDL_MapGPUTransferBuffer(
+        gpu,
+        transferBuffer,
+        true
+	);
+
+    int address = 0;
+    for(Uint32 index : indexes)
+    {
+        dataPtr[address++] = index + indexes.size();
+    }
+
+    for(ShaderObjData objData : data)
+    {
+        SDL_memcpy(&dataPtr[address], objData.data, objData.size);
+        address += objData.size;
+    }
+
+    SDL_UnmapGPUTransferBuffer(gpu, transferBuffer);
+
+    // Upload instance data
+    SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(cmdbuf);
+
+    SDL_UploadToGPUBuffer(
+        copyPass,
+        &(SDL_GPUTransferBufferLocation) {
+            .transfer_buffer = transferBuffer,
+            .offset = 0
+        },
+        &(SDL_GPUBufferRegion) {
+            .buffer = objectDataBuffer,
+            .offset = 0,
+            .size = dataSize + (Uint32)indexes.size() * 4
+        },
+        true
+    );
+
+    SDL_EndGPUCopyPass(copyPass);
+
+    // END OF FUTURE FUNCTION
+
+    SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, NULL);
+
+    ShaderWorldData worldData {*getView().window()};
+	SDL_PushGPUVertexUniformData(cmdbuf, 0, &worldData, sizeof(worldData));
+
+    for(int i = UINT8_MAX; i > 128; i--)
+    {
+        for(Image* image : images[i])
+        {
+            image->draw(this, objectDataBuffer, renderPass);
+        }
+    }
+
+    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    {
+        phyObjects[i]->draw(this, objectDataBuffer, renderPass, percent, deltaTime);
+    }
+
+    for(int i = 127; i >= 0; i--)
+    {
+        for(Image* image : images[i])
+        {
+            image->draw(this, objectDataBuffer, renderPass);
         }
     }
 
     SDL_EndGPURenderPass(renderPass);
     SDL_SubmitGPUCommandBuffer(cmdbuf);
+
+    for(ShaderObjData test : data)
+        free(test.data);
 }
 
 void World::update()

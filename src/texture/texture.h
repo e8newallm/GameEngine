@@ -13,7 +13,7 @@ class Texture : public Texture_base, public DataStore<SDL_GPUTexture, Texture>
         explicit Texture(const std::string& name);
 
         virtual void update(double deltaT) override {(void) deltaT;};
-        virtual void draw(World* world, SDL_GPUCommandBuffer* cmdbuf, SDL_GPURenderPass* renderPass, ShaderObjData objData) override;
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
     protected:
         SDL_GPUTexture* texture;

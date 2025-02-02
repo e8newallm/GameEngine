@@ -10,7 +10,8 @@
 
 struct ShaderObjData
 {
-    SDL_Rect position;
+    void* data;
+    size_t size;
 };
 
 class Sampler : public DataStore<SDL_GPUSampler, Sampler>
