@@ -1,5 +1,6 @@
 #include "spritemap.h"
 #include "spritemapdata.h"
+#include "texture.h"
 #include "texture_base.h"
 #include "tools/packager/packager.h"
 
@@ -51,9 +52,9 @@ SpriteMap::SpriteMap(SpriteMapData* spriteData) :
 
 SDL_FRect SpriteMap::getUV()
 {
-    return Texture_base::getUV();
-    //currentSprite->texture
-    //currentSprite->position
+    SDL_FRect pos = currentSprite->position;
+    GPUTexture* tex = currentSprite->texture;
+    return {pos.x / tex->width, pos.y / tex->height, (pos.x + pos.w) / tex->width, (pos.y + pos.h) / tex->height};
 }
 
 void SpriteMap::update(double deltaT)
@@ -86,7 +87,7 @@ void SpriteMap::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* ren
     {
         //SDL_RenderTexture(world->getGPU(), currentSprite->texture, &currentSprite->position, &bPos);
         SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
-        SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = currentSprite->texture, .sampler = Sampler::get("default") }, 1);
+        SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = currentSprite->texture->tex, .sampler = Sampler::get("default") }, 1);
         SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
         SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
     }

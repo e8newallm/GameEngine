@@ -128,13 +128,13 @@ void World::draw(double deltaTime, SDL_Window* win)
     int address = 0;
     for(Uint32 index : indexes)
     {
-        dataPtr[address++] = index + indexes.size();
+        dataPtr[address++] = index + indexes.size() * 4;
     }
 
     for(ShaderObjData objData : data)
     {
         SDL_memcpy(&dataPtr[address], objData.data, objData.size);
-        address += objData.size;
+        address += objData.size/4;
     }
 
     SDL_UnmapGPUTransferBuffer(gpu, transferBuffer);
@@ -162,19 +162,24 @@ void World::draw(double deltaTime, SDL_Window* win)
 
     SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, NULL);
 
-    ShaderWorldData worldData {*getView().window()};
-	SDL_PushGPUVertexUniformData(cmdbuf, 0, &worldData, sizeof(worldData));
+    ShaderWorldData worldData {{0, 0, 1000, 1000}}; //*getView().window()
+	SDL_PushGPUVertexUniformData(cmdbuf, 1, &worldData, sizeof(ShaderWorldData));
 
+    int drawID = 0;
     for(int i = UINT8_MAX; i > 128; i--)
     {
         for(Image* image : images[i])
         {
+            SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
+            drawID++;
             image->draw(this, objectDataBuffer, renderPass);
         }
     }
 
     for(uint64_t i = 0; i < phyObjects.size(); i++)
     {
+        SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
+        drawID++;
         phyObjects[i]->draw(this, objectDataBuffer, renderPass, percent, deltaTime);
     }
 
@@ -182,6 +187,8 @@ void World::draw(double deltaTime, SDL_Window* win)
     {
         for(Image* image : images[i])
         {
+            SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
+            drawID++;
             image->draw(this, objectDataBuffer, renderPass);
         }
     }

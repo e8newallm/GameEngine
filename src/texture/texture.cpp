@@ -23,15 +23,15 @@ void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* rende
     //SDL_RenderTexture(world->getGPU(), texture, &texturePosition, &bPos);
 
     SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
-    SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = texture, .sampler = Sampler::get("default") }, 1);
+    SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = texture->tex, .sampler = Sampler::get("default") }, 1);
     SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
-    SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
+    SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 1);
 }
 
-template <> Store<SDL_GPUTexture>::~Store()
+template <> Store<GPUTexture>::~Store()
 {
     Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_Texture*).name());
-    for(std::pair<std::string, SDL_GPUTexture*> value : *this)
+    for(std::pair<std::string, GPUTexture*> value : *this)
     {
         Logger::debug(std::string(" - ") + value.first);
     }

@@ -6,7 +6,13 @@
 #include "texture_base.h"
 #include "datastore.h"
 
-class Texture : public Texture_base, public DataStore<SDL_GPUTexture, Texture>
+struct GPUTexture
+{
+    SDL_GPUTexture* tex;
+    int width, height;
+};
+
+class Texture : public Texture_base, public DataStore<GPUTexture, Texture>
 {
     public:
         Texture();
@@ -16,11 +22,11 @@ class Texture : public Texture_base, public DataStore<SDL_GPUTexture, Texture>
         virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
     protected:
-        SDL_GPUTexture* texture;
+        GPUTexture* texture;
         SDL_FRect texturePosition;
 };
 
-template <> Store<SDL_GPUTexture>::~Store();
+template <> Store<GPUTexture>::~Store();
 
 SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, std::string filename);
 #endif

@@ -13,9 +13,11 @@
 
 #include "tools/packager/packager.h"
 
+#include "texture.h"
+
 struct Sprite
 {
-    SDL_GPUTexture* texture;
+    GPUTexture* texture;
     std::string textureName;
     SDL_FRect position;
 };
@@ -45,7 +47,7 @@ class SpriteMapData
 
         PackageManager* package;
 
-        std::map<std::string, SDL_GPUTexture*> textures;
+        std::map<std::string, GPUTexture*> textures;
         std::map<std::string, Sprite> sprites;
         std::map<std::string, Animation> animations;
 };
