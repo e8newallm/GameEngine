@@ -28,12 +28,12 @@ class World
         void stopPhysics();
         void runPhysics();
         
-        bool physicsRunning() { return phyRunning; };
+        bool physicsRunning() const { return phyRunning; };
 
-        double getGravity() { return gravity; };
+        double getGravity() const { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
 
-        const std::vector<PhysicsObject*>& getphyObjects() { return phyObjects; };
+        const std::vector<PhysicsObject*>& getphyObjects() const { return phyObjects; };
 
         View& getView();
         SDL_GPUDevice* getGPU();

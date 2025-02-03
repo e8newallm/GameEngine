@@ -17,12 +17,16 @@ struct ShaderObjData
 class Sampler : public DataStore<SDL_GPUSampler, Sampler>
 {
     public:
-        static SDL_GPUSampler* createSampler(Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
+        static SDL_GPUSampler* createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
 };
+
+template <> Store<SDL_GPUSampler>::~Store();
 
 class Pipeline : public DataStore<SDL_GPUGraphicsPipeline, Pipeline>
 {
     public:
-        static SDL_GPUGraphicsPipeline* createPipeline(Window& win, const std::string vertShader, const std::string fragShader);
+        static SDL_GPUGraphicsPipeline* createPipeline(const Window& win, const std::string& vertShader, const std::string& fragShader);
 };
+template <> Store<SDL_GPUGraphicsPipeline>::~Store();
+
 #endif

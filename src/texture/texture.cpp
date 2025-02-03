@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_stdinc.h>
 #include <string>
 
 #include "logging.h"
@@ -20,10 +21,15 @@ Texture::Texture(const std::string& name) :
 
 void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
 {
-    //SDL_RenderTexture(world->getGPU(), texture, &texturePosition, &bPos);
+    (void)world;
+
+    SDL_GPUTextureSamplerBinding sampleBinding;
+    SDL_zero(sampleBinding);
+    sampleBinding.texture = texture->tex;
+    sampleBinding.sampler = Sampler::get("default");
 
     SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
-    SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = texture->tex, .sampler = Sampler::get("default") }, 1);
+    SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
     SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
     SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 1);
 }
@@ -39,7 +45,7 @@ template <> Store<GPUTexture>::~Store()
     Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_Texture*).name());
 }
 
-SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, std::string filename)
+SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename)
 {
     SDL_Surface* convertSurf = SDL_ConvertSurface(surf, SDL_PIXELFORMAT_ABGR8888);
 

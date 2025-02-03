@@ -1,12 +1,13 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_stdinc.h>
 #include <cstdint>
 
 #include "shader.h"
 
 SDL_GPUShader* Shader::createShader(
 	SDL_GPUDevice* device,
-	std::vector<uint8_t> code,
-    std::string filename,
+    const std::string& filename,
+	const std::vector<uint8_t>& code,
 	Uint32 samplerCount,
 	Uint32 uniformBufferCount,
 	Uint32 storageBufferCount,
@@ -48,17 +49,18 @@ SDL_GPUShader* Shader::createShader(
 		return nullptr;
 	}
 
-	SDL_GPUShaderCreateInfo shaderInfo = {
-		.code_size = code.size(),
-		.code = static_cast<Uint8*>(code.data()),
-		.entrypoint = entrypoint,
-		.format = format,
-		.stage = stage,
-		.num_samplers = samplerCount,
-		.num_storage_textures = storageTextureCount,
-		.num_storage_buffers = storageBufferCount,
-		.num_uniform_buffers = uniformBufferCount,
-	};
+	SDL_GPUShaderCreateInfo shaderInfo;
+	SDL_zero(shaderInfo);
+	shaderInfo.code_size = code.size();
+	shaderInfo.code = const_cast<Uint8*>(code.data());
+	shaderInfo.entrypoint = entrypoint;
+	shaderInfo.format = format;
+	shaderInfo.stage = stage;
+	shaderInfo.num_samplers = samplerCount;
+	shaderInfo.num_storage_textures = storageTextureCount;
+	shaderInfo.num_storage_buffers = storageBufferCount;
+	shaderInfo.num_uniform_buffers = uniformBufferCount;
+
 	SDL_GPUShader* shader = SDL_CreateGPUShader(device, &shaderInfo);
 	if (shader == NULL)
 	{
@@ -71,14 +73,14 @@ SDL_GPUShader* Shader::createShader(
 
 SDL_GPUShader* Shader::LoadShaderFromFile(
 	SDL_GPUDevice* device,
-	std::string shaderFilename,
+	const std::string& shaderFilename,
 	Uint32 samplerCount,
 	Uint32 uniformBufferCount,
 	Uint32 storageBufferCount,
 	Uint32 storageTextureCount
 ) {
 	size_t codeSize;
-    uint8_t* codeRaw = (uint8_t*)SDL_LoadFile(shaderFilename.c_str(), &codeSize);
+    uint8_t* codeRaw = static_cast<uint8_t*>(SDL_LoadFile(shaderFilename.c_str(), &codeSize));
 	if (codeRaw == NULL)
 	{
 		SDL_Log("Failed to load shader from disk! %s", shaderFilename.c_str());
@@ -88,17 +90,28 @@ SDL_GPUShader* Shader::LoadShaderFromFile(
     std::vector<uint8_t> code;
     code.assign(codeRaw, codeRaw + codeSize);
 
-    return createShader(device, code, shaderFilename, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
+    return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
 }
 
 SDL_GPUShader* Shader::LoadShaderFromArray(
 	SDL_GPUDevice* device,
-	std::string shaderFilename,
-    std::vector<uint8_t> code,
+	const std::string& shaderFilename,
+    const std::vector<uint8_t>& code,
 	Uint32 samplerCount,
 	Uint32 uniformBufferCount,
 	Uint32 storageBufferCount,
 	Uint32 storageTextureCount
 ) {
-    return createShader(device, code, shaderFilename, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
+    return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
+}
+
+template <> Store<SDL_GPUShader>::~Store()
+{
+    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_GPUShader*).name());
+    for(std::pair<std::string, SDL_GPUShader*> value : *this)
+    {
+        Logger::debug(std::string(" - ") + value.first);
+    }
+    this->clear();
+    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_GPUShader*).name());
 }

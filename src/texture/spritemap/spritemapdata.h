@@ -39,9 +39,9 @@ class SpriteMapData
     public:
         SpriteMapData();
 
-        void loadFromFile(SDL_GPUDevice* gpu, const char* configLocation);
-        void loadFromPackage(SDL_GPUDevice* gpu, PackageManager* package, const char* spriteConfig);
-        void loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig, const char* source = "string config");
+        void loadFromFile(const char* configLocation);
+        void loadFromPackage(PackageManager* package, const char* path);
+        void loadFromString(const char* spriteConfig, const char* source = "string config");
         void save(const char* spriteConfig);
         std::string serialise();
 

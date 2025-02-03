@@ -1,10 +1,10 @@
 #include "spritemap.h"
 #include "spritemapdata.h"
 #include "texture.h"
-#include "texture_base.h"
+#include "graphics.h"
 #include "tools/packager/packager.h"
 
-SpriteMap::SpriteMap(SDL_GPUDevice* gpu, const char* spriteConfig) :
+SpriteMap::SpriteMap(const char* spriteConfig) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
@@ -14,7 +14,7 @@ SpriteMap::SpriteMap(SDL_GPUDevice* gpu, const char* spriteConfig) :
     if(!exists(storeName))
     {
         data = new SpriteMapData();
-        data->loadFromFile(gpu, spriteConfig);
+        data->loadFromFile(spriteConfig);
         add(data, storeName);
     }
     else
@@ -23,7 +23,7 @@ SpriteMap::SpriteMap(SDL_GPUDevice* gpu, const char* spriteConfig) :
     }
 }
 
-SpriteMap::SpriteMap(SDL_GPUDevice* gpu, PackageManager* package, const char* path) :
+SpriteMap::SpriteMap(PackageManager* package, const char* path) :
     currentAnimation(nullptr)
     , currentFrame({0.0, 0})
     , currentSprite(nullptr)
@@ -32,7 +32,7 @@ SpriteMap::SpriteMap(SDL_GPUDevice* gpu, PackageManager* package, const char* pa
     if(!exists(storeName))
     {
         data = new SpriteMapData();
-        data->loadFromPackage(gpu, package, path);
+        data->loadFromPackage(package, path);
         add(data, storeName);
     }
     else
@@ -53,7 +53,7 @@ SpriteMap::SpriteMap(SpriteMapData* spriteData) :
 SDL_FRect SpriteMap::getUV()
 {
     SDL_FRect pos = currentSprite->position;
-    GPUTexture* tex = currentSprite->texture;
+    const GPUTexture* tex = currentSprite->texture;
     return {pos.x / tex->width, pos.y / tex->height, (pos.x + pos.w) / tex->width, (pos.y + pos.h) / tex->height};
 }
 
@@ -83,11 +83,17 @@ void SpriteMap::update(double deltaT)
 
 void SpriteMap::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
 {
+    (void)world;
     if(currentSprite != nullptr)
     {
+        SDL_GPUTextureSamplerBinding sampleBinding;
+        SDL_zero(sampleBinding);
+        sampleBinding.texture = currentSprite->texture->tex;
+        sampleBinding.sampler = Sampler::get("default");
+
         //SDL_RenderTexture(world->getGPU(), currentSprite->texture, &currentSprite->position, &bPos);
         SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
-        SDL_BindGPUFragmentSamplers(renderPass, 0, &(SDL_GPUTextureSamplerBinding){ .texture = currentSprite->texture->tex, .sampler = Sampler::get("default") }, 1);
+        SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
         SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
         SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
     }

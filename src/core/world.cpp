@@ -43,7 +43,6 @@ World::~World()
 void World::draw(double deltaTime, SDL_Window* win)
 {
     std::lock_guard<std::mutex> lock(usageLock);
-    double percent = lastPhysics.getElapsed() / (1000.0f / pps);
 
     SDL_GPUCommandBuffer* cmdbuf = SDL_AcquireGPUCommandBuffer(getGPU());
     SDL_GPUTexture* swapchainTexture;
@@ -60,7 +59,7 @@ void World::draw(double deltaTime, SDL_Window* win)
     SDL_GPUColorTargetInfo colorTargetInfo;
     SDL_zero(colorTargetInfo);
     colorTargetInfo.texture = swapchainTexture;
-    colorTargetInfo.clear_color = (SDL_FColor){ 0.0f, 0.0f, 0.0f, 1.0f };
+    colorTargetInfo.clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };
     colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
     colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
@@ -103,27 +102,19 @@ void World::draw(double deltaTime, SDL_Window* win)
     SDL_GPUTransferBuffer* transferBuffer;
     SDL_GPUBuffer* objectDataBuffer;
 
-    transferBuffer = SDL_CreateGPUTransferBuffer(
-		gpu,
-		&(SDL_GPUTransferBufferCreateInfo) {
-			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-			.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32)
-		}
-	);
+    SDL_GPUTransferBufferCreateInfo transferBufferCreateInfo;
+    SDL_zero(transferBufferCreateInfo);
+    transferBufferCreateInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+    transferBufferCreateInfo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
+    transferBuffer = SDL_CreateGPUTransferBuffer(gpu, &transferBufferCreateInfo);
 
-    objectDataBuffer = SDL_CreateGPUBuffer(
-		gpu,
-		&(SDL_GPUBufferCreateInfo) {
-			.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ,
-			.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32)
-		}
-	);
+    SDL_GPUBufferCreateInfo bufferCreateInfoTwo;
+    SDL_zero(bufferCreateInfoTwo);
+    bufferCreateInfoTwo.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ;
+    bufferCreateInfoTwo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
+    objectDataBuffer = SDL_CreateGPUBuffer(gpu, &bufferCreateInfoTwo);
 
-    Uint32* dataPtr = (Uint32*)SDL_MapGPUTransferBuffer(
-        gpu,
-        transferBuffer,
-        true
-	);
+    Uint32* dataPtr = static_cast<Uint32*>(SDL_MapGPUTransferBuffer(gpu,transferBuffer,true));
 
     int address = 0;
     for(Uint32 index : indexes)
@@ -142,19 +133,18 @@ void World::draw(double deltaTime, SDL_Window* win)
     // Upload instance data
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(cmdbuf);
 
-    SDL_UploadToGPUBuffer(
-        copyPass,
-        &(SDL_GPUTransferBufferLocation) {
-            .transfer_buffer = transferBuffer,
-            .offset = 0
-        },
-        &(SDL_GPUBufferRegion) {
-            .buffer = objectDataBuffer,
-            .offset = 0,
-            .size = dataSize + (Uint32)indexes.size() * 4
-        },
-        true
-    );
+    SDL_GPUTransferBufferLocation transferBufferLocation;
+    SDL_zero(transferBufferLocation);
+    transferBufferLocation.transfer_buffer = transferBuffer;
+    transferBufferLocation.offset = 0;
+
+    SDL_GPUBufferRegion bufferRegion;
+    SDL_zero(bufferRegion);
+    bufferRegion.buffer = objectDataBuffer;
+    bufferRegion.offset = 0;
+    bufferRegion.size = dataSize + (Uint32)indexes.size() * 4;
+
+    SDL_UploadToGPUBuffer(copyPass, &transferBufferLocation, &bufferRegion,true);
 
     SDL_EndGPUCopyPass(copyPass);
 
@@ -180,7 +170,7 @@ void World::draw(double deltaTime, SDL_Window* win)
     {
         SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
         drawID++;
-        phyObjects[i]->draw(this, objectDataBuffer, renderPass, percent, deltaTime);
+        phyObjects[i]->draw(this, objectDataBuffer, renderPass, deltaTime);
     }
 
     for(int i = 127; i >= 0; i--)

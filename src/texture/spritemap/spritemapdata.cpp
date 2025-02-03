@@ -24,7 +24,7 @@ SpriteMapData::SpriteMapData() :
 {
 }
 
-void SpriteMapData::loadFromFile(SDL_GPUDevice* gpu, const char* configLocation)
+void SpriteMapData::loadFromFile(const char* configLocation)
 {
     std::ifstream file(configLocation);
 
@@ -34,18 +34,19 @@ void SpriteMapData::loadFromFile(SDL_GPUDevice* gpu, const char* configLocation)
     }
     std::ostringstream ss;
     ss << file.rdbuf();
-    loadFromString(gpu, ss.str().c_str(), configLocation);
+    loadFromString(ss.str().c_str(), configLocation);
 }
 
-void SpriteMapData::loadFromPackage(SDL_GPUDevice* gpu, PackageManager* package, const char* path)
+void SpriteMapData::loadFromPackage(PackageManager* package, const char* path)
 {
     this->package = package;
     std::vector<uint8_t> data = package->getFile(path);
-    loadFromString(gpu, std::string(data.begin(), data.end()).c_str(), (package->getPackageName() + ":" + path).c_str());
+    loadFromString(std::string(data.begin(), data.end()).c_str(), (package->getPackageName() + ":" + path).c_str());
 }
 
-void SpriteMapData::loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig, const char* source)
+void SpriteMapData::loadFromString(const char* spriteConfig, const char* source)
 {
+
     rapidjson::Document schema;
     schema.Parse(SpriteMapSchema);
     rapidjson::SchemaDocument schemaDoc(schema);
@@ -71,7 +72,7 @@ void SpriteMapData::loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig,
         {
             if(!Texture::exists(value.GetString()))
             {
-                SDL_Surface* surface;
+                const SDL_Surface* surface;
                 if(package)
                 {
                     std::vector<uint8_t> data = package->getFile(value.GetString());
@@ -95,7 +96,7 @@ void SpriteMapData::loadFromString(SDL_GPUDevice* gpu, const char* spriteConfig,
     {
         if(!Texture::exists(config["Textures"].GetString()))
         {
-            SDL_Surface* surface;
+            const SDL_Surface* surface;
             if(package)
             {
                 std::vector<uint8_t> data = package->getFile(config["Textures"].GetString());

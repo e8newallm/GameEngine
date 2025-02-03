@@ -1,7 +1,10 @@
+#include <string>
+
+#include "graphics.h"
 #include "image.h"
 #include "graphics.h"
 #include "texture.h"
-#include <string>
+
 
 Image::Image(SDL_Rect body, const std::string& texture) :
     Object(body, new Texture(texture))
@@ -15,7 +18,7 @@ ShaderObjData Image::predraw()
         SDL_FRect texBody;
     };
 
-    ObjData* data = (ObjData*)malloc(sizeof(ObjData));
+    ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
     data->body = body;
     data->texBody = tex->getUV();
     return {data, sizeof(ObjData)};

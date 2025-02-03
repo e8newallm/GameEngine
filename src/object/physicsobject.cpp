@@ -18,13 +18,9 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     body.y = nextBody.y;
 }
 
-SDL_Rect PhysicsObject::calcDrawBody(double percent, View viewport)
+SDL_Rect PhysicsObject::calcDrawBody(double percent)
 {
     SDL_Rect interBody = getInterBody(percent);
-    //interBody.x = (interBody.x - viewport.window()->x) * viewport.getZoom();
-    //interBody.y = (interBody.y - viewport.window()->y) * viewport.getZoom();
-    //interBody.h = round((double)interBody.h * viewport.getZoom());
-    //interBody.w = round((double)interBody.w * viewport.getZoom());
     return interBody;
 }
 
@@ -50,7 +46,7 @@ void PhysicsObject::velocityDelta(double x, double y)
     nextVelocity.y += y;
 }
 
-bool PhysicsObject::onGround(World& world)
+bool PhysicsObject::onGround(const World& world) const
 {
     SDL_Rect groundCheck;
     groundCheck.x = body.x;
@@ -75,13 +71,13 @@ ShaderObjData PhysicsObject::predraw()
         SDL_FRect texBody;
     };
 
-    ObjData* data = (ObjData*)malloc(sizeof(ObjData));
+    ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
     data->body = body;
     data->texBody = tex->getUV();
     return {data, sizeof(ObjData)};
 }
 
-void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double percent, double deltaT)
+void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
 {
     Object::draw(world, buffer, renderPass, deltaT);
 }

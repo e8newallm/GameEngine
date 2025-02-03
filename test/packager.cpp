@@ -5,7 +5,7 @@
 #include <filesystem>
 
 #include "tools/packager/packager.h"
-#include "geerror.h"
+#include "core/geerror.h"
 
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers.hpp"
@@ -28,7 +28,7 @@ inline void fileEntryTest(const FileEntry lhs, const FileEntry rhs)
 inline void headerTest(std::vector<FileEntry> data) {
 	std::vector<FileEntry> result = headerDecompress(headerCompress(data));
 	REQUIRE(result.size() == data.size());
-	for(uint64_t i = 0; i < result.size(); i++) fileEntryTest(result[i], data[i]);
+	for(uint64_t i = 0; i < data.size(); i++) fileEntryTest(result[i], data[i]);
 
 }
 

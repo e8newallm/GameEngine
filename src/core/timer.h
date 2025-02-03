@@ -17,7 +17,7 @@ template <class rep = double, class period = std::milli> class Timer
 class TimerLoop : public Timer<>
 {
     public:
-        TimerLoop(double Hz) : Timer<>()
+         explicit TimerLoop(double Hz) : Timer<>()
         ,Hz(Hz)
         {};
 

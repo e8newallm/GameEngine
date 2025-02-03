@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "graphics.h"
 #include "texture_base.h"
 #include "world.h"
 

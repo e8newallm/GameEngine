@@ -4,7 +4,6 @@
 #include <SDL3/SDL.h>
 
 #include "world.h"
-#include "graphics.h"
 
 class Texture_base
 {

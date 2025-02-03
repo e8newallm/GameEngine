@@ -18,20 +18,6 @@ project(GameEngine LANGUAGES CXX)
 
 version_define(GAMEENGINE 0 0 1)
 
-file(GLOB src
-    core/*.cpp
-    utility/*.cpp
-    object/*.cpp
-    texture/*.cpp
-    texture/*/*.cpp
-
-)
-
-if(DEBUG)
-    file(GLOB debugsrc debug/*.cpp)
-    list(APPEND src ${debugsrc})
-endif()
-
 file(GLOB GAMEENGINE_HEADERS
     object
     texture
@@ -41,6 +27,19 @@ file(GLOB GAMEENGINE_HEADERS
     core
     utility
 )
+
+file(GLOB src
+    core/*.cpp
+    utility/*.cpp
+    object/*.cpp
+    texture/*.cpp
+    texture/*/*.cpp
+)
+
+if(DEBUG)
+    file(GLOB debugsrc debug/*.cpp)
+    list(APPEND src ${debugsrc})
+endif()
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL3_LIBRARIES} SDL3_image lua Packager)

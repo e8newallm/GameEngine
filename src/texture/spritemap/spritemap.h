@@ -12,8 +12,8 @@
 class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap>
 {
     public:
-        SpriteMap(SDL_GPUDevice* gpu, const char* spriteConfig);
-        SpriteMap(SDL_GPUDevice* gpu, PackageManager* package, const char* path);
+        explicit SpriteMap(const char* spriteConfig);
+        SpriteMap(PackageManager* package, const char* path);
         explicit SpriteMap(SpriteMapData* spriteData);
 
         virtual SDL_FRect getUV() override;

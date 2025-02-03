@@ -12,10 +12,10 @@
 class Shader : public DataStore<SDL_GPUShader, Shader>
 {
     public:
-        SDL_GPUShader* LoadShaderFromArray(
+        static SDL_GPUShader* LoadShaderFromArray(
             SDL_GPUDevice* device,
-            std::string shaderFilename,
-            std::vector<uint8_t> code,
+            const std::string& shaderFilename,
+            const std::vector<uint8_t>& code,
             Uint32 samplerCount,
             Uint32 uniformBufferCount,
             Uint32 storageBufferCount,
@@ -24,7 +24,7 @@ class Shader : public DataStore<SDL_GPUShader, Shader>
 
         static SDL_GPUShader* LoadShaderFromFile(
             SDL_GPUDevice* device,
-            std::string shaderFilename,
+            const std::string& shaderFilename,
             Uint32 samplerCount,
             Uint32 uniformBufferCount,
             Uint32 storageBufferCount,
@@ -33,13 +33,15 @@ class Shader : public DataStore<SDL_GPUShader, Shader>
 
         static SDL_GPUShader* createShader(
             SDL_GPUDevice* device,
-            std::vector<uint8_t> code,
-            std::string filename,
+            const std::string& filename,
+            const std::vector<uint8_t>& code,
             Uint32 samplerCount,
             Uint32 uniformBufferCount,
             Uint32 storageBufferCount,
             Uint32 storageTextureCount
         );
 };
+
+template <> Store<SDL_GPUShader>::~Store();
 
 #endif

@@ -20,7 +20,7 @@ class PackageManager
 
         std::vector<std::string> getFileList();
         std::vector<uint8_t> getFile(const std::string& path);
-        const std::string& getPackageName();
+        const std::string& getPackageName() const;
 
     private:
         std::string packageFile;
@@ -31,7 +31,7 @@ class PackageManager
 std::vector<std::string> getFileList(const std::string& directory);
 std::string fileCompress(const std::string& file);
 void numToByte(std::vector<uint8_t>& data, uint64_t value);
-uint64_t byteToNum(std::vector<uint8_t>& value);
+uint64_t byteToNum(std::vector<uint8_t>& data);
 std::string getExtension(const std::string& filename);
 
 std::vector<uint8_t> headerCompress(const std::vector<FileEntry>& fileList);

@@ -15,7 +15,7 @@ class View
             calcWindow();
         };
 
-        double getZoom() { return zoom; };
+        double getZoom() const { return zoom; };
         void setZoom(double zoom)
         {
             this->zoom = zoom;

@@ -91,7 +91,6 @@ TEST_CASE("Logging", "[base][logging]")
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    SDL_GPUDevice* gpu = SDL_CreateRenderer(nullptr, NULL);
 
     SECTION("Schema sanity check")
     {
@@ -135,40 +134,40 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
     SECTION("JSON load/save sanity check", "[spritemap]")
     {
         SpriteMapData test, testTwo;
-        test.loadFromFile(rend, "testfiles/json/spritemap/spritemap.json");
+        test.loadFromFile("testfiles/json/spritemap/spritemap.json");
         std::string result = R"TEST({"Textures":["testfiles/tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"testfiles/tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
 
         REQUIRE(test.serialise() == result);
-        REQUIRE_NOTHROW(testTwo.loadFromString(rend, result.c_str()));
+        REQUIRE_NOTHROW(testTwo.loadFromString(result.c_str()));
         REQUIRE(test.serialise() == testTwo.serialise());
     }
 
     SECTION("SpriteMap schema test", "[spritemap][exceptions]")
     {
-        REQUIRE_NOTHROW(SpriteMap(rend, "testfiles/json/spritemap/spritemap.json"));
+        REQUIRE_NOTHROW(SpriteMap("testfiles/json/spritemap/spritemap.json"));
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "UNKNOWN FILE"),
+        REQUIRE_THROWS_WITH(SpriteMap("UNKNOWN FILE"),
                             "Could not open Spritemap JSON \"UNKNOWN FILE\"");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/invalidjson.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/invalidjson.json"),
                             "\"testfiles/json/invalidjson.json\" is invalid JSON");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/badspritemap.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/badspritemap.json"),
                             "\"testfiles/json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/texturenotfound.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/texturenotfound.json"),
                             "\"testfiles/json/spritemap/texturenotfound.json\" could not load texture file \"texspritemap.png\"");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/mismatchedsprite.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/mismatchedsprite.json"),
                             "\"testfiles/json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
         
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/mismatchedanimation.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/mismatchedanimation.json"),
                             "\"testfiles/json/spritemap/mismatchedanimation.json\" has a animation (explosion) referencing a sprite not named in the JSON");
         
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/duplicatedsprite.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/duplicatedsprite.json"),
                             "\"testfiles/json/spritemap/duplicatedsprite.json\" has two sprites named (sprite01)");
 
-        REQUIRE_THROWS_WITH(SpriteMap(rend, "testfiles/json/spritemap/duplicatedanimation.json"),
+        REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/duplicatedanimation.json"),
                             "\"testfiles/json/spritemap/duplicatedanimation.json\" has two animations named (explosion)");
     }
 }
@@ -287,12 +286,12 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 TEST_CASE("Basic functionality", "[physics]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    SDL_GPUDevice* gpu = SDL_CreateRenderer(nullptr, NULL);
+    SDL_GPUDevice* gpu = SDL_CreateGPUDevice(0, false, NULL);
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);
 
-    World world(rend, viewport);
+    World world(gpu, viewport);
 
     SECTION("Box drop")
     {
@@ -362,7 +361,7 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->y == 500);
     }
 
-    SECTION("Correct interpolation and viewpoint adjustment for drawing")
+    SECTION("Correct interpolation for drawing")
     {
         world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
@@ -371,9 +370,9 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 500, 50, 50});
         testRect(box->getInterBody(1.0), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {500, 500, 50, 50});
+        testRect(box->calcDrawBody(0), {500, 500, 50, 50});
+        testRect(box->calcDrawBody(0.5), {500, 500, 50, 50});
+        testRect(box->calcDrawBody(1.0), {500, 500, 50, 50});
 
         box->velocityDelta(0.0, 100.0);
         box->update(1.0f, world);
@@ -381,25 +380,8 @@ TEST_CASE("Basic functionality", "[physics]")
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 550, 50, 50});
         testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {500, 550, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {500, 600, 50, 50});
-
-        viewport.moveDelta({200, 150});
-        testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {300, 350, 50, 50});
-        testRect(box->calcDrawBody(0.5, viewport), {300, 400, 50, 50});
-        testRect(box->calcDrawBody(1.0, viewport), {300, 450, 50, 50});
-
-        viewport.setZoom(0.27);
-
-        testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0, viewport), {445, 459, 14, 14});
-        testRect(box->calcDrawBody(0.5, viewport), {445, 472, 14, 14});
-        testRect(box->calcDrawBody(1.0, viewport), {445, 486, 14, 14});
+        testRect(box->calcDrawBody(0), {500, 500, 50, 50});
+        testRect(box->calcDrawBody(0.5), {500, 550, 50, 50});
+        testRect(box->calcDrawBody(1.0), {500, 600, 50, 50});
     }
 }

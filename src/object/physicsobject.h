@@ -2,11 +2,10 @@
 #define PHYSICSOBJECT_H
 
 #include "object.h"
-#include "view.h"
 #include "world.h"
 
-#define PHYOBJ_STATIC 1<<0
-#define PHYOBJ_COLLIDE 1<<1
+#define PHYOBJ_STATIC   1<<0
+#define PHYOBJ_COLLIDE  1<<1
 
 class PhysicsObject : public Object
 {
@@ -16,23 +15,23 @@ class PhysicsObject : public Object
 
         using Object::draw;
         using Object::update;
-        ShaderObjData predraw();
-        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double percent, double deltaT);
+        ShaderObjData predraw() override;
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT) override;
         virtual void update(double deltaTime, World& world);
 
         bool detectCollision(World& context);
         virtual void collision(SDL_Rect* other);
-        bool onGround(World& context);
+        bool onGround(const World& world) const;
 
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
         virtual SDL_FPoint getVelocity() { return nextVelocity; };
 
         virtual SDL_Rect getInterBody(double percent);
-        SDL_Rect calcDrawBody(double percent, View viewport);
+        SDL_Rect calcDrawBody(double percent);
 
-        bool isStatic() { return _isStatic; };
-        bool canCollide() { return _canCollide; };
+        inline bool isStatic() const { return _isStatic; };
+        inline bool canCollide() const { return _canCollide; };
 
     protected:
 

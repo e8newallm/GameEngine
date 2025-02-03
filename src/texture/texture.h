@@ -28,5 +28,5 @@ class Texture : public Texture_base, public DataStore<GPUTexture, Texture>
 
 template <> Store<GPUTexture>::~Store();
 
-SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, std::string filename);
+SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename);
 #endif

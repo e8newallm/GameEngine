@@ -14,11 +14,12 @@ set_target_properties(Packager
 
 find_package(ZLIB)
 target_link_libraries(Packager ZLIB::ZLIB)
-target_include_directories(Packager PUBLIC . ../../{core,utility})
+target_include_directories(Packager PUBLIC . ../../core)
 
 project(PackagerBin LANGUAGES CXX)
 add_executable(PackagerBin main.cpp)
 target_link_libraries(PackagerBin ZLIB::ZLIB Packager)
+target_include_directories(PackagerBin PUBLIC . ../../core)
 
 MACRO(package_gen folder file)
 IF(NOT PACKAGER_INT)

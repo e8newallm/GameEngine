@@ -12,7 +12,6 @@
 #include "zlib.h"
 #include "packager.h"
 #include "geerror.h"
-#include "logging.h"
 
 #define CHUNK (256 * 1024)
 
@@ -140,7 +139,7 @@ std::vector<uint8_t> PackageManager::getFile(const std::string& path)
     throw GameEngineException(GEError::FILE_NOT_FOUND, "File " + path + " not found in package " + packageFile);
 }
 
-const std::string& PackageManager::getPackageName() { return packageFile; }
+const std::string& PackageManager::getPackageName() const { return packageFile; }
 
 std::vector<std::string> getFileList(const std::string& directory)
 {

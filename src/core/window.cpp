@@ -38,9 +38,8 @@ Window::Window(const std::string& name, int width, int height, int flags)
 
 }
 
-Window::Window(const std::string& name, int flags)
+Window::Window(const std::string& name, int flags) : Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags)
 {
-    Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags);
 }
 
 const SDL_Point* Window::getResolution() const
@@ -64,6 +63,7 @@ void Window::render(World& world)
 
 Window::~Window()
 {
-    SDL_DestroyGPUDevice(gpu);
+    SDL_ReleaseWindowFromGPUDevice(gpu, win);
     SDL_DestroyWindow(win);
+    SDL_DestroyGPUDevice(gpu);
 }

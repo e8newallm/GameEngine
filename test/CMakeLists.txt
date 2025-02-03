@@ -16,5 +16,5 @@ add_custom_command(
 
 add_executable(UnitTests ${jsonfiles} test.cpp packager.cpp)
 target_link_libraries(UnitTests PRIVATE Catch2::Catch2WithMain GameEngine Packager)
-target_include_directories(UnitTests PUBLIC . ${headers} ${SDL2_INCLUDE_DIRS} Catch2::Catch2)
+target_include_directories(UnitTests PUBLIC . ../src ${SDL2_INCLUDE_DIRS} Catch2::Catch2)
 add_dependencies(UnitTests SchemaLoader)
