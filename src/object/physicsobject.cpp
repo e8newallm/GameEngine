@@ -5,6 +5,7 @@
 #include "physicsobject.h"
 #include "graphics.h"
 #include "logging.h"
+#include "object.h"
 
 PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
     Object(body, texture)
@@ -53,10 +54,11 @@ bool PhysicsObject::onGround(const World& world) const
     groundCheck.y = body.y + body.h;
     groundCheck.w = body.w;
     groundCheck.h = 2;
-    std::vector<PhysicsObject*> phyObjects = world.getphyObjects();
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    std::vector<Object*> objects = world.getObjects();
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
-        if(SDL_HasRectIntersection(&groundCheck, phyObjects[i]->getBody()))
+        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        if(obj != nullptr && SDL_HasRectIntersection(&groundCheck, objects[i]->getBody()))
         {
             return true;
         }
@@ -100,23 +102,25 @@ void PhysicsObject::update(double deltaTime, World& world)
     SDL_FPoint displacement;
     displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
     displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
-    std::vector<PhysicsObject*> phyObjects = world.getphyObjects();
+    std::vector<Object*> objects = world.getObjects();
 
     nextBody.x += displacement.x;
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
-        if(SDL_HasRectIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
+        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        if(obj != nullptr && SDL_HasRectIntersection(&nextBody, &obj->nextBody) && this != objects[i])
         {
-            collision(&phyObjects[i]->nextBody);
+            collision(&obj->nextBody);
         }
     }
 
     nextBody.y += displacement.y;
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
-        if(SDL_HasRectIntersection(&nextBody, &phyObjects[i]->nextBody) && this != phyObjects[i])
+        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        if(obj != nullptr && SDL_HasRectIntersection(&nextBody, &obj->nextBody) && this != objects[i])
         {
-            collision(&phyObjects[i]->nextBody);
+            collision(&obj->nextBody);
         }
     }
 }

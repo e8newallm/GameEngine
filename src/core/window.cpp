@@ -2,6 +2,8 @@
 
 #include "window.h"
 #include "gamestate.h"
+#include "mousestate.h"
+#include "keystate.h"
 
 double FPS = 0;
 

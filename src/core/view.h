@@ -2,15 +2,17 @@
 #define VIEW_H
 
 #include <SDL3/SDL.h>
-#include <iostream>
+#include <string>
+
+#include "logging.h"
 
 class View
 {
     public:
-        View(SDL_Point resolution, SDL_Point position) :
+        View(SDL_FPoint resolution, SDL_FPoint position) :
         zoom(1.0f)
-        ,center{(position.x + resolution.x)/2, (position.y + resolution.y)/2}
         ,resolution(resolution)
+        ,center(position)
         {
             calcWindow();
         };
@@ -29,10 +31,10 @@ class View
             calcWindow();
         }
 
-        void moveDelta(SDL_Point newPosition)
+        void moveDelta(SDL_FPoint newPosition)
         {
-            center.x += newPosition.x/zoom;
-            center.y += newPosition.y/zoom;
+            center.x -= newPosition.x/zoom;
+            center.y -= newPosition.y/zoom;
             calcWindow();
         }
 
@@ -48,14 +50,14 @@ class View
             win.w = resolution.x/zoom;
             win.h = resolution.y/zoom;
             win.x = center.x - resolution.x/zoom/2.0f;
-            win.y = center.y - resolution.x/zoom/2.0f;
+            win.y = center.y - resolution.y/zoom/2.0f;
+            Logger::debug("window: " + std::to_string(win.x) + ", " + std::to_string(win.y) + " - " + std::to_string(win.w) + ", " + std::to_string(win.h));
             return win;
         }
 
         double zoom;
-        SDL_Point center;
-        SDL_Point resolution;
-
+        SDL_FPoint resolution;
+        SDL_FPoint center;
         SDL_Rect win;
 };
 #endif

@@ -296,7 +296,7 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Box drop")
     {
         PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addPhyObj(box);
+        world.addObj(box);
 
         box->velocityDelta(0.0, 0.5);
         REQUIRE(box->getBody()->x == 500);
@@ -336,9 +336,9 @@ TEST_CASE("Basic functionality", "[physics]")
     {
         world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addPhyObj(box);
+        world.addObj(box);
         PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addPhyObj(boxCollide);
+        world.addObj(boxCollide);
 
         box->velocityDelta(1.0, 0.0);
         box->update(5.0, world);
@@ -365,7 +365,7 @@ TEST_CASE("Basic functionality", "[physics]")
     {
         world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
-        world.addPhyObj(box);
+        world.addObj(box);
 
         testRect(box->getInterBody(0), {500, 500, 50, 50});
         testRect(box->getInterBody(0.5), {500, 500, 50, 50});

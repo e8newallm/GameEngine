@@ -26,15 +26,7 @@ World::World(SDL_GPUDevice* gpu, View viewport) :
 
 World::~World()
 {
-    for(const std::vector<Image*>& level : images)
-    {
-        for(Image* image : level)
-        {
-            delete image;
-        }
-    }
-
-    for(PhysicsObject* obj : phyObjects)
+    for(Object* obj : objects)
     {
         delete obj;
     }
@@ -67,34 +59,12 @@ void World::draw(double deltaTime, SDL_Window* win)
     std::vector<Uint32> indexes{};
     Uint32 dataSize = 0;
 
-    for(int i = UINT8_MAX; i > 128; i--)
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
-        for(Image* image : images[i])
-        {
-            ShaderObjData newData = image->predraw();
-            indexes.push_back(dataSize);
-            dataSize += newData.size;
-            data.push_back(newData);
-        }
-    }
-
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
-    {
-        ShaderObjData newData = phyObjects[i]->predraw();
+        ShaderObjData newData = objects[i]->predraw();
         indexes.push_back(dataSize);
         dataSize += newData.size;
         data.push_back(newData);
-    }
-
-    for(int i = 127; i >= 0; i--)
-    {
-        for(Image* image : images[i])
-        {
-            ShaderObjData newData = image->predraw();
-            indexes.push_back(dataSize);
-            dataSize += newData.size;
-            data.push_back(newData);
-        }
     }
 
     //FUTURE FUNCTION
@@ -108,11 +78,11 @@ void World::draw(double deltaTime, SDL_Window* win)
     transferBufferCreateInfo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
     transferBuffer = SDL_CreateGPUTransferBuffer(gpu, &transferBufferCreateInfo);
 
-    SDL_GPUBufferCreateInfo bufferCreateInfoTwo;
-    SDL_zero(bufferCreateInfoTwo);
-    bufferCreateInfoTwo.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ;
-    bufferCreateInfoTwo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
-    objectDataBuffer = SDL_CreateGPUBuffer(gpu, &bufferCreateInfoTwo);
+    SDL_GPUBufferCreateInfo bufferCreateInfo;
+    SDL_zero(bufferCreateInfo);
+    bufferCreateInfo.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ;
+    bufferCreateInfo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
+    objectDataBuffer = SDL_CreateGPUBuffer(gpu, &bufferCreateInfo);
 
     Uint32* dataPtr = static_cast<Uint32*>(SDL_MapGPUTransferBuffer(gpu,transferBuffer,true));
 
@@ -152,35 +122,16 @@ void World::draw(double deltaTime, SDL_Window* win)
 
     SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, NULL);
 
-    ShaderWorldData worldData {{0, 0, 1000, 1000}}; //*getView().window()
+    ShaderWorldData worldData {*getView().window()};
 	SDL_PushGPUVertexUniformData(cmdbuf, 1, &worldData, sizeof(ShaderWorldData));
 
     int drawID = 0;
-    for(int i = UINT8_MAX; i > 128; i--)
-    {
-        for(Image* image : images[i])
-        {
-            SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
-            drawID++;
-            image->draw(this, objectDataBuffer, renderPass);
-        }
-    }
 
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
         SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
         drawID++;
-        phyObjects[i]->draw(this, objectDataBuffer, renderPass, deltaTime);
-    }
-
-    for(int i = 127; i >= 0; i--)
-    {
-        for(Image* image : images[i])
-        {
-            SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
-            drawID++;
-            image->draw(this, objectDataBuffer, renderPass);
-        }
+        objects[i]->draw(this, objectDataBuffer, renderPass, deltaTime);
     }
 
     SDL_EndGPURenderPass(renderPass);
@@ -193,9 +144,9 @@ void World::draw(double deltaTime, SDL_Window* win)
 void World::update()
 {
     std::lock_guard<std::mutex> lock(usageLock);
-    for(uint64_t i = 0; i < phyObjects.size(); i++)
+    for(uint64_t i = 0; i < objects.size(); i++)
     {
-        phyObjects[i]->update(pps, *this);
+        objects[i]->update(pps, *this);
     }
 }
 
@@ -221,14 +172,9 @@ void World::runPhysics()
     }
 }
 
-void World::addImage(Image* newImage)
+void World::addObj(Object* obj)
 {
-    this->images[UINT8_MAX].push_back(newImage);
-};
-
-void World::addPhyObj(PhysicsObject* obj)
-{
-    phyObjects.push_back(obj);
+    objects.push_back(obj);
 }
 
 View& World::getView()

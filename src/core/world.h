@@ -3,15 +3,12 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
-#include <vector>
-#include <array>
 #include <mutex>
 
 #include "timer.h"
 #include "view.h"
 
-class Image;
-class PhysicsObject;
+class Object;
 
 class World
 {
@@ -20,8 +17,7 @@ class World
         ~World();
         void draw(double deltaTime, SDL_Window* win);
         void update();
-        void addImage(Image* newImage);
-        void addPhyObj(PhysicsObject* obj);
+        void addObj(Object* obj);
 
         //Physics
         void startPhysics();
@@ -33,7 +29,7 @@ class World
         double getGravity() const { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
 
-        const std::vector<PhysicsObject*>& getphyObjects() const { return phyObjects; };
+        const std::vector<Object*>& getObjects() const { return objects; };
 
         View& getView();
         SDL_GPUDevice* getGPU();
@@ -48,8 +44,6 @@ class World
         View viewport;
         SDL_GPUDevice* gpu;
 
-        std::array<std::vector<Image*>, UINT8_MAX+1> images;
-
         //Physics
         bool phyRunning;
 
@@ -57,7 +51,7 @@ class World
         std::mutex usageLock;
         double gravity = 0.00005f;
         const double pps = 60.0f;
-        std::vector<PhysicsObject*> phyObjects;
+        std::vector<Object*> objects;
 };
 
 #endif

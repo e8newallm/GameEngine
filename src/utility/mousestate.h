@@ -5,12 +5,6 @@
 
 #include <array>
 
-struct mousePosition
-{
-    Uint32 x;
-    Uint32 y;
-};
-
 class MouseState
 {
     public:
@@ -21,10 +15,10 @@ class MouseState
 
         static void reset();
 
-        static inline mousePosition mousePos()
+        static inline SDL_FPoint mousePos()
             { return {xMouse, yMouse}; };
 
-        static inline SDL_Point mouseDelta()
+        static inline SDL_FPoint mouseDelta()
             { return {xDeltaMouse, yDeltaMouse}; };
 
         static inline Sint32 scrollDelta()
@@ -43,8 +37,8 @@ class MouseState
             { return {(int)mouseButton[button].x, (int)mouseButton[button].y}; };
 
     private:
-        static inline Uint32 xMouse, yMouse;
-        static inline Sint32 xDeltaMouse, yDeltaMouse;
+        static inline float xMouse, yMouse;
+        static inline float xDeltaMouse, yDeltaMouse;
         static inline Sint32 scrollAmount;
         static inline std::array<bool, SDL_BUTTON_X2+1> mouseButtonDown;
         static inline std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;

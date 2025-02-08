@@ -1,5 +1,4 @@
 #include "object.h"
-#include "graphics.h"
 #include "world.h"
 
 Object::Object(SDL_Rect body, Texture_base* texture) :
@@ -20,9 +19,9 @@ void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* render
     tex->draw(world, buffer, renderPass);
 
 }
-void Object::update(double deltaTime)
+void Object::update(double deltaTime, World& world)
 {
-    (void)deltaTime;
+    (void)deltaTime, (void)world;
 }
 
 void Object::move(double x, double y)
