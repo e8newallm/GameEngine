@@ -59,6 +59,7 @@ void Window::render(World& world)
         FPS = 1000.0f / lastRender.getElapsed();
         lastRender.update();
 
+        world.update(deltaTime);
         world.draw(deltaTime, getWin());
     }
 }

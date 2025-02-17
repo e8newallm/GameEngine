@@ -2,13 +2,15 @@
 #define WORLD_H
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_render.h>
 #include <mutex>
 
 #include "timer.h"
 #include "view.h"
 
 class Object;
+class World;
+
+typedef void (*GEUpdateFunc)(double deltaTime, World& world);
 
 class World
 {
@@ -16,23 +18,24 @@ class World
         World(SDL_GPUDevice* gpu, View viewport);
         ~World();
         void draw(double deltaTime, SDL_Window* win);
-        void update();
+        void update(double deltaTime);
+
         void addObj(Object* obj);
+        const std::vector<Object*>& getObjects() const { return objects; };
 
         //Physics
         void startPhysics();
         void stopPhysics();
         void runPhysics();
-        
         bool physicsRunning() const { return phyRunning; };
 
         double getGravity() const { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
 
-        const std::vector<Object*>& getObjects() const { return objects; };
-
         View& getView();
         SDL_GPUDevice* getGPU();
+
+        void registerUpdate(GEUpdateFunc func);
 
     protected:
         struct ShaderWorldData
@@ -46,8 +49,10 @@ class World
 
         //Physics
         bool phyRunning;
-
         Timer<> lastPhysics;
+
+        GEUpdateFunc updateFunc = nullptr;
+
         std::mutex usageLock;
         double gravity = 0.00005f;
         const double pps = 60.0f;

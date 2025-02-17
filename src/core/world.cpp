@@ -32,6 +32,17 @@ World::~World()
     }
 }
 
+void World::update(double deltaTime)
+{
+    std::lock_guard<std::mutex> lock(usageLock);
+
+    if(updateFunc != nullptr)
+        (*updateFunc)(deltaTime, *this);
+
+    for(Object* obj : objects)
+        obj->update(deltaTime, *this);
+}
+
 void World::draw(double deltaTime, SDL_Window* win)
 {
     std::lock_guard<std::mutex> lock(usageLock);
@@ -141,14 +152,6 @@ void World::draw(double deltaTime, SDL_Window* win)
         free(test.data);
 }
 
-void World::update()
-{
-    std::lock_guard<std::mutex> lock(usageLock);
-    for(uint64_t i = 0; i < objects.size(); i++)
-    {
-        objects[i]->update(pps, *this);
-    }
-}
 
 void World::startPhysics()
 {
@@ -168,8 +171,20 @@ void World::runPhysics()
         PPS = 1000.0f / lastPhysics.getElapsed();
         lastPhysics.update();
 
-        if(!GameState::gamePaused() && phyRunning) update();
+        if(!GameState::gamePaused() && phyRunning)
+        {
+            std::lock_guard<std::mutex> lock(usageLock);
+            for(uint64_t i = 0; i < objects.size(); i++)
+            {
+                objects[i]->runPhysics(pps, *this);
+            }
+        }
     }
+}
+
+void World::registerUpdate(GEUpdateFunc func)
+{
+    updateFunc = func;
 }
 
 void World::addObj(Object* obj)

@@ -17,7 +17,9 @@ class PhysicsObject : public Object
         using Object::update;
         ShaderObjData predraw() override;
         virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT) override;
-        virtual void update(double deltaTime, World& world);
+        //virtual void update(double deltaTime, World& world) override;
+
+        virtual void runPhysics(double deltaTime, World& world) override;
 
         bool detectCollision(World& context);
         virtual void collision(SDL_Rect* other);

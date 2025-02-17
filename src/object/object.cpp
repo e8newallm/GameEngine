@@ -19,7 +19,13 @@ void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* render
     tex->draw(world, buffer, renderPass);
 
 }
+
 void Object::update(double deltaTime, World& world)
+{
+    (void)deltaTime, (void)world;
+}
+
+void Object::runPhysics(double deltaTime, World& world)
 {
     (void)deltaTime, (void)world;
 }

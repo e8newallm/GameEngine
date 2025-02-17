@@ -84,7 +84,7 @@ void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass*
     Object::draw(world, buffer, renderPass, deltaT);
 }
 
-void PhysicsObject::update(double deltaTime, World& world)
+void PhysicsObject::runPhysics(double deltaTime, World& world)
 {
     if(isStatic())
         return;

@@ -18,6 +18,7 @@ class Object
 
         virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT = 0);
         virtual void update(double deltaTime, World& world);
+        virtual void runPhysics(double deltaTime, World& world);
 
         virtual void move(double x, double y);
         virtual void moveDelta(double x, double y);
