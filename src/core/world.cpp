@@ -36,6 +36,8 @@ void World::update(double deltaTime)
 {
     std::lock_guard<std::mutex> lock(usageLock);
 
+    phyInterPercent = lastPhysics.getElapsed() / (1000.0f / pps);
+
     if(updateFunc != nullptr)
         (*updateFunc)(deltaTime, *this);
 

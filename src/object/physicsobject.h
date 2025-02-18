@@ -17,7 +17,7 @@ class PhysicsObject : public Object
         using Object::update;
         ShaderObjData predraw() override;
         virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT) override;
-        //virtual void update(double deltaTime, World& world) override;
+        virtual void update(double deltaTime, World& world) override;
 
         virtual void runPhysics(double deltaTime, World& world) override;
 
@@ -29,9 +29,6 @@ class PhysicsObject : public Object
         virtual void velocityDelta(double x, double y);
         virtual SDL_FPoint getVelocity() { return nextVelocity; };
 
-        virtual SDL_Rect getInterBody(double percent);
-        SDL_Rect calcDrawBody(double percent);
-
         inline bool isStatic() const { return _isStatic; };
         inline bool canCollide() const { return _canCollide; };
 
@@ -41,6 +38,7 @@ class PhysicsObject : public Object
         bool _canCollide = false;
 
         SDL_Rect nextBody;
+        SDL_Rect interBody;
 
         SDL_FPoint currentVelocity;
         SDL_FPoint nextVelocity;

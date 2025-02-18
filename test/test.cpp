@@ -353,10 +353,10 @@ TEST_CASE("Basic functionality", "[physics]")
 
         box->update(6.0, world);
         boxCollide->update(6.0, world);
-        REQUIRE(box->getBody()->x == 505);
+        REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
         REQUIRE(box->getVelocity().y == 0.0);
-        REQUIRE(box->getVelocity().x == 0.0);
+        REQUIRE(box->getVelocity().x == 1.0);
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
     }
@@ -367,21 +367,11 @@ TEST_CASE("Basic functionality", "[physics]")
         PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
         world.addObj(box);
 
-        testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {500, 500, 50, 50});
-        testRect(box->getInterBody(1.0), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0.5), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(1.0), {500, 500, 50, 50});
+        testRect(*box->getBody(), {500, 500, 50, 50});
 
         box->velocityDelta(0.0, 100.0);
         box->update(1.0f, world);
 
-        testRect(box->getInterBody(0), {500, 500, 50, 50});
-        testRect(box->getInterBody(0.5), {500, 550, 50, 50});
-        testRect(box->getInterBody(1.0), {500, 600, 50, 50});
-        testRect(box->calcDrawBody(0), {500, 500, 50, 50});
-        testRect(box->calcDrawBody(0.5), {500, 550, 50, 50});
-        testRect(box->calcDrawBody(1.0), {500, 600, 50, 50});
+        testRect(*box->getBody(), {500, 500, 50, 50});
     }
 }

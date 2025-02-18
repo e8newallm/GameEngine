@@ -28,6 +28,8 @@ class World
         void stopPhysics();
         void runPhysics();
         bool physicsRunning() const { return phyRunning; };
+        bool getPPS() const { return pps; };
+        double getPhyInterpolation() const { return phyInterPercent; };
 
         double getGravity() const { return gravity; };
         void setGravity(double newGravity) { gravity = newGravity; };
@@ -50,12 +52,13 @@ class World
         //Physics
         bool phyRunning;
         Timer<> lastPhysics;
+        double phyInterPercent = 0.0f;
+        const double pps = 60.0f;
 
         GEUpdateFunc updateFunc = nullptr;
 
         std::mutex usageLock;
         double gravity = 0.00005f;
-        const double pps = 60.0f;
         std::vector<Object*> objects;
 };
 

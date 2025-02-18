@@ -12,27 +12,12 @@ PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
    ,_isStatic(flags & PHYOBJ_STATIC)
    ,_canCollide(flags & PHYOBJ_COLLIDE)
    ,nextBody(body)
+   ,interBody(body)
    ,currentVelocity()
    ,nextVelocity()
 {
     body.x = nextBody.x;
     body.y = nextBody.y;
-}
-
-SDL_Rect PhysicsObject::calcDrawBody(double percent)
-{
-    SDL_Rect interBody = getInterBody(percent);
-    return interBody;
-}
-
-SDL_Rect PhysicsObject::getInterBody(double percent)
-{
-    SDL_Rect interBody;
-    interBody.x = body.x + (nextBody.x - body.x) * percent;
-    interBody.y = body.y + (nextBody.y - body.y) * percent;
-    interBody.h = body.h;
-    interBody.w = body.w;
-    return interBody;
 }
 
 void PhysicsObject::velocity(double x, double y)
@@ -74,9 +59,19 @@ ShaderObjData PhysicsObject::predraw()
     };
 
     ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
-    data->body = body;
+    data->body = interBody;
     data->texBody = tex->getUV();
     return {data, sizeof(ObjData)};
+}
+
+void PhysicsObject::update(double deltaTime, World& world)
+{
+    (void)deltaTime;
+    
+    interBody.x = body.x + (nextBody.x - body.x) * world.getPhyInterpolation();
+    interBody.y = body.y + (nextBody.y - body.y) * world.getPhyInterpolation();
+    interBody.h = body.h;
+    interBody.w = body.w;
 }
 
 void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
