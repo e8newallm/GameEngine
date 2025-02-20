@@ -59,7 +59,7 @@ ShaderObjData PhysicsObject::predraw()
     };
 
     ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
-    data->body = interBody;
+    data->body = *getBody();
     data->texBody = tex->getUV();
     return {data, sizeof(ObjData)};
 }
@@ -67,7 +67,6 @@ ShaderObjData PhysicsObject::predraw()
 void PhysicsObject::update(double deltaTime, World& world)
 {
     (void)deltaTime;
-    
     interBody.x = body.x + (nextBody.x - body.x) * world.getPhyInterpolation();
     interBody.y = body.y + (nextBody.y - body.y) * world.getPhyInterpolation();
     interBody.h = body.h;
@@ -98,37 +97,16 @@ void PhysicsObject::runPhysics(double deltaTime, World& world)
     displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
     displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
     std::vector<Object*> objects = world.getObjects();
+    SDL_Rect collisionArea;
 
     nextBody.x += displacement.x;
     for(uint64_t i = 0; i < objects.size(); i++)
     {
         PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
-        if(obj != nullptr && SDL_HasRectIntersection(&nextBody, &obj->nextBody) && this != objects[i])
-        {
-            collision(&obj->nextBody);
-        }
-    }
 
-    nextBody.y += displacement.y;
-    for(uint64_t i = 0; i < objects.size(); i++)
-    {
-        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
-        if(obj != nullptr && SDL_HasRectIntersection(&nextBody, &obj->nextBody) && this != objects[i])
+        if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
         {
-            collision(&obj->nextBody);
-        }
-    }
-}
-
-void PhysicsObject::collision(SDL_Rect* other)
-{
-    SDL_Rect collisionArea;
-    if(SDL_GetRectIntersection(&nextBody, other, &collisionArea))
-    {
-        //std::cout << "collision!\r\n";
-        if(collisionArea.h > collisionArea.w)
-        {
-            if(other->x < body.x)
+            if(obj->getBody()->x < body.x)
             {
                 nextBody.x += collisionArea.w;
             }
@@ -139,9 +117,15 @@ void PhysicsObject::collision(SDL_Rect* other)
             currentVelocity.x = 0;
             nextVelocity.x = 0;
         }
-        else
+    }
+
+    nextBody.y += displacement.y;
+    for(uint64_t i = 0; i < objects.size(); i++)
+    {
+        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
         {
-            if(other->y < body.y)
+            if(obj->getBody()->y < body.y)
             {
                 nextBody.y += collisionArea.h;
             }
@@ -152,7 +136,5 @@ void PhysicsObject::collision(SDL_Rect* other)
             currentVelocity.y = 0;
             nextVelocity.y = 0;
         }
-        //std::cout << "new body: " << body.x << ", " << body.y << " - " << body.w << ", " << body.h << "\r\n";
-        //std::cout << "new nextBody: " << nextBody.x << ", " << nextBody.y << " - " << nextBody.w << ", " << nextBody.h << "\r\n";
     }
 }

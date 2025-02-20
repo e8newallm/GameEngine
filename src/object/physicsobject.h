@@ -22,7 +22,6 @@ class PhysicsObject : public Object
         virtual void runPhysics(double deltaTime, World& world) override;
 
         bool detectCollision(World& context);
-        virtual void collision(SDL_Rect* other);
         bool onGround(const World& world) const;
 
         virtual void velocity(double x, double y);

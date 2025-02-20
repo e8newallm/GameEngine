@@ -293,77 +293,7 @@ TEST_CASE("Basic functionality", "[physics]")
 
     World world(gpu, viewport);
 
-    SECTION("Box drop")
-    {
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addObj(box);
-
-        box->velocityDelta(0.0, 0.5);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 500);
-
-        world.runPhysics();
-        world.update(10.0);
-        box->update(0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 500);
-
-        box->update(2.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 505);
-
-        box->update(2.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 506);
-
-        box->update(2.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 507);
-
-        box->velocityDelta(15.0, 0.0);
-        box->update(4.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 508);
-
-        box->update(0.0, world);
-        REQUIRE(box->getBody()->x == 560);
-        REQUIRE(box->getBody()->y == 510);
-
-        box->moveDelta(10.0, 10.0);
-        REQUIRE(box->getBody()->x == 570);
-        REQUIRE(box->getBody()->y == 520);
-    }
-
-    SECTION("Collision")
-    {
-        world.setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addObj(box);
-        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
-        world.addObj(boxCollide);
-
-        box->velocityDelta(1.0, 0.0);
-        box->update(5.0, world);
-        boxCollide->update(5.0, world);
-
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 500);
-        REQUIRE(box->getVelocity().y == 0.0);
-        REQUIRE(box->getVelocity().x == 1.0);
-        REQUIRE(boxCollide->getBody()->x == 520);
-        REQUIRE(boxCollide->getBody()->y == 500);
-
-        box->update(6.0, world);
-        boxCollide->update(6.0, world);
-        REQUIRE(box->getBody()->x == 500);
-        REQUIRE(box->getBody()->y == 500);
-        REQUIRE(box->getVelocity().y == 0.0);
-        REQUIRE(box->getVelocity().x == 1.0);
-        REQUIRE(boxCollide->getBody()->x == 520);
-        REQUIRE(boxCollide->getBody()->y == 500);
-    }
-
-    SECTION("Correct interpolation for drawing")
+    SECTION("Interpolation calculation")
     {
         world.setGravity(0.0);
         PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
@@ -371,9 +301,94 @@ TEST_CASE("Basic functionality", "[physics]")
 
         testRect(*box->getBody(), {500, 500, 50, 50});
 
+        world.setPhyInterpolation(1.0f);
         box->velocityDelta(0.0, 100.0);
+        box->runPhysics(1, world);
         box->update(1.0f, world);
 
         testRect(*box->getBody(), {500, 500, 50, 50});
+    }
+
+    SECTION("Box drop")
+    {
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        world.addObj(box);
+
+        box->velocityDelta(0.0, 10);
+        REQUIRE(box->getBody()->x == 500);
+        REQUIRE(box->getBody()->y == 500);
+
+        world.setPhyInterpolation(0.5f);
+        box->runPhysics(1, world);
+        box->update(1, world);
+        REQUIRE(box->getBody()->x == 500);
+        REQUIRE(box->getBody()->y == 505);
+
+        world.setPhyInterpolation(1.0f);
+        box->update(1, world);
+        REQUIRE(box->getBody()->x == 500);
+        REQUIRE(box->getBody()->y == 510);
+    }
+
+    SECTION("Collision")
+    {
+        world.setGravity(0.0);
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        box->velocityDelta(11.0, 0.0);
+        world.addObj(box);
+        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        world.addObj(boxCollide);
+
+        //No collision
+        box->runPhysics(0.5f, world);
+        boxCollide->runPhysics(0.5f, world);
+
+        world.setPhyInterpolation(0.5f);
+        box->update(0.0f, world);
+        boxCollide->update(0.0f, world);
+
+        REQUIRE(box->getBody()->x == 502);
+        REQUIRE(box->getBody()->y == 500);
+        REQUIRE(box->getVelocity().y == 0.0);
+        REQUIRE(box->getVelocity().x == 11.0);
+        REQUIRE(boxCollide->getBody()->x == 520);
+        REQUIRE(boxCollide->getBody()->y == 500);
+
+        world.setPhyInterpolation(1.0f);
+        box->update(0.0f, world);
+        boxCollide->update(0.0f, world);
+
+        REQUIRE(box->getBody()->x == 505);
+        REQUIRE(box->getBody()->y == 500);
+        REQUIRE(box->getVelocity().y == 0.0);
+        REQUIRE(box->getVelocity().x == 11.0);
+        REQUIRE(boxCollide->getBody()->x == 520);
+        REQUIRE(boxCollide->getBody()->y == 500);
+
+        //Collision
+        box->runPhysics(1.0f, world);
+        boxCollide->runPhysics(1.0f, world);
+
+        world.setPhyInterpolation(0.5f);
+        box->update(0.0f, world);
+        boxCollide->update(0.0f, world);
+
+        REQUIRE(box->getBody()->x == 507);
+        REQUIRE(box->getBody()->y == 500);
+        REQUIRE(box->getVelocity().y == 0.0);
+        REQUIRE(box->getVelocity().x == 0.0);
+        REQUIRE(boxCollide->getBody()->x == 520);
+        REQUIRE(boxCollide->getBody()->y == 500);
+
+        world.setPhyInterpolation(1.0f);
+        box->update(0.0f, world);
+        boxCollide->update(0.0f, world);
+
+        REQUIRE(box->getBody()->x == 510);
+        REQUIRE(box->getBody()->y == 500);
+        REQUIRE(box->getVelocity().y == 0.0);
+        REQUIRE(box->getVelocity().x == 0.0);
+        REQUIRE(boxCollide->getBody()->x == 520);
+        REQUIRE(boxCollide->getBody()->y == 500);
     }
 }

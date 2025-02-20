@@ -64,7 +64,6 @@ void Logger::deinit()
         delete file;
         file = nullptr;
     }
-    std::cout << "\r\n" << std::flush;
 
     logFile = &std::cout;
 }

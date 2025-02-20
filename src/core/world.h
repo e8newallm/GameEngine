@@ -29,6 +29,8 @@ class World
         void runPhysics();
         bool physicsRunning() const { return phyRunning; };
         bool getPPS() const { return pps; };
+
+        void setPhyInterpolation(double newPhyInter) { phyInterPercent = newPhyInter; };
         double getPhyInterpolation() const { return phyInterPercent; };
 
         double getGravity() const { return gravity; };
