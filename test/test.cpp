@@ -302,7 +302,9 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
 
-        box->update(10.0, world);
+        world.runPhysics();
+        world.update(10.0);
+        box->update(0, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
 

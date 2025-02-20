@@ -26,7 +26,7 @@ class Object
         virtual void resize(double height, double width);
         virtual void resizeDelta(double height, double width);
 
-        SDL_Rect* getBody() {return &body;};
+        virtual const SDL_Rect* getBody() const { return &body; };
 
     protected:
         SDL_Rect body;

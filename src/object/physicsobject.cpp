@@ -43,7 +43,7 @@ bool PhysicsObject::onGround(const World& world) const
     for(uint64_t i = 0; i < objects.size(); i++)
     {
         PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
-        if(obj != nullptr && SDL_HasRectIntersection(&groundCheck, objects[i]->getBody()))
+        if(obj != this && obj != nullptr && SDL_HasRectIntersection(&groundCheck, objects[i]->getBody()))
         {
             return true;
         }

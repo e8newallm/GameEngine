@@ -28,6 +28,7 @@ class PhysicsObject : public Object
         virtual void velocity(double x, double y);
         virtual void velocityDelta(double x, double y);
         virtual SDL_FPoint getVelocity() { return nextVelocity; };
+        virtual const SDL_Rect* getBody() const override { return &interBody; };
 
         inline bool isStatic() const { return _isStatic; };
         inline bool canCollide() const { return _canCollide; };

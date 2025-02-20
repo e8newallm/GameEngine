@@ -59,8 +59,6 @@ void World::draw(double deltaTime, SDL_Window* win)
     if(swapchainTexture == NULL)
         return;
 
-
-
     SDL_GPUColorTargetInfo colorTargetInfo;
     SDL_zero(colorTargetInfo);
     colorTargetInfo.texture = swapchainTexture;
