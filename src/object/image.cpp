@@ -23,9 +23,3 @@ ShaderObjData Image::predraw()
     data->texBody = tex->getUV();
     return {data, sizeof(ObjData)};
 }
-
-void Image::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
-{
-    tex->update(deltaT);
-    tex->draw(world, buffer, renderPass);
-}

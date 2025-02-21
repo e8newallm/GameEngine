@@ -66,16 +66,12 @@ ShaderObjData PhysicsObject::predraw()
 
 void PhysicsObject::update(double deltaTime, World& world)
 {
-    (void)deltaTime;
     interBody.x = body.x + (nextBody.x - body.x) * world.getPhyInterpolation();
     interBody.y = body.y + (nextBody.y - body.y) * world.getPhyInterpolation();
     interBody.h = body.h;
     interBody.w = body.w;
-}
-
-void PhysicsObject::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
-{
-    Object::draw(world, buffer, renderPass, deltaT);
+    
+    Object::update(deltaTime,world);
 }
 
 void PhysicsObject::runPhysics(double deltaTime, World& world)

@@ -60,7 +60,7 @@ void Window::render(World& world)
         lastRender.update();
 
         world.update(deltaTime);
-        world.draw(deltaTime, getWin());
+        world.draw(getWin());
     }
 }
 

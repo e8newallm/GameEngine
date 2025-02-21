@@ -13,7 +13,6 @@ class Image : public Object
         Image(SDL_Rect body, const std::string& texture);
 
         ShaderObjData predraw() override;
-        void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT = 0) override;
 };
 
 #endif

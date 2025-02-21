@@ -13,16 +13,17 @@ Object::~Object()
     delete tex;
 }
 
-void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass, double deltaT)
+void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
 {
-    tex->update(deltaT);
+
     tex->draw(world, buffer, renderPass);
 
 }
 
 void Object::update(double deltaTime, World& world)
 {
-    (void)deltaTime, (void)world;
+    (void)world;
+    tex->update(deltaTime);
 }
 
 void Object::runPhysics(double deltaTime, World& world)

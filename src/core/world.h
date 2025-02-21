@@ -17,7 +17,7 @@ class World
     public:
         World(SDL_GPUDevice* gpu, View viewport);
         ~World();
-        void draw(double deltaTime, SDL_Window* win);
+        void draw(SDL_Window* win);
         void update(double deltaTime);
 
         void addObj(Object* obj);

@@ -1,6 +1,4 @@
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_gpu.h>
-#include <SDL3/SDL_stdinc.h>
 #include <string>
 
 #include "logging.h"
@@ -31,7 +29,7 @@ void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* rende
     SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
     SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
     SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
-    SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 1);
+    SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
 }
 
 template <> Store<GPUTexture>::~Store()

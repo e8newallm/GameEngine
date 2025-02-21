@@ -1,13 +1,10 @@
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_stdinc.h>
-#include <SDL3/SDL_video.h>
 #include <cstdint>
 #include <iostream>
 #include <mutex>
 
 #include "world.h"
-#include "physicsobject.h"
-#include "image.h"
+#include "object.h"
 #include "logging.h"
 #include "gamestate.h"
 #include "graphics.h"
@@ -45,7 +42,7 @@ void World::update(double deltaTime)
         obj->update(deltaTime, *this);
 }
 
-void World::draw(double deltaTime, SDL_Window* win)
+void World::draw(SDL_Window* win)
 {
     std::lock_guard<std::mutex> lock(usageLock);
 
@@ -137,14 +134,13 @@ void World::draw(double deltaTime, SDL_Window* win)
 	SDL_PushGPUVertexUniformData(cmdbuf, 1, &worldData, sizeof(ShaderWorldData));
 
     int drawID = 0;
-
     for(uint64_t i = 0; i < objects.size(); i++)
     {
         SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
         drawID++;
-        objects[i]->draw(this, objectDataBuffer, renderPass, deltaTime);
+        if(SDL_HasRectIntersection(objects[i]->getBody(), getView().window()))
+            objects[i]->draw(this, objectDataBuffer, renderPass);
     }
-
     SDL_EndGPURenderPass(renderPass);
     SDL_SubmitGPUCommandBuffer(cmdbuf);
 
