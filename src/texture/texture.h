@@ -26,7 +26,5 @@ class Texture : public Texture_base, public DataStore<GPUTexture, Texture>
         SDL_FRect texturePosition;
 };
 
-template <> Store<GPUTexture>::~Store();
-
 SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename);
 #endif

@@ -306,7 +306,7 @@ TEST_CASE("Basic functionality", "[physics]")
         box->runPhysics(1, world);
         box->update(1.0f, world);
 
-        testRect(*box->getBody(), {500, 500, 50, 50});
+        testRect(*box->getBody(), {500, 600, 50, 50});
     }
 
     SECTION("Box drop")

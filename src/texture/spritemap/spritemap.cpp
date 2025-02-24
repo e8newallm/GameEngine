@@ -91,7 +91,6 @@ void SpriteMap::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* ren
         sampleBinding.texture = currentSprite->texture->tex;
         sampleBinding.sampler = Sampler::get("default");
 
-        //SDL_RenderTexture(world->getGPU(), currentSprite->texture, &currentSprite->position, &bPos);
         SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
         SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
         SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);

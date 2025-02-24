@@ -32,17 +32,6 @@ void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* rende
     SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
 }
 
-template <> Store<GPUTexture>::~Store()
-{
-    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_Texture*).name());
-    for(std::pair<std::string, GPUTexture*> value : *this)
-    {
-        Logger::debug(std::string(" - ") + value.first);
-    }
-    this->clear();
-    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_Texture*).name());
-}
-
 SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename)
 {
     SDL_Surface* convertSurf = SDL_ConvertSurface(surf, SDL_PIXELFORMAT_ABGR8888);

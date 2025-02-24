@@ -9,13 +9,13 @@
 #include "gamestate.h"
 #include "graphics.h"
 
-double PPS = 0;
+int phyUpdates = 0;
 
 World::World(SDL_GPUDevice* gpu, View viewport) :
     viewport(viewport)
     , gpu(gpu)
     , phyRunning(false)
-    , lastPhysics()
+    , physicsTimer(pps)
     , usageLock()
 {
 
@@ -33,7 +33,7 @@ void World::update(double deltaTime)
 {
     std::lock_guard<std::mutex> lock(usageLock);
 
-    setPhyInterpolation(lastPhysics.getElapsed() / (1000.0f / pps));
+    setPhyInterpolation(physicsTimer.getElapsed() / (1000.0f / pps));
 
     if(updateFunc != nullptr)
         (*updateFunc)(deltaTime, *this);
@@ -161,12 +161,10 @@ void World::stopPhysics()
 
 void World::runPhysics()
 {
-    if(lastPhysics.getElapsed() >= 900.0f / pps) //Check if physics loop is approaching the correct timing
+    if(physicsTimer.trigger())
     {
-        while(lastPhysics.getElapsed() < (1000.0f / pps)); //Busy loop to get the timing correct
-        PPS = 1000.0f / lastPhysics.getElapsed();
-        lastPhysics.update();
-
+        physicsTimer.update();
+        phyUpdates++;
         if(!GameState::gamePaused() && phyRunning)
         {
             std::lock_guard<std::mutex> lock(usageLock);

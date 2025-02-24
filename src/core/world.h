@@ -53,9 +53,9 @@ class World
 
         //Physics
         bool phyRunning;
-        Timer<> lastPhysics;
         double phyInterPercent = 0.0f;
         const double pps = 60.0f;
+        Timer physicsTimer;
 
         GEUpdateFunc updateFunc = nullptr;
 

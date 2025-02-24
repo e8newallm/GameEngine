@@ -31,7 +31,7 @@ class Window
         SDL_Point reso;
 
         double fps = 165.0f;
-        Timer<> lastRender;
+        Timer renderTimer;
 };
 
 #endif

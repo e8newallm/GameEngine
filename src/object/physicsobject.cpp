@@ -42,7 +42,7 @@ bool PhysicsObject::onGround(const World& world) const
     std::vector<Object*> objects = world.getObjects();
     for(uint64_t i = 0; i < objects.size(); i++)
     {
-        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
         if(obj != this && obj != nullptr && SDL_HasRectIntersection(&groundCheck, objects[i]->getBody()))
         {
             return true;
@@ -98,7 +98,7 @@ void PhysicsObject::runPhysics(double deltaTime, World& world)
     nextBody.x += displacement.x;
     for(uint64_t i = 0; i < objects.size(); i++)
     {
-        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
 
         if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
         {
@@ -118,7 +118,7 @@ void PhysicsObject::runPhysics(double deltaTime, World& world)
     nextBody.y += displacement.y;
     for(uint64_t i = 0; i < objects.size(); i++)
     {
-        PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+        const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
         if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
         {
             if(obj->getBody()->y < body.y)

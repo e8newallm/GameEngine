@@ -2,12 +2,11 @@
 
 #include "window.h"
 #include "gamestate.h"
-#include "mousestate.h"
-#include "keystate.h"
 
-double FPS = 0;
+int frameUpdates = 0;
 
-Window::Window(const std::string& name, int width, int height, int flags)
+Window::Window(const std::string& name, int width, int height, int flags) :
+    renderTimer(fps+1)
 {
     win = SDL_CreateWindow(name.c_str(),
                             width, height,  SDL_WINDOW_VULKAN | flags);
@@ -51,14 +50,12 @@ const SDL_Point* Window::getResolution() const
 
 void Window::render(World& world)
 {
-    if(lastRender.getElapsed() >= (800.0f / fps)) //Check if render loop is approaching the correct timing
+    if(renderTimer.trigger())
     {
-        while(lastRender.getElapsed() < (1000.0f / fps)); //Busy loop to get the timing correct
-
-        double deltaTime = lastRender.getElapsed();
-        FPS = 1000.0f / lastRender.getElapsed();
-        lastRender.update();
-
+        double deltaTime = renderTimer.getElapsed();
+        renderTimer.update();
+        frameUpdates++;
+        
         world.update(deltaTime);
         world.draw(getWin());
     }

@@ -3,14 +3,25 @@
 
 #include <chrono>
 #include <ratio>
+#include <iostream>
 
-template <class rep = double, class period = std::milli> class Timer
+class Timer
 {
     public:
-        rep getElapsed() const { return std::chrono::duration<rep, period>(std::chrono::high_resolution_clock::now() - timer).count(); };
-        void update() { timer = std::chrono::high_resolution_clock::now(); };
+        explicit Timer(double rate) : timeframe(1000.0/(rate)), nextTrigger(timeframe) {};
+
+        double getElapsed() const { return std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - timer).count(); };
+        bool trigger() const { return getElapsed() >= nextTrigger; };
+        void update()
+        {
+            double elapsed = getElapsed();
+            nextTrigger = timeframe - (elapsed - timeframe);
+            timer = std::chrono::high_resolution_clock::now();
+        };
 
     private:
+        double timeframe;
+        double nextTrigger;
         std::chrono::high_resolution_clock::time_point timer = std::chrono::high_resolution_clock::now();
 };
 
