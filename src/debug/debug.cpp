@@ -10,13 +10,18 @@
 #include "texture.h"
 #include "spritemap.h"
 #include "gamestate.h"
+#include "shader.h"
+#include "graphics.h"
 
 using commandFunc = void (*)(const std::vector<std::string>&);
 
-std::map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList
+std::unordered_map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList
 {
-    {"texture", Texture::getList},
-    {"spritemap", SpriteMap::getList},
+    {"Texture",     Texture::getList},
+    {"SpriteMap",   SpriteMap::getList},
+    {"Shader",      Shader::getList},
+    {"Pipeline",    Pipeline::getList},
+    {"Sampler",     Sampler::getList},
 };
 
 void printStore(const std::vector<std::string>& parameters)

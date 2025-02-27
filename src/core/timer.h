@@ -3,7 +3,6 @@
 
 #include <chrono>
 #include <ratio>
-#include <iostream>
 
 class Timer
 {

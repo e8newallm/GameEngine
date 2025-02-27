@@ -87,7 +87,6 @@ void SpriteMapData::loadFromString(const char* spriteConfig, const char* source)
                 {
                     throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
                 }
-                //Texture::add(SDL_CreateTextureFromSurface(gpu, surface), value.GetString());
             }
             textures.insert({value.GetString(), Texture::get(value.GetString())});
         }
@@ -111,7 +110,6 @@ void SpriteMapData::loadFromString(const char* spriteConfig, const char* source)
             {
                 throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
             }
-            //Texture::add(SDL_CreateTextureFromSurface(gpu, surface), config["Textures"].GetString());
         }
         textures.insert({config["Textures"].GetString(), Texture::get(config["Textures"].GetString())});
     }

@@ -13,13 +13,7 @@ SDL_GPUSampler* Sampler::createSampler(const Window& win, SDL_GPUSamplerCreateIn
 
 template <> Store<SDL_GPUSampler>::~Store()
 {
-    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_GPUSampler*).name());
-    for(std::pair<std::string, SDL_GPUSampler*> value : *this)
-    {
-        Logger::debug(std::string(" - ") + value.first);
-    }
     this->clear();
-    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_GPUSampler*).name());
 }
 
 SDL_GPUGraphicsPipeline* Pipeline::createPipeline(const Window& win, const std::string& vertShader = "default", const std::string& fragShader = "default")
@@ -65,11 +59,5 @@ SDL_GPUGraphicsPipeline* Pipeline::createPipeline(const Window& win, const std::
 
 template <> Store<SDL_GPUGraphicsPipeline>::~Store()
 {
-    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_GPUGraphicsPipeline*).name());
-    for(std::pair<std::string, SDL_GPUGraphicsPipeline*> value : *this)
-    {
-        Logger::debug(std::string(" - ") + value.first);
-    }
     this->clear();
-    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_GPUGraphicsPipeline*).name());
 }

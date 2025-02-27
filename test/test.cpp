@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
+#include <catch2/catch_test_macros.hpp>
 #include <cstdlib>
 #include <ios>
 #include <rapidjson/document.h>
@@ -15,6 +16,7 @@
 #include <sstream>
 #include <string>
 
+#include "datastore.h"
 #include "physicsobject.h"
 #include "world.h"
 
@@ -51,10 +53,29 @@ TEST_CASE("Error", "[base][exceptions]")
     }
 }
 
+TEST_CASE("Store", "[base][store]")
+{
+    int* testValue = new int(12);
+    DataStore<int, char> testStore;
+    SECTION("Basic test")
+    {
+        REQUIRE_THROWS_WITH(testStore.get("MISSING ENTRY"),
+                            "Requested entry MISSING ENTRY not found in char store");
+
+        REQUIRE(!testStore.exists("test"));
+
+        testStore.add(testValue, "test");
+        REQUIRE(testStore.exists("test"));
+        REQUIRE(*testStore.get("test") == 12);
+        *testValue = 35;
+        REQUIRE(*testStore.get("test") == 35);
+    }
+    delete testValue;
+}
 
 TEST_CASE("Logging", "[base][logging]")
 {
-    SECTION("ostream test")
+    SECTION("Ostream test")
     {
         std::ostringstream testStream;
         Logger::init(&testStream);
@@ -67,7 +88,7 @@ TEST_CASE("Logging", "[base][logging]")
     std::string filename = "./testlog.log";
     std::fstream testFile;
 
-    SECTION("file test")
+    SECTION("File test")
     {
         testFile.open(filename, std::ios_base::out | std::ios_base::binary);
         Logger::init(&testFile);
@@ -91,6 +112,7 @@ TEST_CASE("Logging", "[base][logging]")
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
+    Texture::add(new GPUTexture(), "testfiles/tex/spritemap.png");
 
     SECTION("Schema sanity check")
     {
@@ -134,9 +156,9 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
     SECTION("JSON load/save sanity check", "[spritemap]")
     {
         SpriteMapData test, testTwo;
-        test.loadFromFile("testfiles/json/spritemap/spritemap.json");
         std::string result = R"TEST({"Textures":["testfiles/tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"testfiles/tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
 
+        REQUIRE_NOTHROW(test.loadFromFile("testfiles/json/spritemap/spritemap.json"));
         REQUIRE(test.serialise() == result);
         REQUIRE_NOTHROW(testTwo.loadFromString(result.c_str()));
         REQUIRE(test.serialise() == testTwo.serialise());

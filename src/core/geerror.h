@@ -9,6 +9,8 @@ enum class GEError {
     FILE_NOT_FOUND = 1,
     FILE_IO = 2,
     INVALID_FILE_FORMAT = 3,
+
+    STORE_ENTRY_NOT_FOUND = 4,
 };
 
 class GameEngineException : public std::exception

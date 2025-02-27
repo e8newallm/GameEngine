@@ -7,7 +7,7 @@
 
 void Logger::error(const std::string& msg, const std::source_location location)
 {
-    log("ERRO: " + msg, location);
+    log("ERROR: " + msg, location);
 }
 
 void Logger::warning(const std::string& msg, const std::source_location location)
@@ -34,7 +34,7 @@ void Logger::log(const std::string& msg, const std::source_location location)
 {
     std::string fullMsg = msg + "\r\n";
 #ifdef DEBUG
-    fullMsg = std::string("(") + location.function_name() + ": line " + std::to_string(location.line()) + ") " + fullMsg;
+    fullMsg = std::string("(") + location.file_name() + ":" + std::to_string(location.line()) + " " + location.function_name() + ") " + fullMsg;
 #else
     (void)location;
 #endif

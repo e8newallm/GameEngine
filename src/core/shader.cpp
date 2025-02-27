@@ -107,11 +107,5 @@ SDL_GPUShader* Shader::LoadShaderFromArray(
 
 template <> Store<SDL_GPUShader>::~Store()
 {
-    Logger::debug(std::string("Deconstructing Store of ") + typeid(SDL_GPUShader*).name());
-    for(std::pair<std::string, SDL_GPUShader*> value : *this)
-    {
-        Logger::debug(std::string(" - ") + value.first);
-    }
     this->clear();
-    Logger::debug(std::string("Deconstructed Store of ") + typeid(SDL_GPUShader*).name());
 }
