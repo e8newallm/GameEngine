@@ -11,6 +11,8 @@
 #include "catch2/matchers/catch_matchers.hpp"
 #include "catch2/matchers/catch_matchers_exception.hpp"
 
+using namespace GameEng;
+
 inline void conversionTest(uint64_t value) {
 	std::vector<uint8_t> data = {};
 	numToByte(data, value);

@@ -5,14 +5,17 @@
 
 #include "object.h"
 
-class Context;
-
-class Image : public Object
+namespace GameEng
 {
-    public:
-        Image(SDL_Rect body, const std::string& texture);
+    class Context;
 
-        ShaderObjData predraw() override;
-};
+    class Image : public Object
+    {
+        public:
+            Image(SDL_Rect body, const std::string& texture);
+
+            ShaderObjData predraw() override;
+    };
+}
 
 #endif

@@ -13,6 +13,8 @@
 #include "packager.h"
 #include "geerror.h"
 
+using namespace GameEng;
+
 #define CHUNK (256 * 1024)
 
 PackageManager::PackageManager(const std::string& file) :
@@ -102,7 +104,7 @@ std::vector<uint8_t> PackageManager::getFile(const std::string& path)
                 if (ferror(package)) {
                     (void)inflateEnd(&strm);
                     fclose(package);
-                    throw GameEngineException(GEError::FILE_IO, "Could not read from package: " + packageFile);
+                    throw GameEng::GameEngineException(GameEng::GEError::FILE_IO, "Could not read from package: " + packageFile);
                 }
                 if (strm.avail_in == 0)
                     break;

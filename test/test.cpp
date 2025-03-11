@@ -31,6 +31,8 @@
 
 #include "catch2/catch_all.hpp"
 
+using namespace GameEng;
+
 extern const char* SpriteMapSchema;
 
 uint64_t lineNumber;

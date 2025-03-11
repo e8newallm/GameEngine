@@ -15,41 +15,44 @@
 
 #include "texture.h"
 
-struct Sprite
+namespace GameEng
 {
-    GPUTexture* texture;
-    std::string textureName;
-    SDL_FRect position;
-};
+    struct Sprite
+    {
+        GPUTexture* texture;
+        std::string textureName;
+        SDL_FRect position;
+    };
 
-struct Animation
-{
-    double FPS;
-    std::vector<std::string> sprites;
-};
+    struct Animation
+    {
+        double FPS;
+        std::vector<std::string> sprites;
+    };
 
-struct CurrentFrame
-{
-    double elapsedTime = 0.0;
-    Uint32 frame = 0;
-};
+    struct CurrentFrame
+    {
+        double elapsedTime = 0.0;
+        Uint32 frame = 0;
+    };
 
-class SpriteMapData
-{
-    public:
-        SpriteMapData();
+    class SpriteMapData
+    {
+        public:
+            SpriteMapData();
 
-        void loadFromFile(const char* configLocation);
-        void loadFromPackage(PackageManager* package, const char* path);
-        void loadFromString(const char* spriteConfig, const char* source = "string config");
-        void save(const char* spriteConfig);
-        std::string serialise();
+            void loadFromFile(const char* configLocation);
+            void loadFromPackage(PackageManager* package, const char* path);
+            void loadFromString(const char* spriteConfig, const char* source = "string config");
+            void save(const char* spriteConfig);
+            std::string serialise();
 
-        PackageManager* package;
+            PackageManager* package;
 
-        std::map<std::string, GPUTexture*> textures;
-        std::map<std::string, Sprite> sprites;
-        std::map<std::string, Animation> animations;
-};
+            std::map<std::string, GPUTexture*> textures;
+            std::map<std::string, Sprite> sprites;
+            std::map<std::string, Animation> animations;
+    };
+}
 
 #endif

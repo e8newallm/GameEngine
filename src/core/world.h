@@ -7,61 +7,64 @@
 #include "timer.h"
 #include "view.h"
 
-class Object;
-class World;
-
-typedef void (*GEUpdateFunc)(double deltaTime, World& world);
-
-class World
+namespace GameEng
 {
-    public:
-        World(SDL_GPUDevice* gpu, View viewport);
-        ~World();
-        void draw(SDL_Window* win);
-        void update(double deltaTime);
+    class Object;
+    class World;
 
-        void addObj(Object* obj);
-        const std::vector<Object*>& getObjects() const { return objects; };
+    typedef void (*GEUpdateFunc)(double deltaTime, World& world);
 
-        //Physics
-        void startPhysics();
-        void stopPhysics();
-        void runPhysics();
-        bool physicsRunning() const { return phyRunning; };
-        bool getPPS() const { return pps; };
+    class World
+    {
+        public:
+            World(SDL_GPUDevice* gpu, View viewport);
+            ~World();
+            void draw(SDL_Window* win);
+            void update(double deltaTime);
 
-        void setPhyInterpolation(double newPhyInter) { phyInterPercent = newPhyInter; };
-        double getPhyInterpolation() const { return phyInterPercent; };
+            void addObj(Object* obj);
+            const std::vector<Object*>& getObjects() const { return objects; };
 
-        double getGravity() const { return gravity; };
-        void setGravity(double newGravity) { gravity = newGravity; };
+            //Physics
+            void startPhysics();
+            void stopPhysics();
+            void runPhysics();
+            bool physicsRunning() const { return phyRunning; };
+            bool getPPS() const { return pps; };
 
-        View& getView();
-        SDL_GPUDevice* getGPU();
+            void setPhyInterpolation(double newPhyInter) { phyInterPercent = newPhyInter; };
+            double getPhyInterpolation() const { return phyInterPercent; };
 
-        void registerUpdate(GEUpdateFunc func);
+            double getGravity() const { return gravity; };
+            void setGravity(double newGravity) { gravity = newGravity; };
 
-    protected:
-        struct ShaderWorldData
-        {
-            SDL_Rect camera;
-        };
+            View& getView();
+            SDL_GPUDevice* getGPU();
 
-    private:
-        View viewport;
-        SDL_GPUDevice* gpu;
+            void registerUpdate(GEUpdateFunc func);
 
-        //Physics
-        bool phyRunning;
-        double phyInterPercent = 0.0f;
-        const double pps = 60.0f;
-        Timer physicsTimer;
+        protected:
+            struct ShaderWorldData
+            {
+                SDL_Rect camera;
+            };
 
-        GEUpdateFunc updateFunc = nullptr;
+        private:
+            View viewport;
+            SDL_GPUDevice* gpu;
 
-        std::mutex usageLock;
-        double gravity = 0.00005f;
-        std::vector<Object*> objects;
-};
+            //Physics
+            bool phyRunning;
+            double phyInterPercent = 0.0f;
+            const double pps = 60.0f;
+            Timer physicsTimer;
+
+            GEUpdateFunc updateFunc = nullptr;
+
+            std::mutex usageLock;
+            double gravity = 0.00005f;
+            std::vector<Object*> objects;
+    };
+}
 
 #endif

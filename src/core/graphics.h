@@ -8,25 +8,28 @@
 #include "datastore.h"
 #include "window.h"
 
-struct ShaderObjData
+namespace GameEng
 {
-    void* data;
-    size_t size;
-};
+    struct ShaderObjData
+    {
+        void* data;
+        size_t size;
+    };
 
-class Sampler : public DataStore<SDL_GPUSampler, Sampler>
-{
-    public:
-        static SDL_GPUSampler* createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
-};
+    class Sampler : public DataStore<SDL_GPUSampler, Sampler>
+    {
+        public:
+            static SDL_GPUSampler* createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
+    };
 
-template <> Store<SDL_GPUSampler>::~Store();
+    template <> Store<SDL_GPUSampler>::~Store();
 
-class Pipeline : public DataStore<SDL_GPUGraphicsPipeline, Pipeline>
-{
-    public:
-        static SDL_GPUGraphicsPipeline* createPipeline(const Window& win, const std::string& vertShader, const std::string& fragShader);
-};
-template <> Store<SDL_GPUGraphicsPipeline>::~Store();
+    class Pipeline : public DataStore<SDL_GPUGraphicsPipeline, Pipeline>
+    {
+        public:
+            static SDL_GPUGraphicsPipeline* createPipeline(const Window& win, const std::string& vertShader, const std::string& fragShader);
+    };
+    template <> Store<SDL_GPUGraphicsPipeline>::~Store();
+}
 
 #endif

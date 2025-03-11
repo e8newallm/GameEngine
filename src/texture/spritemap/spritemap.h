@@ -9,27 +9,30 @@
 
 #include "tools/packager/packager.h"
 
-class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap>
+namespace GameEng
 {
-    public:
-        explicit SpriteMap(const char* spriteConfig);
-        SpriteMap(PackageManager* package, const char* path);
-        explicit SpriteMap(SpriteMapData* spriteData);
+    class SpriteMap : public Texture_base, public DataStore<SpriteMapData, SpriteMap>
+    {
+        public:
+            explicit SpriteMap(const char* spriteConfig);
+            SpriteMap(PackageManager* package, const char* path);
+            explicit SpriteMap(SpriteMapData* spriteData);
 
-        virtual SDL_FRect getUV() override;
-        virtual void update(double deltaT) override;
-        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
+            virtual SDL_FRect getUV() override;
+            virtual void update(double deltaT) override;
+            virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
-        void setSprite(const std::string& name);
-        void setAnimationSprite(const std::string& name);
-        void startAnimation(const std::string& animation);
-        bool animationRunning() {return currentAnimation != nullptr; };
+            void setSprite(const std::string& name);
+            void setAnimationSprite(const std::string& name);
+            void startAnimation(const std::string& animation);
+            bool animationRunning() {return currentAnimation != nullptr; };
 
-    private:
-        Animation* currentAnimation;
-        CurrentFrame currentFrame;
-        Sprite* currentSprite;
-        SpriteMapData* data;
-};
+        private:
+            Animation* currentAnimation;
+            CurrentFrame currentFrame;
+            Sprite* currentSprite;
+            SpriteMapData* data;
+    };
+}
 
 #endif
