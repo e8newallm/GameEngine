@@ -65,7 +65,7 @@ namespace GameEng
              * \param package The package the load the data from.
              * \param path The path within the package to load the config from.
              */
-            void loadFromPackage(Packager::PackageManager* package, const char* path);
+            void loadFromPackage(const Packager::PackageManager* package, const char* path);
 
             /**
              * \brief Load SpriteMapData from a string.
@@ -89,7 +89,7 @@ namespace GameEng
              */
             std::string serialise();
 
-            Packager::PackageManager* package;
+            const Packager::PackageManager* package;
 
             std::map<std::string, std::shared_ptr<GPUTexture>> textures;
             std::map<std::string, Sprite> sprites;

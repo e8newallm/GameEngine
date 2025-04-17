@@ -60,14 +60,14 @@ namespace Packager
         fclose(openFile);
     }
 
-    std::vector<std::string> PackageManager::getFileList()
+    std::vector<std::string> PackageManager::getFileList() const
     {
         std::vector<std::string> fileListStr(fileList.size());
         std::transform(fileList.begin(), fileList.end(), fileListStr.begin(), [&](const FileEntry& entry){ return entry.name; });
         return fileListStr;
     }
 
-    std::vector<uint8_t> PackageManager::getFile(const std::string& path)
+    std::vector<uint8_t> PackageManager::getFile(const std::string& path) const
     {
         for(const FileEntry& file : fileList)
         {

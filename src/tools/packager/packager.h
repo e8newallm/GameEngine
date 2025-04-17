@@ -38,7 +38,7 @@ namespace Packager
             *
             * \return std::vector<std::string> A vector of all the files in the package.
             */
-            std::vector<std::string> getFileList();
+            std::vector<std::string> getFileList() const;
 
             /**
             * \brief Gets an uncompressed copy of a file from the package.
@@ -46,7 +46,7 @@ namespace Packager
             * \param path The path and filename of the file inside the package.
             * \return std::vector<uint8_t> The resulting data.
             */
-            std::vector<uint8_t> getFile(const std::string& path);
+            std::vector<uint8_t> getFile(const std::string& path) const;
 
             /**
             * \brief Gets the filename of the package.

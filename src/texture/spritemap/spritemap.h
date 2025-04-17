@@ -42,7 +42,7 @@ namespace GameEng
              * \param package The package that the SpriteMap is loaded from.
              * \param path The path inside the package that the SpriteMap is located at.
              */
-            SpriteMap(Packager::PackageManager* package, const char* path);
+            SpriteMap(const Packager::PackageManager* package, const char* path);
 
             /**
              * \brief Construct a new SpriteMap from an existing SpriteMapData.
@@ -104,9 +104,9 @@ namespace GameEng
             bool animationRunning() {return currentAnimation != nullptr; };
 
         private:
-            Animation* currentAnimation;
+            const Animation* currentAnimation;
             CurrentFrame currentFrame;
-            Sprite* currentSprite;
+            const Sprite* currentSprite;
             std::shared_ptr<SpriteMapData> data;
     };
 }
