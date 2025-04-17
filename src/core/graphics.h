@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gpu.h>
+#include <memory>
 #include <string>
 
 #include "datastore.h"
@@ -21,12 +22,19 @@ namespace GameEng
     };
 
     /**
-     * \brief A class for creating and storing all created SDL Samplers.
+     * \brief A class for wrapping SDL_GPUSampler for use with the DataStore in the class. Also contains functions for creating and storing all created SDL samplers.
      *
      */
-    class Sampler : public DataStore<SDL_GPUSampler, Sampler>
+    class Sampler : public DataStore<Sampler, Sampler>
     {
         public:
+            /**
+             * \brief Construct a new Sampler wrapper
+             *
+             * \param sampler The SDL_GPUSampler* to be wrapped
+             */
+            explicit Sampler(SDL_GPUSampler* sampler) { this->sampler = sampler; };
+
             /**
              * \brief Create a Sampler object.
              *
@@ -36,18 +44,33 @@ namespace GameEng
              *
              * Note: Any other window sharing the SDL_GPUDevice can also use this sampler.
              */
-            static SDL_GPUSampler* createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
+            static std::shared_ptr<Sampler> createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo);
+
+            /**
+             * \brief Get the SDL_GPUSampler from the object.
+             *
+             * \return SDL_GPUSampler* The SDL pipeline object.
+             */
+             SDL_GPUSampler* getSampler() { return sampler; };
+
+        private:
+            SDL_GPUSampler* sampler;
     };
 
-    template <> Store<SDL_GPUSampler>::~Store();
-
     /**
-     * \brief A class for creating and storing all created SDL Pipelines.
+     * \brief A class for wrapping SDL_GPUGraphicsPipeline for use with the DataStore in the class. Also contains functions for creating and storing all created SDL Pipelines.
      *
      */
-    class Pipeline : public DataStore<SDL_GPUGraphicsPipeline, Pipeline>
+    class Pipeline : public DataStore<Pipeline, Pipeline>
     {
         public:
+            /**
+             * \brief Construct a new Pipeline wrapper
+             *
+             * \param sampler The SDL_GPUGraphicsPipeline* to be wrapped
+             */
+            Pipeline(SDL_GPUGraphicsPipeline* pipeline) { this->pipeline = pipeline; };
+
             /**
              * \brief Create a Pipeline object using shaders saved in the Shader DataStore.
              *
@@ -56,10 +79,18 @@ namespace GameEng
              * \param fragShader The name of the fragment shader.
              * \return SDL_GPUGraphicsPipeline* The created pipeline.
              */
-            static SDL_GPUGraphicsPipeline* createPipeline(const Window& win, const std::string& vertShader, const std::string& fragShader);
-    };
+            static std::shared_ptr<Pipeline> createPipeline(const Window& win, const std::string& vertShader, const std::string& fragShader);
 
-    template <> Store<SDL_GPUGraphicsPipeline>::~Store();
+            /**
+             * \brief Get the SDL_GPUGraphicsPipeline from the object.
+             *
+             * \return SDL_GPUGraphicsPipeline* The SDL pipeline object.
+             */
+            SDL_GPUGraphicsPipeline* getPipeline() { return pipeline; };
+
+        private:
+            SDL_GPUGraphicsPipeline* pipeline;
+    };
 }
 
 #endif

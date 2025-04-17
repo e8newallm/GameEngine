@@ -194,7 +194,7 @@ namespace GameEng
         }
 
         rapidjson::Value texArray(rapidjson::kArrayType);
-        for (std::map<std::string, GPUTexture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+        for (std::map<std::string, std::shared_ptr<GPUTexture>>::iterator it = textures.begin(); it != textures.end(); ++it)
         {
             texArray.PushBack(rapidjson::Value(it->first.c_str(), allocator), allocator);
         }

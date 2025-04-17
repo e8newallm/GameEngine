@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "graphics.h"
 #include "tools/packager/packager.h"
+#include <memory>
 
 namespace GameEng
 {
@@ -15,7 +16,7 @@ namespace GameEng
         std::string storeName = std::string(configLocation);
         if(!exists(storeName))
         {
-            data = new SpriteMapData();
+            data = std::make_shared<SpriteMapData>(SpriteMapData());
             data->loadFromFile(configLocation);
             add(data, storeName);
         }
@@ -33,7 +34,7 @@ namespace GameEng
         std::string storeName = package->getPackageName() + ":" + std::string(path);
         if(!exists(storeName))
         {
-            data = new SpriteMapData();
+            data = std::make_shared<SpriteMapData>(SpriteMapData());
             data->loadFromPackage(package, path);
             add(data, storeName);
         }
@@ -55,7 +56,7 @@ namespace GameEng
     SDL_FRect SpriteMap::getUV()
     {
         SDL_FRect pos = currentSprite->position;
-        const GPUTexture* tex = currentSprite->texture;
+        const GPUTexture* tex = currentSprite->texture.get();
         return {pos.x / tex->width, pos.y / tex->height, (pos.x + pos.w) / tex->width, (pos.y + pos.h) / tex->height};
     }
 
@@ -91,9 +92,9 @@ namespace GameEng
             SDL_GPUTextureSamplerBinding sampleBinding;
             SDL_zero(sampleBinding);
             sampleBinding.texture = currentSprite->texture->tex;
-            sampleBinding.sampler = Sampler::get("default");
+            sampleBinding.sampler = Sampler::get("default")->getSampler();
 
-            SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
+            SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
             SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
             SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
             SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);

@@ -1,6 +1,7 @@
 #ifndef DATASTORE_H
 #define DATASTORE_H
 
+#include <memory>
 #include <unordered_map>
 #include <string>
 
@@ -14,23 +15,6 @@ extern std::unordered_map<std::string, std::unordered_map<std::string, uint64_t>
 
 namespace GameEng
 {
-    /**
-    * \brief A wrapper class around std::unordered_map that deletes all held pointer objects at deconstruction.
-    *
-    * \tparam T the type of object to be mapped.
-    */
-    template <class T> class Store : public std::unordered_map<std::string, T*>
-    {
-        public:
-            ~Store()
-            {
-                for(std::pair<std::string, T*> value : *this)
-                {
-                    delete value.second;
-                }
-            }
-    };
-
     template <typename T> consteval std::string_view getTypeName();
 
     /**
@@ -46,10 +30,21 @@ namespace GameEng
             /**
             * \brief Add a new entry to the store.
             * 
-            * \param data A pointer to the object being added.
+            * \param data A raw pointer to the object being added.
             * \param name A name to reference the object by.
             */
             static void add(T* data, const std::string& name)
+            {
+                Data.insert({name, std::make_shared<T>(*data)});
+            }
+
+            /**
+             * \brief Add a new shared_ptr to the store.
+             * 
+             * \param data A shared_ptr to the object being added.
+             * \param name A name to reference the object by.
+             */
+            static void add(std::shared_ptr<T> data, const std::string& name)
             {
                 Data.insert({name, data});
             }
@@ -58,11 +53,11 @@ namespace GameEng
             * \brief Retrieve an object from the store.
             * 
             * \param name The name of the object to be retrieved.
-            * \return T* Pointer to the requested object.
+            * \return std::shared_ptr<T> Pointer to the requested object.
             *
             * \throws GameEng::GEError::STORE_ENTRY_NOT_FOUND Thrown if there is no entry for the given name.
             */
-            static T* get(const std::string& name)
+            static std::shared_ptr<T> get(const std::string& name)
             {
                 if(exists(name))
                     return Data[name];
@@ -84,16 +79,16 @@ namespace GameEng
             static std::unordered_map<std::string, uint64_t> getList()
             {
                 std::unordered_map<std::string, uint64_t> list;
-                for(std::pair<std::string, T*> name : Data)
+                for(std::pair<std::string, std::shared_ptr<T>> name : Data)
                 {
-                    list.insert({name.first, (uint64_t)name.second});
+                    list.insert({name.first, (uint64_t)name.second.get()});
                 }
                 return list;
             }
     #endif
 
         private:
-            static inline Store<T> Data;
+            static inline std::unordered_map<std::string, std::shared_ptr<T>> Data;
             static inline constexpr std::string ownerClass = std::string(getTypeName<storeID>());
     };
 

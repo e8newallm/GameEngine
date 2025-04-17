@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL_gpu.h>
 #include <map>
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -23,7 +24,7 @@ namespace GameEng
      */
     struct Sprite
     {
-        GPUTexture* texture;
+        std::shared_ptr<GPUTexture> texture;
         std::string textureName;
         SDL_FRect position;
     };
@@ -90,7 +91,7 @@ namespace GameEng
 
             Packager::PackageManager* package;
 
-            std::map<std::string, GPUTexture*> textures;
+            std::map<std::string, std::shared_ptr<GPUTexture>> textures;
             std::map<std::string, Sprite> sprites;
             std::map<std::string, Animation> animations;
     };

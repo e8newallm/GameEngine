@@ -4,6 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cstdlib>
 #include <ios>
+#include <memory>
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
@@ -57,7 +58,7 @@ TEST_CASE("Error", "[base][exceptions]")
 
 TEST_CASE("Store", "[base][store]")
 {
-    int* testValue = new int(12);
+    std::shared_ptr<int> testValue = std::make_shared<int>(12);
     DataStore<int, char> testStore;
     SECTION("Basic test")
     {
@@ -72,7 +73,6 @@ TEST_CASE("Store", "[base][store]")
         *testValue = 35;
         REQUIRE(*testStore.get("test") == 35);
     }
-    delete testValue;
 }
 
 TEST_CASE("Logging", "[base][logging]")

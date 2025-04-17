@@ -56,7 +56,7 @@ namespace GameEng
             virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
         protected:
-            GPUTexture* texture;
+            std::shared_ptr<GPUTexture> texture;
             SDL_FRect texturePosition;
     };
 

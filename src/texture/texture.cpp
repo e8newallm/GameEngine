@@ -26,9 +26,9 @@ namespace GameEng
         SDL_GPUTextureSamplerBinding sampleBinding;
         SDL_zero(sampleBinding);
         sampleBinding.texture = texture->tex;
-        sampleBinding.sampler = Sampler::get("default");
+        sampleBinding.sampler = Sampler::get("default")->getSampler();
 
-        SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default"));
+        SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
         SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
         SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
         SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);

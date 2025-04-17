@@ -1,13 +1,14 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_stdinc.h>
 #include <cstdint>
+#include <memory>
 
 #include "shader.h"
 #include "logging.h"
 
 namespace GameEng
 {
-	SDL_GPUShader* Shader::createShader(
+	std::shared_ptr<Shader> Shader::createShader(
 		SDL_GPUDevice* device,
 		const std::string& filename,
 		const std::vector<uint8_t>& code,
@@ -71,10 +72,10 @@ namespace GameEng
 			return nullptr;
 		}
 
-		return shader;
+		return std::make_shared<Shader>(shader);
 	}
 
-	SDL_GPUShader* Shader::LoadShaderFromFile(
+	std::shared_ptr<Shader> Shader::LoadShaderFromFile(
 		SDL_GPUDevice* device,
 		const std::string& shaderFilename,
 		Uint32 samplerCount,
@@ -96,7 +97,7 @@ namespace GameEng
 		return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
 	}
 
-	SDL_GPUShader* Shader::LoadShaderFromArray(
+	std::shared_ptr<Shader> Shader::LoadShaderFromArray(
 		SDL_GPUDevice* device,
 		const std::string& shaderFilename,
 		const std::vector<uint8_t>& code,
@@ -106,10 +107,5 @@ namespace GameEng
 		Uint32 storageTextureCount
 	) {
 		return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
-	}
-
-	template <> Store<SDL_GPUShader>::~Store()
-	{
-		this->clear();
 	}
 }

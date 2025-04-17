@@ -107,7 +107,7 @@ namespace GameEng
             Animation* currentAnimation;
             CurrentFrame currentFrame;
             Sprite* currentSprite;
-            SpriteMapData* data;
+            std::shared_ptr<SpriteMapData> data;
     };
 }
 
