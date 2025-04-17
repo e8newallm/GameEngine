@@ -11,8 +11,8 @@ namespace GameEng
 {
     PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
         Object(body, texture)
-    ,_isStatic(flags & PHYOBJ_STATIC)
-    ,_canCollide(flags & PHYOBJ_COLLIDE)
+    ,_isStatic(flags & PhyObjFlag::Static)
+    ,_canCollide(flags & PhyObjFlag::Collide)
     ,nextBody(body)
     ,interBody(body)
     ,currentVelocity()

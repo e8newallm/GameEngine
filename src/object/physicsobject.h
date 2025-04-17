@@ -4,8 +4,11 @@
 #include "object.h"
 #include "world.h"
 
-#define PHYOBJ_STATIC   1<<0
-#define PHYOBJ_COLLIDE  1<<1
+enum PhyObjFlag : int
+{
+    Static  = 1<<0,
+    Collide = 1<<1,
+};
 
 namespace GameEng
 {
@@ -26,7 +29,7 @@ namespace GameEng
             PhysicsObject(SDL_Rect body, int flags, Texture_base* texture);
 
             /**
-             * \brief Construct a new physics object with all dimensions 0, no flags, and no assigned texture.
+             * \brief Construct a new physics object with all dimensions 0, no PhyObj flags, and no assigned texture.
              *
              */
             PhysicsObject() : Object(){};
@@ -110,7 +113,6 @@ namespace GameEng
             inline bool canCollide() const { return _canCollide; };
 
         protected:
-
             bool _isStatic = true;
             bool _canCollide = false;
 

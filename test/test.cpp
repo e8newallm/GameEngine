@@ -320,7 +320,7 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Interpolation calculation")
     {
         world.setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PHYOBJ_COLLIDE, new Texture());
+        PhysicsObject* box = new PhysicsObject({500, 500, 50, 50}, PhyObjFlag::Collide, new Texture());
         world.addObj(box);
 
         testRect(*box->getBody(), {500, 500, 50, 50});
@@ -335,7 +335,7 @@ TEST_CASE("Basic functionality", "[physics]")
 
     SECTION("Box drop")
     {
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PhyObjFlag::Collide, new Texture());
         world.addObj(box);
 
         box->velocityDelta(0.0, 10);
@@ -357,10 +357,10 @@ TEST_CASE("Basic functionality", "[physics]")
     SECTION("Collision")
     {
         world.setGravity(0.0);
-        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        PhysicsObject* box = new PhysicsObject({500, 500, 10, 10}, PhyObjFlag::Collide, new Texture());
         box->velocityDelta(11.0, 0.0);
         world.addObj(box);
-        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PHYOBJ_COLLIDE, new Texture());
+        PhysicsObject* boxCollide = new PhysicsObject({520, 500, 10, 10}, PhyObjFlag::Collide, new Texture());
         world.addObj(boxCollide);
 
         //No collision

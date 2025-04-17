@@ -14,7 +14,23 @@ extern std::unordered_map<std::string, std::unordered_map<std::string, uint64_t>
 
 namespace GameEng
 {
-    template <class T> class Store;
+    /**
+    * \brief A wrapper class around std::unordered_map that deletes all held pointer objects at deconstruction.
+    *
+    * \tparam T the type of object to be mapped.
+    */
+    template <class T> class Store : public std::unordered_map<std::string, T*>
+    {
+        public:
+            ~Store()
+            {
+                for(std::pair<std::string, T*> value : *this)
+                {
+                    delete value.second;
+                }
+            }
+    };
+
     template <typename T> consteval std::string_view getTypeName();
 
     /**
@@ -79,23 +95,6 @@ namespace GameEng
         private:
             static inline Store<T> Data;
             static inline constexpr std::string ownerClass = std::string(getTypeName<storeID>());
-    };
-
-    /**
-    * \brief A wrapper class around std::unordered_map that deletes all held pointer objects at deconstruction.
-    *
-    * \tparam T the type of object to be mapped.
-    */
-    template <class T> class Store : public std::unordered_map<std::string, T*>
-    {
-        public:
-            ~Store()
-            {
-                for(std::pair<std::string, T*> value : *this)
-                {
-                    delete value.second;
-                }
-            }
     };
 
     /**
