@@ -1,11 +1,12 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_gpu.h>
 
 #include "window.h"
 #include "gamestate.h"
 
 namespace GameEng
 {
-    Window::Window(const std::string& name, int width, int height, int flags) :
+    Window::Window(const std::string& name, int width, int height, int flags, SDL_GPUDevice* newGPU) :
         renderTimer(fps+1)
     {
         win = SDL_CreateWindow(name.c_str(),
@@ -14,10 +15,19 @@ namespace GameEng
         {
             SDL_Log("CreateWindow failed: %s", SDL_GetError());
         }
-        gpu = SDL_CreateGPUDevice(
-            SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
-            false,
-            NULL);
+
+        if(newGPU != nullptr)
+        {
+            gpu = newGPU;
+        }
+        else
+        {
+            gpu = SDL_CreateGPUDevice(
+                SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
+                false,
+                NULL);
+        }
+
         if (gpu == NULL)
         {
             SDL_Log("GPUCreateDevice failed");
@@ -39,13 +49,8 @@ namespace GameEng
 
     }
 
-    Window::Window(const std::string& name, int flags) : Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags)
+    Window::Window(const std::string& name, int flags, SDL_GPUDevice* newGPU) : Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags, newGPU)
     {
-    }
-
-    const SDL_Point* Window::getResolution() const
-    {
-        return &reso;
     }
 
     void Window::render(World& world)

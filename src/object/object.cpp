@@ -28,11 +28,6 @@ namespace GameEng
         tex->update(deltaTime);
     }
 
-    void Object::runPhysics(double deltaTime, World& world)
-    {
-        (void)deltaTime, (void)world;
-    }
-
     void Object::move(double x, double y)
     {
         body.x = x;

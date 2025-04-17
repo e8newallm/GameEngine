@@ -143,7 +143,7 @@ std::vector<uint8_t> PackageManager::getFile(const std::string& path)
 
 const std::string& PackageManager::getPackageName() const { return packageFile; }
 
-std::vector<std::string> getFileList(const std::string& directory)
+std::vector<std::string> getDirContents(const std::string& directory)
 {
     try
     {
@@ -231,7 +231,7 @@ uint64_t byteToNum(std::vector<uint8_t>& data)
 {
     assert(data.size() >= 8);
     uint64_t result = 0;
-    for(int i = 7; i >= 0; i--)
+    for(int i = 0; i <= 7; i++)
     {
         result *= 0x100;
         result += data.back();
@@ -290,12 +290,12 @@ std::vector<FileEntry> headerDecompress(std::vector<uint8_t> data)
     return fileList;
 }
 
-int dataCompress(const std::string& directory, const std::string& file)
+void createPackage(const std::string& directory, const std::string& file)
 {
     FILE* compData = std::tmpfile();
 
     //Populate file list for compression
-    std::vector<std::string> list = getFileList(directory);
+    std::vector<std::string> list = getDirContents(directory);
     std::vector<FileEntry> dataHeader;
     long currentPosition = 0;
     for(const std::string& filename : list)
@@ -349,5 +349,5 @@ int dataCompress(const std::string& directory, const std::string& file)
     }
     fclose(openFile);
     fclose(compData);
-    return 0;
+    return;
 }

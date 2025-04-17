@@ -56,8 +56,8 @@ TEST_CASE("Packager/HeaderData", "[packager]")
 
 TEST_CASE("Packager/FullTest", "[packager]")
 {
-	std::vector<std::string> dirFiles = getFileList("testfiles");
-	dataCompress("testfiles", "packagerTest.bin");
+	std::vector<std::string> dirFiles = getDirContents("testfiles");
+	createPackage("testfiles", "packagerTest.bin");
 	PackageManager testPackage = PackageManager("packagerTest.bin");
 	std::vector<std::string> packageFiles = testPackage.getFileList();
 	REQUIRE(packageFiles.size() == dirFiles.size());
@@ -79,12 +79,12 @@ TEST_CASE("Packager/FullTest", "[packager]")
 
 TEST_CASE("Packager/Exceptions", "[packager][exceptions]")
 {
-	dataCompress("testfiles/", "test.file");
+	createPackage("testfiles/", "test.file");
 		PackageManager pack("test.file");
 
 	SECTION("FILE_NOT_FOUND")
 	{
-		REQUIRE_THROWS_MATCHES(getFileList("/NOTADIR/"), GameEngineException,
+		REQUIRE_THROWS_MATCHES(getDirContents("/NOTADIR/"), GameEngineException,
 			Catch::Matchers::Message("Could not get file list of /NOTADIR/: No such file or directory"));
 		REQUIRE_THROWS_MATCHES(PackageManager("missingFile.bin"), GameEngineException,
 			Catch::Matchers::Message("File missingFile.bin not found"));

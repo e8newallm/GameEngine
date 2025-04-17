@@ -18,20 +18,20 @@ namespace GameEng
     template <typename T> consteval std::string_view getTypeName();
 
     /**
-    * \brief Class for storing globally shared resources referenced using a name
+    * \brief Class for storing globally shared resources referenced using a name.
     *
-    * \tparam T The class to be stored
-    * \tparam storeID The class the store will be contained in (used to guarantee a unique store)
+    * \tparam T The class to be stored.
+    * \tparam storeID The class the store will be contained in (used to guarantee a unique store).
     */
     template <class T, class storeID> class DataStore
     {
         public:
 
             /**
-            * \brief Add a new entry to the store
+            * \brief Add a new entry to the store.
             * 
-            * \param data A pointer to the object being added
-            * \param name A name to reference the object by
+            * \param data A pointer to the object being added.
+            * \param name A name to reference the object by.
             */
             static void add(T* data, const std::string& name)
             {
@@ -39,12 +39,12 @@ namespace GameEng
             }
 
             /**
-            * \brief Retrieve an object from the store
+            * \brief Retrieve an object from the store.
             * 
-            * \param name The name of the object to be retrieved
-            * \return T* Pointer to the requested object
+            * \param name The name of the object to be retrieved.
+            * \return T* Pointer to the requested object.
             *
-            * \throws GameEng::GEError::STORE_ENTRY_NOT_FOUND Thrown if there is no entry for the given name
+            * \throws GameEng::GEError::STORE_ENTRY_NOT_FOUND Thrown if there is no entry for the given name.
             */
             static T* get(const std::string& name)
             {
@@ -54,10 +54,10 @@ namespace GameEng
             }
 
             /**
-            * \brief Check whether there is an entry for a given name
+            * \brief Check whether there is an entry for a given name.
             *
-            * \param name The name of the entry
-            * \return Does an entry exist for the given name?
+            * \param name The name of the entry.
+            * \return bool Does an entry exist for the given name?
             */
             static bool exists(const std::string& name)
             {
@@ -82,9 +82,9 @@ namespace GameEng
     };
 
     /**
-    * \brief A wrapper class around std::unordered_map that deletes all held pointer objects at deconstruction
+    * \brief A wrapper class around std::unordered_map that deletes all held pointer objects at deconstruction.
     *
-    * \tparam T the type of object to be mapped
+    * \tparam T the type of object to be mapped.
     */
     template <class T> class Store : public std::unordered_map<std::string, T*>
     {
@@ -99,10 +99,10 @@ namespace GameEng
     };
 
     /**
-    * \brief Get the name of Type T as a string_view
+    * \brief Get the name of Type T as a string_view.
     *
-    * \tparam T the type to be turned into a string_view
-    * \return std::string_view the type's name as a string_view
+    * \tparam T the type to be turned into a string_view.
+    * \return std::string_view the type's name as a string_view.
     */
     template <typename T> consteval std::string_view getTypeName()
     {

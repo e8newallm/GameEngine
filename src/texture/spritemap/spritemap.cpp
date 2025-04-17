@@ -6,17 +6,17 @@
 
 namespace GameEng
 {
-    SpriteMap::SpriteMap(const char* spriteConfig) :
+    SpriteMap::SpriteMap(const char* configLocation) :
         currentAnimation(nullptr)
         , currentFrame({0.0, 0})
         , currentSprite(nullptr)
         , data(new SpriteMapData())
     {
-        std::string storeName = std::string(spriteConfig);
+        std::string storeName = std::string(configLocation);
         if(!exists(storeName))
         {
             data = new SpriteMapData();
-            data->loadFromFile(spriteConfig);
+            data->loadFromFile(configLocation);
             add(data, storeName);
         }
         else

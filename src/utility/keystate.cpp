@@ -5,16 +5,6 @@
 
 namespace GameEng
 {
-    std::array<SDL_EventType, SDL_SCANCODE_COUNT> keyStateInit()
-    {
-        std::array<SDL_EventType, SDL_SCANCODE_COUNT> init;
-        for(int i = 0; i < SDL_SCANCODE_COUNT; i++)
-        {
-            init[i] = SDL_EVENT_KEY_UP;
-        }
-        return init;
-    }
-
     void KeyState::update()
     {
         keysPrev = keys;
@@ -30,7 +20,7 @@ namespace GameEng
                 case SDL_EVENT_KEY_DOWN:
                 case SDL_EVENT_KEY_UP:
                 {
-                    updateKey(event.key.scancode, event.type);
+                    updateKey(event.key.scancode, (SDL_EventType)event.type);
                     break;
                 }
                 default:
@@ -47,11 +37,6 @@ namespace GameEng
             keys[key] = keyEvent;
     }
 
-    void KeyState::updateKey(SDL_Scancode key, Uint32 keyEvent)
-    {
-        updateKey(key, (SDL_EventType)keyEvent);
-    }
-
     SDL_EventType KeyState::key(SDL_Scancode key)
     {
         return keys[key];
@@ -66,4 +51,15 @@ namespace GameEng
     {
         return keys[key] == SDL_EVENT_KEY_UP && keysPrev[key] == SDL_EVENT_KEY_DOWN;
     }
+
+    std::array<SDL_EventType, SDL_SCANCODE_COUNT> KeyState::keyStateInit()
+    {
+        std::array<SDL_EventType, SDL_SCANCODE_COUNT> init;
+        for(int i = 0; i < SDL_SCANCODE_COUNT; i++)
+        {
+            init[i] = SDL_EVENT_KEY_UP;
+        }
+        return init;
+    }
+
 }

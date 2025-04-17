@@ -172,7 +172,7 @@ namespace GameEng
         std::string data = serialise();
 
         std::ofstream output;
-        output.open(spriteConfig, std::ofstream::out | std::ofstream::trunc);
+        output.open(spriteConfig, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
         output << data;
         output.close();
     }

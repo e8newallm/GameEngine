@@ -6,21 +6,44 @@
 
 namespace GameEng
 {
+    /**
+     * \enum GEError
+     * \brief Error codes for GameEngine exceptions.
+     */
     enum class GEError {
-        NO_ERROR = 0,
-        FILE_NOT_FOUND = 1,
-        FILE_IO = 2,
-        INVALID_FILE_FORMAT = 3,
+        FILE_NOT_FOUND, ///< File does not exist.
+        FILE_IO, ///< File was unable to be written to or read.
+        INVALID_FILE_FORMAT, ///< Input file was not formatted correctly.
 
-        STORE_ENTRY_NOT_FOUND = 4,
+        STORE_ENTRY_NOT_FOUND, ///< Datastore does not contain an entry of that name.
     };
 
+    /**
+     * \brief Exceptions for use by the game engine.
+     */
     class GameEngineException : public std::exception
     {
         public:
+            /**
+             * \brief Construct a new Game Engine Exception object.
+             * 
+             * \param errorCode The GEError code of the exception.
+             * \param errorMessage A description of what caused the exception.
+             */
             GameEngineException(GEError errorCode, const std::string& errorMessage);
 
+            /**
+             * \brief Get the description of the exception that occurred.
+             * 
+             * \return const char* The string description.
+             */
             const char* what() const noexcept override;
+
+            /**
+             * \brief Get the GEError code of the exception.
+             *
+             * \return GEError The GEError code.
+             */
             GEError code() const noexcept;
 
         private:

@@ -47,9 +47,9 @@ TEST_CASE("Error", "[base][exceptions]")
     SECTION("Error testing")
     {
         try {
-            throw GameEngineException(GEError::NO_ERROR, "No error occurred");
+            throw GameEngineException(GEError::FILE_IO, "No error occurred");
         } catch (GameEngineException& err) {
-            REQUIRE(err.code() == GEError::NO_ERROR);
+            REQUIRE(err.code() == GEError::FILE_IO);
             REQUIRE(std::string(err.what()) == "No error occurred");
         }
     }

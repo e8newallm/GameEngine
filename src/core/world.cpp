@@ -1,6 +1,5 @@
 #include <SDL3/SDL.h>
 #include <cstdint>
-#include <iostream>
 #include <mutex>
 
 #include "world.h"
@@ -8,6 +7,7 @@
 #include "logging.h"
 #include "gamestate.h"
 #include "graphics.h"
+#include "physicsobject.h"
 
 namespace GameEng
 {
@@ -169,7 +169,9 @@ namespace GameEng
                 std::lock_guard<std::mutex> lock(usageLock);
                 for(uint64_t i = 0; i < objects.size(); i++)
                 {
-                    objects[i]->runPhysics(pps, *this);
+                    PhysicsObject* phyObj = dynamic_cast<PhysicsObject*>(objects[i]);
+                    if(phyObj)
+                        phyObj->runPhysics(pps, *this);
                 }
             }
         }
