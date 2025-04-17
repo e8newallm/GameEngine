@@ -25,7 +25,7 @@ namespace GameEng
         }
     }
 
-    SpriteMap::SpriteMap(PackageManager* package, const char* path) :
+    SpriteMap::SpriteMap(Packager::PackageManager* package, const char* path) :
         currentAnimation(nullptr)
         , currentFrame({0.0, 0})
         , currentSprite(nullptr)

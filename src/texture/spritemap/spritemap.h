@@ -38,11 +38,11 @@ namespace GameEng
 
             /**
              * \brief Construct a new SpriteMap from a package.
-             * 
+             *
              * \param package The package that the SpriteMap is loaded from.
              * \param path The path inside the package that the SpriteMap is located at.
              */
-            SpriteMap(PackageManager* package, const char* path);
+            SpriteMap(Packager::PackageManager* package, const char* path);
 
             /**
              * \brief Construct a new SpriteMap from an existing SpriteMapData.

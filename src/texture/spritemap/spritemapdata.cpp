@@ -39,7 +39,7 @@ namespace GameEng
         loadFromString(ss.str().c_str(), configLocation);
     }
 
-    void SpriteMapData::loadFromPackage(PackageManager* package, const char* path)
+    void SpriteMapData::loadFromPackage(Packager::PackageManager* package, const char* path)
     {
         this->package = package;
         std::vector<uint8_t> data = package->getFile(path);

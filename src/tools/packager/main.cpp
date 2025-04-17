@@ -1,6 +1,8 @@
 #include "packager.h"
 #include <iostream>
 
+using namespace Packager;
+
 int main(const int argc, const char *argv[])
 {
     if(argc >= 2)
