@@ -3,7 +3,7 @@
 
 namespace GameEng
 {
-    Object::Object(SDL_Rect body, Texture_base* texture) :
+    Object::Object(SDL_Rect body, std::shared_ptr<Texture_base> texture) :
         body(body)
     ,tex(texture)
     {
@@ -12,7 +12,6 @@ namespace GameEng
 
     Object::~Object()
     {
-        delete tex;
     }
 
     void Object::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)

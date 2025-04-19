@@ -101,7 +101,7 @@ namespace GameEng
              * 
              * \return bool Is an animation currently running?
              */
-            bool animationRunning() {return currentAnimation != nullptr; };
+            bool animationRunning() const {return currentAnimation != nullptr; };
 
         private:
             const Animation* currentAnimation;

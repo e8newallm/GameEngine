@@ -9,7 +9,7 @@
 
 namespace GameEng
 {
-    PhysicsObject::PhysicsObject(SDL_Rect body, int flags, Texture_base* texture) :
+    PhysicsObject::PhysicsObject(SDL_Rect body, int flags, std::shared_ptr<Texture_base> texture) :
         Object(body, texture)
     ,_isStatic(flags & PhyObjFlag::Static)
     ,_canCollide(flags & PhyObjFlag::Collide)
@@ -60,7 +60,7 @@ namespace GameEng
             SDL_FRect texBody;
         };
 
-        ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
+        ObjData* data = new ObjData();
         data->body = *getBody();
         data->texBody = tex->getUV();
         return {data, sizeof(ObjData)};

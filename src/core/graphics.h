@@ -69,7 +69,7 @@ namespace GameEng
              *
              * \param sampler The SDL_GPUGraphicsPipeline* to be wrapped
              */
-            Pipeline(SDL_GPUGraphicsPipeline* pipeline) { this->pipeline = pipeline; };
+            explicit Pipeline(SDL_GPUGraphicsPipeline* pipeline) { this->pipeline = pipeline; };
 
             /**
              * \brief Create a Pipeline object using shaders saved in the Shader DataStore.

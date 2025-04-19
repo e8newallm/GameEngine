@@ -18,11 +18,11 @@ namespace GameEng
         public:
             /**
              * \brief Construct a new object.
-             * 
+             *
              * \param body The dimensions of the object.
              * \param texture The texture of the object.
              */
-            Object(SDL_Rect body, Texture_base* texture);
+            Object(SDL_Rect body, std::shared_ptr<Texture_base> texture = NoTexture);
 
             /**
              * \brief Construct a new object with all dimensions 0 and no assigned texture.
@@ -96,7 +96,7 @@ namespace GameEng
 
         protected:
             SDL_Rect body;
-            Texture_base* tex;
+            std::shared_ptr<Texture_base> tex;
     };
 }
 

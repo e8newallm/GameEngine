@@ -39,5 +39,32 @@ namespace GameEng
             virtual SDL_FRect getUV() { return SDL_FRect{0.0f, 0.0f, 1.0f, 1.0f}; };
             virtual ~Texture_base() {};
     };
+
+    /**
+    * \brief Texture class for use when a texture isn't wanted or needed.
+    *
+    */
+    class TextureNothing : public Texture_base
+    {
+        public:
+        /**
+        * \brief Does nothing.
+        *
+        * \param deltaT How much time has passed since the last update (in milliseconds).
+        */
+        virtual void update(double deltaT) override { (void)deltaT; };
+
+        /**
+        * \brief Does nothing.
+        *
+        * \param world The world that is being drawn to.
+        * \param buffer The buffer that contains the shader data.
+        * \param renderPass The render pass for the current draw.
+        */
+        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override { (void) world, (void)buffer, (void)renderPass; };
+    };
+
+    extern const std::shared_ptr<Texture_base> NoTexture;
 }
+
 #endif

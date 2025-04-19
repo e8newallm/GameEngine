@@ -70,10 +70,14 @@ TEST_CASE("Packager/FullTest", "[packager]")
 	{
 		std::vector<uint8_t> fileReturn = testPackage.getFile(dirFiles[i]);
 		FILE* originalFile = fopen(("testfiles/"+dirFiles[i]).c_str(), "rb");
-		std::vector<uint8_t> originalData(std::filesystem::file_size("testfiles/"+dirFiles[i]));
-		fread(originalData.data(), 1, std::filesystem::file_size("testfiles/"+dirFiles[i]), originalFile);
-		fclose(originalFile);
-		REQUIRE(fileReturn == originalData);
+		REQUIRE(originalFile != NULL);
+		if(originalFile != NULL)
+		{
+			std::vector<uint8_t> originalData(std::filesystem::file_size("testfiles/"+dirFiles[i]));
+			fread(originalData.data(), 1, std::filesystem::file_size("testfiles/"+dirFiles[i]), originalFile);
+			fclose(originalFile);
+			REQUIRE(fileReturn == originalData);
+		}
 	}
 }
 

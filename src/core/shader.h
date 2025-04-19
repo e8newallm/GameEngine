@@ -23,7 +23,7 @@ namespace GameEng
              *
              * \param sampler The SDL_GPUShader* to be wrapped
              */
-            Shader(SDL_GPUShader* shader) { this->shader = shader; };
+            explicit Shader(SDL_GPUShader* shader) { this->shader = shader; };
 
             /**
              * \brief Create a Shader object from an vector array

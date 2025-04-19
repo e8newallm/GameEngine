@@ -2,6 +2,7 @@
 #define PHYSICSOBJECT_H
 
 #include "object.h"
+#include "texture_base.h"
 #include "world.h"
 
 enum PhyObjFlag : int
@@ -26,7 +27,7 @@ namespace GameEng
              * \param flags Various flags that affect how the physics applies.
              * \param texture The texture of the physics object.
              */
-            PhysicsObject(SDL_Rect body, int flags, Texture_base* texture);
+            PhysicsObject(SDL_Rect body, int flags, std::shared_ptr<Texture_base> texture = NoTexture);
 
             /**
              * \brief Construct a new physics object with all dimensions 0, no PhyObj flags, and no assigned texture.
