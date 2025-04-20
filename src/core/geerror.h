@@ -10,12 +10,12 @@ namespace GameEng
      * \enum GEError
      * \brief Error codes for GameEngine exceptions.
      */
-    enum class GEError {
-        FILE_NOT_FOUND, ///< File does not exist.
-        FILE_IO, ///< File was unable to be written to or read.
-        INVALID_FILE_FORMAT, ///< Input file was not formatted correctly.
+    enum class GEError { //NOLINT(performance-enum-size)
+        FILE_NOT_FOUND,         ///< File does not exist.
+        FILE_IO,                ///< File was unable to be written to or read.
+        INVALID_FILE_FORMAT,    ///< Input file was not formatted correctly.
 
-        STORE_ENTRY_NOT_FOUND, ///< Datastore does not contain an entry of that name.
+        STORE_ENTRY_NOT_FOUND,  ///< Datastore does not contain an entry of that name.
     };
 
     /**
@@ -37,14 +37,14 @@ namespace GameEng
              * 
              * \return const char* The string description.
              */
-            const char* what() const noexcept override;
+            [[nodiscard]] const char* what() const noexcept override;
 
             /**
              * \brief Get the GEError code of the exception.
              *
              * \return GEError The GEError code.
              */
-            GEError code() const noexcept;
+            [[nodiscard]] GEError code() const noexcept;
 
         private:
             GEError errorCode;

@@ -51,16 +51,16 @@ namespace GameEng
              * \return bool Has this key been released?
              */
             static bool keyReleased(SDL_Scancode key);
-            
+
+            KeyState() = delete;
+            KeyState(const KeyState&) = delete;
+            KeyState& operator=(const KeyState&) = delete;
+
         private:
             static std::array<SDL_EventType, SDL_SCANCODE_COUNT> keyStateInit();
 
             static inline std::array<SDL_EventType, SDL_SCANCODE_COUNT> keys = KeyState::keyStateInit();
             static inline std::array<SDL_EventType, SDL_SCANCODE_COUNT> keysPrev = KeyState::keyStateInit();
-
-            KeyState() = delete;
-            KeyState(const KeyState&) = delete;
-            KeyState& operator=(const KeyState&) = delete;
     };
 }
 

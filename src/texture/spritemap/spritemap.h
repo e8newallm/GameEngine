@@ -56,14 +56,14 @@ namespace GameEng
              *
              * \return SDL_FRect The current sprite's UV rectangle to be used by the shader.
              */
-            virtual SDL_FRect getUV() override;
+            SDL_FRect getUV() override;
 
             /**
              * \brief Handles any animating of the sprite.
              *
              * \param deltaT How much time has passed since the last update (in milliseconds).
              */
-            virtual void update(double deltaT) override;
+            void update(double deltaT) override;
 
             /**
              * \brief Draws the current sprite to the world.
@@ -72,7 +72,7 @@ namespace GameEng
              * \param buffer The buffer that contains the shader data.
              * \param renderPass The render pass for the current draw.
              */
-            virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
+            void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
             /**
              * \brief Set the current sprite to the named sprite and cancel any animation currently running.
@@ -101,7 +101,7 @@ namespace GameEng
              * 
              * \return bool Is an animation currently running?
              */
-            bool animationRunning() const {return currentAnimation != nullptr; };
+            [[nodiscard]] bool animationRunning() const {return currentAnimation != nullptr; };
 
         private:
             const Animation* currentAnimation;

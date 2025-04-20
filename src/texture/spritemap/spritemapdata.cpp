@@ -48,7 +48,6 @@ namespace GameEng
 
     void SpriteMapData::loadFromString(const char* spriteConfig, const char* source)
     {
-
         rapidjson::Document schema;
         schema.Parse(SpriteMapSchema);
         rapidjson::SchemaDocument schemaDoc(schema);
@@ -75,7 +74,7 @@ namespace GameEng
                 if(!Texture::exists(value.GetString()))
                 {
                     const SDL_Surface* surface;
-                    if(package)
+                    if(package != nullptr)
                     {
                         std::vector<uint8_t> data = package->getFile(value.GetString());
                         SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
@@ -98,7 +97,7 @@ namespace GameEng
             if(!Texture::exists(config["Textures"].GetString()))
             {
                 const SDL_Surface* surface;
-                if(package)
+                if(package != nullptr)
                 {
                     std::vector<uint8_t> data = package->getFile(config["Textures"].GetString());
                     SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
@@ -131,10 +130,10 @@ namespace GameEng
                                         sprite.FindMember("name")->value.GetString() + ") referencing a texture not named in the JSON");
             }
 
-            newEntry.position = { sprite.FindMember("x")->value.GetFloat()
-                                , sprite.FindMember("y")->value.GetFloat()
-                                , sprite.FindMember("height")->value.GetFloat()
-                                , sprite.FindMember("width")->value.GetFloat() };
+            newEntry.position = { .x=sprite.FindMember("x")->value.GetFloat()
+                                , .y=sprite.FindMember("y")->value.GetFloat()
+                                , .w=sprite.FindMember("height")->value.GetFloat()
+                                , .h=sprite.FindMember("width")->value.GetFloat() };
             newEntry.texture = Texture::get(sprite.FindMember("texture")->value.GetString());
             newEntry.textureName = sprite.FindMember("texture")->value.GetString();
             sprites.insert(std::make_pair(sprite.FindMember("name")->value.GetString(), newEntry));
@@ -160,7 +159,7 @@ namespace GameEng
                                             animation.FindMember("name")->value.GetString() + ") referencing a sprite not named in the JSON");
                     }
 
-                    newAni.sprites.push_back(i.GetString());
+                    newAni.sprites.emplace_back(i.GetString());
                 }
                 animations.insert(std::make_pair(animation.FindMember("name")->value.GetString(), newAni));
             }
@@ -201,16 +200,16 @@ namespace GameEng
         config.AddMember("Textures", texArray, allocator);
 
         rapidjson::Value sprArray(rapidjson::kArrayType);
-        for (std::map<std::string, Sprite>::iterator it = sprites.begin(); it != sprites.end(); ++it)
+        for (auto & sprite : sprites)
         {
             rapidjson::Value value;
             value.SetObject();
-            value.AddMember("name", rapidjson::Value().SetString(it->first.c_str(), allocator), allocator);
-            value.AddMember("texture", rapidjson::Value().SetString(it->second.textureName.c_str(), allocator), allocator);
-            value.AddMember("x", rapidjson::Value().SetUint64(it->second.position.x), allocator);
-            value.AddMember("y", rapidjson::Value().SetUint64(it->second.position.y), allocator);
-            value.AddMember("width", rapidjson::Value().SetUint64(it->second.position.w), allocator);
-            value.AddMember("height", rapidjson::Value().SetUint64(it->second.position.h), allocator);
+            value.AddMember("name", rapidjson::Value().SetString(sprite.first.c_str(), allocator), allocator);
+            value.AddMember("texture", rapidjson::Value().SetString(sprite.second.textureName.c_str(), allocator), allocator);
+            value.AddMember("x", rapidjson::Value().SetUint64(static_cast<uint64_t>(sprite.second.position.x)), allocator);
+            value.AddMember("y", rapidjson::Value().SetUint64(static_cast<uint64_t>(sprite.second.position.y)), allocator);
+            value.AddMember("width", rapidjson::Value().SetUint64(static_cast<uint64_t>(sprite.second.position.w)), allocator);
+            value.AddMember("height", rapidjson::Value().SetUint64(static_cast<uint64_t>(sprite.second.position.h)), allocator);
             sprArray.PushBack(value, allocator);
         }
         config.AddMember("Sprites", sprArray, allocator);
@@ -218,14 +217,14 @@ namespace GameEng
         if(!animations.empty())
         {
             rapidjson::Value aniArray(rapidjson::kArrayType);
-            for (std::map<std::string, Animation>::iterator it = animations.begin(); it != animations.end(); ++it)
+            for (auto & animation : animations)
             {
                 rapidjson::Value value;
                 value.SetObject();
-                value.AddMember("name", rapidjson::Value().SetString(it->first.c_str(), allocator), allocator);
-                value.AddMember("FPS", rapidjson::Value().SetFloat(it->second.FPS), allocator);
+                value.AddMember("name", rapidjson::Value().SetString(animation.first.c_str(), allocator), allocator);
+                value.AddMember("FPS", rapidjson::Value().SetFloat(static_cast<float>(animation.second.FPS)), allocator);
                 rapidjson::Value frameArray(rapidjson::kArrayType);
-                for (std::vector<std::string>::iterator itTwo = it->second.sprites.begin(); itTwo != it->second.sprites.end(); ++itTwo)
+                for (std::vector<std::string>::iterator itTwo = animation.second.sprites.begin(); itTwo != animation.second.sprites.end(); ++itTwo)
                 {
                     frameArray.PushBack(rapidjson::Value().SetString(itTwo->c_str(), allocator), allocator);
                 }

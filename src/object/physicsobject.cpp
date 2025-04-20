@@ -10,9 +10,9 @@
 namespace GameEng
 {
     PhysicsObject::PhysicsObject(SDL_Rect body, int flags, std::shared_ptr<Texture_base> texture) :
-        Object(body, texture)
-    ,_isStatic(flags & PhyObjFlag::Static)
-    ,_canCollide(flags & PhyObjFlag::Collide)
+        Object(body, std::move(texture))
+    ,_isStatic((flags & PhyObjFlag::Static) != 0)
+    ,_canCollide((flags & PhyObjFlag::Collide) != 0)
     ,nextBody(body)
     ,interBody(body)
     ,currentVelocity()
@@ -24,14 +24,14 @@ namespace GameEng
 
     void PhysicsObject::velocity(double x, double y)
     {
-        nextVelocity.x = x;
-        nextVelocity.y = y;
+        nextVelocity.x = static_cast<float>(x);
+        nextVelocity.y = static_cast<float>(y);
     }
 
     void PhysicsObject::velocityDelta(double x, double y)
     {
-        nextVelocity.x += x;
-        nextVelocity.y += y;
+        nextVelocity.x += static_cast<float>(x);
+        nextVelocity.y += static_cast<float>(y);
     }
 
     bool PhysicsObject::onGround(const World& world) const
@@ -41,7 +41,7 @@ namespace GameEng
         groundCheck.y = body.y + body.h;
         groundCheck.w = body.w;
         groundCheck.h = 2;
-        std::vector<Object*> objects = world.getObjects();
+        const std::vector<Object*>& objects = world.getObjects();
         for(uint64_t i = 0; i < objects.size(); i++)
         {
             const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
@@ -63,13 +63,13 @@ namespace GameEng
         ObjData* data = new ObjData();
         data->body = *getBody();
         data->texBody = tex->getUV();
-        return {data, sizeof(ObjData)};
+        return {.data=data, .size=sizeof(ObjData)};
     }
 
     void PhysicsObject::update(double deltaTime, World& world)
     {
-        interBody.x = body.x + (nextBody.x - body.x) * world.getPhyInterpolation();
-        interBody.y = body.y + (nextBody.y - body.y) * world.getPhyInterpolation();
+        interBody.x = static_cast<int>(body.x + ((nextBody.x - body.x) * world.getPhyInterpolation()));
+        interBody.y = static_cast<int>(body.y + ((nextBody.y - body.y) * world.getPhyInterpolation()));
         interBody.h = body.h;
         interBody.w = body.w;
         
@@ -79,7 +79,9 @@ namespace GameEng
     void PhysicsObject::runPhysics(double deltaTime, World& world)
     {
         if(isStatic())
+        {
             return;
+        }
 
         body.x = nextBody.x;
         body.y = nextBody.y;
@@ -92,12 +94,12 @@ namespace GameEng
         }
 
         SDL_FPoint displacement;
-        displacement.x = ((currentVelocity.x + nextVelocity.x) / 2) * deltaTime;
-        displacement.y = ((currentVelocity.y + nextVelocity.y) / 2) * deltaTime;
-        std::vector<Object*> objects = world.getObjects();
+        displacement.x = static_cast<float>(((currentVelocity.x + nextVelocity.x) / 2) * deltaTime);
+        displacement.y = static_cast<float>(((currentVelocity.y + nextVelocity.y) / 2) * deltaTime);
+        const std::vector<Object*>& objects = world.getObjects();
         SDL_Rect collisionArea;
 
-        nextBody.x += displacement.x;
+        nextBody.x += static_cast<int>(displacement.x);
         for(uint64_t i = 0; i < objects.size(); i++)
         {
             const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
@@ -117,7 +119,7 @@ namespace GameEng
             }
         }
 
-        nextBody.y += displacement.y;
+        nextBody.y += static_cast<int>(displacement.y);
         for(uint64_t i = 0; i < objects.size(); i++)
         {
             const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);

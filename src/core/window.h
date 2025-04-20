@@ -42,21 +42,21 @@ namespace GameEng
              * 
              * \return SDL_GPUDevice* The GPU device of the window.
              */
-            SDL_GPUDevice* getGPU() const { return gpu; };
+            [[nodiscard]] SDL_GPUDevice* getGPU() const { return gpu; };
 
             /**
              * \brief Get the SDL window object.
              * 
              * \return SDL_Window* The SDL window.
              */
-            SDL_Window* getWin() const { return win; };
+            [[nodiscard]] SDL_Window* getWin() const { return win; };
 
             /**
              * \brief Get the resolution of the window.
              * 
              * \return const SDL_Point* The resolution of the window.
              */
-            const SDL_Point* getResolution() const { return &reso; };
+            [[nodiscard]] const SDL_Point* getResolution() const { return &reso; };
 
             /**
              * \brief Renders a frame for the window using a given world.
@@ -65,16 +65,16 @@ namespace GameEng
              */
             void render(World& world);
 
-        private:
             Window() = delete;
             Window(const Window&) = delete;
             Window& operator=(const Window&) = delete;
 
+        private:
             SDL_Window* win;
             SDL_GPUDevice* gpu;
             SDL_Point reso;
 
-            double fps = 165.0f;
+            const double fps = 165.0F;
             Timer renderTimer;
     };
 }

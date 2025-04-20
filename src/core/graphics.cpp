@@ -10,7 +10,11 @@ namespace GameEng
 	{
 		SDL_GPUSampler* sample = SDL_CreateGPUSampler(win.getGPU(), &sampleInfo);
 
-		if(sample == NULL) return nullptr;
+		if(sample == NULL) //NOLINT(modernize-use-nullptr)
+		{
+			return nullptr;
+		}
+
 		return std::make_shared<Sampler>(Sampler(sample));
 	}
 
@@ -28,7 +32,7 @@ namespace GameEng
 		colorBlend.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
 		colorBlend.enable_blend = true;
 
-		SDL_GPUColorTargetDescription colorTargetDescription[]
+		SDL_GPUColorTargetDescription colorTargetDescription[] //NOLINT(modernize-avoid-c-arrays)
 		{
 			{
 				.format = SDL_GetGPUSwapchainTextureFormat(win.getGPU(), win.getWin()),
@@ -51,7 +55,11 @@ namespace GameEng
 
 		SDL_GPUGraphicsPipeline* pipe = SDL_CreateGPUGraphicsPipeline(win.getGPU(), &pipelineCreateInfo);
 
-		if(pipe == NULL) return nullptr;
+		if(pipe == NULL) //NOLINT(modernize-use-nullptr)
+		{
+			return nullptr;
+		}
+		
 		return std::make_shared<Pipeline>(Pipeline(pipe));
 	};
 }

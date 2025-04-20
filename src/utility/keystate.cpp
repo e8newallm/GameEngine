@@ -9,11 +9,14 @@ namespace GameEng
     {
         keysPrev = keys;
         SDL_PumpEvents();
-        while(1)
+        while(true)
         {
             SDL_Event event;
             int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP);
-            if(count <= 0) break;
+            if(count <= 0)
+            {
+                break;
+            }
 
             switch (event.type)
             {
@@ -34,7 +37,9 @@ namespace GameEng
     void KeyState::updateKey(SDL_Scancode key, SDL_EventType keyEvent)
     {
         if(keyEvent == SDL_EVENT_KEY_UP || keyEvent == SDL_EVENT_KEY_DOWN)
+        {
             keys[key] = keyEvent;
+        }
     }
 
     SDL_EventType KeyState::key(SDL_Scancode key)

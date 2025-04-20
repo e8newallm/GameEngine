@@ -12,6 +12,7 @@ namespace GameEng
     class Object;
     class World;
 
+
     typedef void (*GEUpdateFunc)(double deltaTime, World& world);
 
     /**
@@ -63,7 +64,7 @@ namespace GameEng
              * 
              * \return const std::vector<Object*>& The list of objects in the world.
              */
-            const std::vector<Object*>& getObjects() const { return objects; };
+            [[nodiscard]] const std::vector<Object*>& getObjects() const { return objects; };
 
             //Physics
 
@@ -90,14 +91,14 @@ namespace GameEng
              * 
              * \return bool Is the physics running?
              */
-            bool physicsRunning() const { return phyRunning; };
+            [[nodiscard]] bool physicsRunning() const { return phyRunning; };
 
             /**
              * \brief Returns the physics update frequency.
              *
              * \return double The physics update frequency.
              */
-            double getPPS() const { return pps; };
+            [[nodiscard]] double getPPS() const { return pps; };
 
             /**
              * \brief Sets the current physics interpolation to a new value (Used for unit testing).
@@ -111,14 +112,14 @@ namespace GameEng
              *
              * \return double The current physics interpolation value.
              */
-            double getPhyInterpolation() const { return phyInterPercent; };
+            [[nodiscard]] double getPhyInterpolation() const { return phyInterPercent; };
 
             /**
              * \brief Gets the current gravity value.
              *
              * \return double The current gravity.
              */
-            double getGravity() const { return gravity; };
+            [[nodiscard]] double getGravity() const { return gravity; };
 
             /**
              * \brief Sets the gravity.
@@ -153,14 +154,16 @@ namespace GameEng
 
             //Physics
             bool phyRunning;
-            double phyInterPercent = 0.0f;
-            const double pps = 60.0f;
+            double phyInterPercent = 0.0F;
+            const double pps = 60.0F;
             Timer physicsTimer;
 
             GEUpdateFunc updateFunc = nullptr;
 
+            const double initialGravity =  0.00005F;
+            double gravity = initialGravity;
+
             std::mutex usageLock;
-            double gravity = 0.00005f;
             std::vector<Object*> objects;
     };
 }

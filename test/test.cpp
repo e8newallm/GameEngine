@@ -36,8 +36,10 @@ using namespace GameEng;
 
 extern const char* SpriteMapSchema;
 
+// NOLINTBEGIN(readability-magic-numbers)
+
 uint64_t lineNumber;
-void loggingTestFunc(std::string message)
+void loggingTestFunc(const std::string& message)
 {
     Logger::message(message);
     lineNumber = __LINE__ - 1;
@@ -56,22 +58,23 @@ TEST_CASE("Error", "[base][exceptions]")
     }
 }
 
+using TestStore = DataStore<int, char>;
+
 TEST_CASE("Store", "[base][store]")
 {
     std::shared_ptr<int> testValue = std::make_shared<int>(12);
-    DataStore<int, char> testStore;
     SECTION("Basic test")
     {
-        REQUIRE_THROWS_WITH(testStore.get("MISSING ENTRY"),
+        REQUIRE_THROWS_WITH(TestStore::get("MISSING ENTRY"),
                             "Requested entry MISSING ENTRY not found in char store");
 
-        REQUIRE(!testStore.exists("test"));
+        REQUIRE(!TestStore::exists("test"));
 
-        testStore.add(testValue, "test");
-        REQUIRE(testStore.exists("test"));
-        REQUIRE(*testStore.get("test") == 12);
+        TestStore::add(testValue, "test");
+        REQUIRE(TestStore::exists("test"));
+        REQUIRE(*TestStore::get("test") == 12);
         *testValue = 35;
-        REQUIRE(*testStore.get("test") == 35);
+        REQUIRE(*TestStore::get("test") == 35);
     }
 }
 
@@ -99,7 +102,7 @@ TEST_CASE("Logging", "[base][logging]")
         testFile.close();
         testFile.open(filename, std::ios_base::in | std::ios_base::binary);
 
-        std::string line = "";
+        std::string line;
         std::getline(testFile, line);
         REQUIRE(line == "INFO: TEST MESSAGE\r");
         std::getline(testFile, line);
@@ -157,7 +160,8 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
 
     SECTION("JSON load/save sanity check", "[spritemap]")
     {
-        SpriteMapData test, testTwo;
+        SpriteMapData test;
+        SpriteMapData testTwo;
         std::string result = R"TEST({"Textures":["testfiles/tex/spritemap.png"],"Sprites":[{"name":"sprite01","texture":"testfiles/tex/spritemap.png","x":0,"y":0,"width":150,"height":150}],"Animations":[{"name":"explosion","FPS":5.0,"frames":["sprite01"]}]})TEST";
 
         REQUIRE_NOTHROW(test.loadFromFile("testfiles/json/spritemap/spritemap.json"));
@@ -325,10 +329,10 @@ TEST_CASE("Basic functionality", "[physics]")
 
         testRect(*box->getBody(), {500, 500, 50, 50});
 
-        world.setPhyInterpolation(1.0f);
+        world.setPhyInterpolation(1.0F);
         box->velocityDelta(0.0, 100.0);
         box->runPhysics(1, world);
-        box->update(1.0f, world);
+        box->update(1.0F, world);
 
         testRect(*box->getBody(), {500, 600, 50, 50});
     }
@@ -342,13 +346,13 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 500);
 
-        world.setPhyInterpolation(0.5f);
+        world.setPhyInterpolation(0.5F);
         box->runPhysics(1, world);
         box->update(1, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 505);
 
-        world.setPhyInterpolation(1.0f);
+        world.setPhyInterpolation(1.0F);
         box->update(1, world);
         REQUIRE(box->getBody()->x == 500);
         REQUIRE(box->getBody()->y == 510);
@@ -364,12 +368,12 @@ TEST_CASE("Basic functionality", "[physics]")
         world.addObj(boxCollide);
 
         //No collision
-        box->runPhysics(0.5f, world);
-        boxCollide->runPhysics(0.5f, world);
+        box->runPhysics(0.5F, world);
+        boxCollide->runPhysics(0.5F, world);
 
-        world.setPhyInterpolation(0.5f);
-        box->update(0.0f, world);
-        boxCollide->update(0.0f, world);
+        world.setPhyInterpolation(0.5F);
+        box->update(0.0F, world);
+        boxCollide->update(0.0F, world);
 
         REQUIRE(box->getBody()->x == 502);
         REQUIRE(box->getBody()->y == 500);
@@ -378,9 +382,9 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
 
-        world.setPhyInterpolation(1.0f);
-        box->update(0.0f, world);
-        boxCollide->update(0.0f, world);
+        world.setPhyInterpolation(1.0F);
+        box->update(0.0F, world);
+        boxCollide->update(0.0F, world);
 
         REQUIRE(box->getBody()->x == 505);
         REQUIRE(box->getBody()->y == 500);
@@ -390,12 +394,12 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->y == 500);
 
         //Collision
-        box->runPhysics(1.0f, world);
-        boxCollide->runPhysics(1.0f, world);
+        box->runPhysics(1.0F, world);
+        boxCollide->runPhysics(1.0F, world);
 
-        world.setPhyInterpolation(0.5f);
-        box->update(0.0f, world);
-        boxCollide->update(0.0f, world);
+        world.setPhyInterpolation(0.5F);
+        box->update(0.0F, world);
+        boxCollide->update(0.0F, world);
 
         REQUIRE(box->getBody()->x == 507);
         REQUIRE(box->getBody()->y == 500);
@@ -404,9 +408,9 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->x == 520);
         REQUIRE(boxCollide->getBody()->y == 500);
 
-        world.setPhyInterpolation(1.0f);
-        box->update(0.0f, world);
-        boxCollide->update(0.0f, world);
+        world.setPhyInterpolation(1.0F);
+        box->update(0.0F, world);
+        boxCollide->update(0.0F, world);
 
         REQUIRE(box->getBody()->x == 510);
         REQUIRE(box->getBody()->y == 500);
@@ -416,3 +420,5 @@ TEST_CASE("Basic functionality", "[physics]")
         REQUIRE(boxCollide->getBody()->y == 500);
     }
 }
+
+// NOLINTEND(readability-magic-numbers)

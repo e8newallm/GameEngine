@@ -20,11 +20,14 @@ namespace GameEng
     {
         reset();
         SDL_PumpEvents();
-        while(1)
+        while(true)
         {
             SDL_Event event;
             int count = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_WHEEL);
-            if(count <= 0) break;
+            if(count <= 0)
+            {
+                break;
+            }
 
             switch (event.type)
             {
@@ -68,6 +71,6 @@ namespace GameEng
 
     void MouseState::updateWheel(SDL_MouseWheelEvent wheelScroll)
     {
-        scrollAmount += (wheelScroll.direction == SDL_MOUSEWHEEL_FLIPPED) ? -wheelScroll.y : wheelScroll.y;
+        scrollAmount -= (wheelScroll.direction == SDL_MOUSEWHEEL_FLIPPED) ? -static_cast<int>(wheelScroll.y) : static_cast<int>(wheelScroll.y);
     }
 }

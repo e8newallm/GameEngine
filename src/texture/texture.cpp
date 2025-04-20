@@ -1,7 +1,6 @@
 #include <SDL3/SDL.h>
 #include <string>
 
-#include "logging.h"
 #include "texture.h"
 #include "graphics.h"
 
@@ -31,7 +30,7 @@ namespace GameEng
         SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
         SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
         SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
-        SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
+        SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0); //NOLINT
     }
 
     SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename)

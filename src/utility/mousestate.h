@@ -52,7 +52,7 @@ namespace GameEng
              *
              * \return SDL_FPoint The mouse position in the window.
              */
-            static inline SDL_FPoint mousePos()
+            static SDL_FPoint mousePos()
                 { return {xMouse, yMouse}; };
 
             /**
@@ -60,7 +60,7 @@ namespace GameEng
              *
              * \return SDL_FPoint The mouse position delta since the last update in the window.
              */
-            static inline SDL_FPoint mouseDelta()
+            static SDL_FPoint mouseDelta()
                 { return {xDeltaMouse, yDeltaMouse}; };
 
             /**
@@ -68,7 +68,7 @@ namespace GameEng
              *
              * \return Sint32 Get the mouse wheel scroll delta.
              */
-            static inline Sint32 scrollDelta()
+            static Sint32 scrollDelta()
                 { return scrollAmount; };
 
             /**
@@ -77,7 +77,7 @@ namespace GameEng
              * \param button The button being checked.
              * \return bool Is the button currently pressed down?
              */
-            static inline bool buttonDown(Uint8 button)
+            static bool buttonDown(Uint8 button)
                 { return mouseButtonDown[button]; };
 
             /**
@@ -86,7 +86,7 @@ namespace GameEng
              * \param button The button being checked.
              * \return bool Has the button been double clicked?
              */
-            static inline bool doubleClicked(Uint8 button)
+            static bool doubleClicked(Uint8 button)
                 { return mouseButton[button].clicks == 2; };
 
             /**
@@ -95,7 +95,7 @@ namespace GameEng
              * \param button The button being checked.
              * \return bool Has the button been clicked?
              */
-            static inline bool clicked(Uint8 button)
+            static bool clicked(Uint8 button)
                 { return mouseButton[button].clicks == 1; };
 
             /**
@@ -104,8 +104,12 @@ namespace GameEng
              * \param button The button whose click position is being gotten.
              * \return SDL_Point The position in the window the click happened.
              */
-            static inline SDL_Point clickPosition(Uint8 button)
+            static SDL_Point clickPosition(Uint8 button)
                 { return {(int)mouseButton[button].x, (int)mouseButton[button].y}; };
+
+            MouseState() = delete;
+            MouseState(const MouseState&) = delete;
+            MouseState& operator=(const MouseState&) = delete;
 
         private:
             static inline float xMouse = 0, yMouse = 0;
@@ -113,10 +117,6 @@ namespace GameEng
             static inline Sint32 scrollAmount = 0;
             static inline std::array<bool, SDL_BUTTON_X2+1> mouseButtonDown;
             static inline std::array<SDL_MouseButtonEvent, SDL_BUTTON_X2+1> mouseButton;
-
-            MouseState() = delete;
-            MouseState(const MouseState&) = delete;
-            MouseState& operator=(const MouseState&) = delete;
     };
 }
 

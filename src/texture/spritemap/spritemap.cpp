@@ -9,7 +9,7 @@ namespace GameEng
 {
     SpriteMap::SpriteMap(const char* configLocation) :
         currentAnimation(nullptr)
-        , currentFrame({0.0, 0})
+        , currentFrame({.elapsedTime=0.0, .frame=0})
         , currentSprite(nullptr)
         , data(new SpriteMapData())
     {
@@ -28,7 +28,7 @@ namespace GameEng
 
     SpriteMap::SpriteMap(const Packager::PackageManager* package, const char* path) :
         currentAnimation(nullptr)
-        , currentFrame({0.0, 0})
+        , currentFrame({.elapsedTime=0.0, .frame=0})
         , currentSprite(nullptr)
     {
         std::string storeName = package->getPackageName() + ":" + std::string(path);
@@ -47,7 +47,7 @@ namespace GameEng
 
     SpriteMap::SpriteMap(SpriteMapData* spriteData) :
         currentAnimation(nullptr)
-        , currentFrame({0.0, 0})
+        , currentFrame({.elapsedTime=0.0, .frame=0})
         , currentSprite(nullptr)
         , data(spriteData)
     {
@@ -55,26 +55,30 @@ namespace GameEng
 
     SDL_FRect SpriteMap::getUV()
     {
-        if(!currentSprite)
+        if(currentSprite == nullptr)
+        {
             return {0, 0, 0, 0};
+        }
 
         SDL_FRect pos = currentSprite->position;
         const GPUTexture* tex = currentSprite->texture.get();
-        return {pos.x / tex->width, pos.y / tex->height, (pos.x + pos.w) / tex->width, (pos.y + pos.h) / tex->height};
+        return {.x=(pos.x / static_cast<float>(tex->width)),         .y=pos.y / static_cast<float>(tex->height),
+                .w=(pos.x + pos.w) / static_cast<float>(tex->width), .h=(pos.y + pos.h) / static_cast<float>(tex->height)};
     }
 
     void SpriteMap::update(double deltaT)
     {
+        static const float milliseconds = 1000.0F;
         if(currentAnimation != nullptr)
         {
             currentFrame.elapsedTime += deltaT;
-            while(currentFrame.elapsedTime > 1000.0f/currentAnimation->FPS)
+            while(currentFrame.elapsedTime > milliseconds/currentAnimation->FPS)
             {
-                currentFrame.elapsedTime -= 1000.0f/currentAnimation->FPS;
+                currentFrame.elapsedTime -= milliseconds/currentAnimation->FPS;
                 currentFrame.frame++;
                 if(currentFrame.frame > currentAnimation->sprites.size()-1)
                 {
-                    currentFrame = {0.0, 0};
+                    currentFrame = {.elapsedTime=0.0, .frame=0};
                     currentAnimation = nullptr;
                     break;
                 }
@@ -82,6 +86,7 @@ namespace GameEng
                 {
                     setAnimationSprite(currentAnimation->sprites[currentFrame.frame]);
                 }
+
             }
 
         }
@@ -100,24 +105,28 @@ namespace GameEng
             SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
             SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
             SDL_BindGPUVertexStorageBuffers(renderPass, 0, &buffer, 1);
-            SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0);
+            SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0); //NOLINT
         }
     }
 
     void SpriteMap::setSprite(const std::string& name)
     {
-        if(data->sprites.contains(name))
+        if(!data->sprites.contains(name))
+        {
             return;
+        }
 
         currentSprite = &data->sprites.find(name)->second;
-        currentFrame = {0.0, 0};
+        currentFrame = {.elapsedTime=0.0, .frame=0};
         currentAnimation = nullptr;
     }
 
     void SpriteMap::setAnimationSprite(const std::string& name)
     {
-        if(data->sprites.contains(name))
+        if(!data->sprites.contains(name))
+        {
             return;
+        }
 
         currentSprite = &data->sprites.find(name)->second;
 
@@ -125,11 +134,13 @@ namespace GameEng
 
     void SpriteMap::startAnimation(const std::string& animation)
     {
-        if(data->animations.contains(animation))
+        if(!data->animations.contains(animation))
+        {
             return;
+        }
 
         currentAnimation = &data->animations.find(animation)->second;
-        currentFrame = {0.0, 0};
+        currentFrame = {.elapsedTime=0.0, .frame=0};
         setAnimationSprite(currentAnimation->sprites[currentFrame.frame]);
     }
 }

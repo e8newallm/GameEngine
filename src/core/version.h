@@ -24,21 +24,21 @@ namespace GameEng
              * 
              * \param version 
              */
-            Version(uint32_t version) : Major(version >> 16), Minor((version >> 8) & 0xFF), Patch(version & 0xFF) {};
+            Version(uint32_t version) : Major(version >> 16), Minor((version >> 8) & 0xFF), Patch(version & 0xFF) {}; //NOLINT(readability-magic-numbers)
 
             /**
              * \brief Get the Version in 32 bit form.
              *
              * \return constexpr uint32_t The version in 32 bit form.
              */
-            constexpr uint32_t getVersion() { return (Major << 16) + (Minor << 8) + Patch; };
+            [[nodiscard]] constexpr uint32_t getVersion() const { return (Major << 16) + (Minor << 8) + Patch; }; //NOLINT(readability-magic-numbers)
 
             /**
              * \brief Get the Version in string form.
              * 
              * \return constexpr std::string The version in string form.
              */
-            constexpr std::string getVersionStr() { return std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Patch); };
+            [[nodiscard]] constexpr std::string getVersionStr() const { return std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Patch); };
 
             /**
              * \brief Check whether two versions are compatible together.
@@ -46,7 +46,7 @@ namespace GameEng
              * \param other The other version to compare to.
              * \return bool Are the two versions compatible?
              */
-            bool compatible(Version other) { return Major == other.Major && Minor >= other.Minor; };
+            [[nodiscard]] bool compatible(Version other) const { return Major == other.Major && Minor >= other.Minor; };
 
         private:
             uint8_t Major, Minor, Patch;

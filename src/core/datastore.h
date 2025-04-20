@@ -60,7 +60,10 @@ namespace GameEng
             static std::shared_ptr<T> get(const std::string& name)
             {
                 if(exists(name))
+                {
                     return Data[name];
+                }
+
                 throw GameEngineException(GEError::STORE_ENTRY_NOT_FOUND, "Requested entry " + name + " not found in " + ownerClass + " store");
             }
 
@@ -89,7 +92,7 @@ namespace GameEng
 
         private:
             static inline std::unordered_map<std::string, std::shared_ptr<T>> Data;
-            static inline constexpr std::string ownerClass = std::string(getTypeName<storeID>());
+            static constexpr std::string ownerClass = std::string(getTypeName<storeID>());
     };
 
     /**

@@ -16,7 +16,6 @@ namespace GameEng
         , gpu(gpu)
         , phyRunning(false)
         , physicsTimer(pps)
-        , usageLock()
     {
 
     }

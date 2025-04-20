@@ -5,7 +5,7 @@
 #include "texture_base.h"
 #include "world.h"
 
-enum PhyObjFlag : int
+enum PhyObjFlag : int //NOLINT(performance-enum-size)
 {
     Static  = 1<<0,
     Collide = 1<<1,
@@ -33,7 +33,7 @@ namespace GameEng
              * \brief Construct a new physics object with all dimensions 0, no PhyObj flags, and no assigned texture.
              *
              */
-            PhysicsObject() : Object(){};
+            PhysicsObject() = default;
 
             using Object::draw;
             using Object::update;
@@ -51,7 +51,7 @@ namespace GameEng
              * \param deltaTime The time since last update in milliseconds.
              * \param world The world the object is being drawn to.
              */
-            virtual void update(double deltaTime, World& world) override;
+            void update(double deltaTime, World& world) override;
 
             /**
              * \brief Runs one physics update tick for the object.
@@ -67,7 +67,7 @@ namespace GameEng
              * \param world The world that the physics object exists in.
              * \return bool Is the physics object on top of another physics object.
              */
-            bool onGround(const World& world) const;
+            [[nodiscard]] bool onGround(const World& world) const;
 
             /**
              * \brief Sets the velocity of the physics object to an absolute value.
@@ -90,28 +90,28 @@ namespace GameEng
              *
              * \return SDL_FPoint The velocity of the physics object.
              */
-            virtual SDL_FPoint getVelocity() { return nextVelocity; };
+            [[nodiscard]] virtual SDL_FPoint getVelocity() { return nextVelocity; };
 
             /**
              * \brief Get the body of the physics object.
              *
              * \return const SDL_Rect* the physics object's body.
              */
-            virtual const SDL_Rect* getBody() const override { return &interBody; };
+            [[nodiscard]] virtual const SDL_Rect* getBody() const override { return &interBody; };
 
             /**
              * \brief Returns if the physics object is static.
              *
              * \return bool Is the object static?
              */
-            inline bool isStatic() const { return _isStatic; };
+            [[nodiscard]] bool isStatic() const { return _isStatic; };
 
             /**
              * \brief Returns if the physics object is collidable.
              *
              * \return bool Is the object collidable?
              */
-            inline bool canCollide() const { return _canCollide; };
+            [[nodiscard]] bool canCollide() const { return _canCollide; };
 
         protected:
             bool _isStatic = true;

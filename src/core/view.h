@@ -23,7 +23,7 @@ namespace GameEng
              * \param position The initial position of the view inside a given world.
              */
             View(SDL_FPoint resolution, SDL_FPoint position) :
-            zoom(1.0f)
+            zoom(1.0F)
             ,resolution(resolution)
             ,center(position)
             {
@@ -35,14 +35,14 @@ namespace GameEng
              * 
              * \return double The zoom of the view.
              */
-            double getZoom() const { return zoom; };
+            [[nodiscard]] double getZoom() const { return zoom; };
 
             /**
              * \brief Set the zoom of the view.
              * 
              * \param zoom The new zoom of the view.
              */
-            void setZoom(double zoom)
+            void setZoom(float zoom)
             {
                 this->zoom = zoom;
                 calcWindow();
@@ -55,8 +55,8 @@ namespace GameEng
              */
             void move(SDL_Point newPosition)
             {
-                center.x = newPosition.x;
-                center.y = newPosition.y;
+                center.x = static_cast<float>(newPosition.x);
+                center.y = static_cast<float>(newPosition.y);
                 calcWindow();
             }
 
@@ -90,14 +90,14 @@ namespace GameEng
              */
             void calcWindow()
             {
-                win.w = resolution.x/zoom;
-                win.h = resolution.y/zoom;
-                win.x = center.x - resolution.x/zoom/2.0f;
-                win.y = center.y - resolution.y/zoom/2.0f;
+                win.w = static_cast<int>(resolution.x/zoom);
+                win.h = static_cast<int>(resolution.y/zoom);
+                win.x = static_cast<int>(center.x - (resolution.x/zoom/2.0F)); //NOLINT(readability-magic-numbers)
+                win.y = static_cast<int>(center.y - (resolution.y/zoom/2.0F)); //NOLINT(readability-magic-numbers)
                 Logger::debug("window: " + std::to_string(win.x) + ", " + std::to_string(win.y) + " - " + std::to_string(win.w) + ", " + std::to_string(win.h));
             }
 
-            double zoom;
+            float zoom;
             SDL_FPoint resolution;
             SDL_FPoint center;
             SDL_Rect win;

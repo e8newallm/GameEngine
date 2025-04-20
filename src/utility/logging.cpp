@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <ios>
 #include <iostream>
 #include <source_location>
 #include <fstream>
@@ -7,22 +8,22 @@
 
 namespace GameEng
 {
-    void Logger::error(const std::string& msg, const std::source_location location)
+    void Logger::error(const std::string& msg, const std::source_location& location)
     {
         log("ERROR: " + msg, location);
     }
 
-    void Logger::warning(const std::string& msg, const std::source_location location)
+    void Logger::warning(const std::string& msg, const std::source_location& location)
     {
         log("WARN: " + msg, location);
     }
 
-    void Logger::message(const std::string& msg, const std::source_location location)
+    void Logger::message(const std::string& msg, const std::source_location& location)
     {
         log("INFO: " + msg, location);
     }
 
-    void Logger::debug(const std::string& msg, const std::source_location location)
+    void Logger::debug(const std::string& msg, const std::source_location& location)
     {
     #ifdef DEBUG
         log("DEBUG: " + msg, location);
@@ -32,7 +33,7 @@ namespace GameEng
     #endif
     }
 
-    void Logger::log(const std::string& msg, const std::source_location location)
+    void Logger::log(const std::string& msg, const std::source_location& location)
     {
         std::string fullMsg = msg + "\r\n";
     #ifdef DEBUG
@@ -40,7 +41,7 @@ namespace GameEng
     #else
         (void)location;
     #endif
-        logFile->write(fullMsg.c_str(), fullMsg.length());
+        logFile->write(fullMsg.c_str(), static_cast<std::streamsize>(fullMsg.length()));
         logFile->flush();
     }
 
@@ -50,7 +51,7 @@ namespace GameEng
         atexit(deinit);
     }
 
-    void Logger::init(std::filesystem::path fileLocation)
+    void Logger::init(const std::filesystem::path& fileLocation)
     {
         file = new std::ofstream(fileLocation);
         logFile = file;

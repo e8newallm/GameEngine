@@ -1,3 +1,5 @@
+#ifdef DEBUG
+
 #include <exception>
 #include <iostream>
 #include <unistd.h>
@@ -12,6 +14,8 @@
 #include "gamestate.h"
 #include "shader.h"
 #include "graphics.h"
+
+
 
 namespace GameEng
 {
@@ -105,3 +109,5 @@ namespace GameEng
         return 0;
     }
 }
+
+#endif

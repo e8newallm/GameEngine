@@ -18,11 +18,11 @@ namespace GameEng
 		Uint32 storageTextureCount
 	) {
 		SDL_GPUShaderStage stage;
-		if (SDL_strstr(filename.c_str(), ".vert"))
+		if (SDL_strstr(filename.c_str(), ".vert") != NULL)//NOLINT(modernize-use-nullptr)
 		{
 			stage = SDL_GPU_SHADERSTAGE_VERTEX;
 		}
-		else if (SDL_strstr(filename.c_str(), ".frag"))
+		else if (SDL_strstr(filename.c_str(), ".frag") != NULL) //NOLINT(modernize-use-nullptr)
 		{
 			stage = SDL_GPU_SHADERSTAGE_FRAGMENT;
 		}
@@ -32,21 +32,17 @@ namespace GameEng
 			return nullptr;
 		}
 
-		char fullPath[256];
 		SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(device);
 		SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
 		const char* entrypoint;
 
-		if (backendFormats & SDL_GPU_SHADERFORMAT_SPIRV) {
-			SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.spv", ".", filename.c_str());
+		if ((backendFormats & SDL_GPU_SHADERFORMAT_SPIRV) != 0U) {
 			format = SDL_GPU_SHADERFORMAT_SPIRV;
 			entrypoint = "main";
-		} else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL) {
-			SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.msl", ".", filename.c_str());
+		} else if ((backendFormats & SDL_GPU_SHADERFORMAT_MSL) != 0U) {
 			format = SDL_GPU_SHADERFORMAT_MSL;
 			entrypoint = "main0";
-		} else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL) {
-			SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.dxil", ".", filename.c_str());
+		} else if ((backendFormats & SDL_GPU_SHADERFORMAT_DXIL) != 0U) {
 			format = SDL_GPU_SHADERFORMAT_DXIL;
 			entrypoint = "main";
 		} else {
@@ -66,7 +62,7 @@ namespace GameEng
 		shaderInfo.num_uniform_buffers = uniformBufferCount;
 
 		SDL_GPUShader* shader = SDL_CreateGPUShader(device, &shaderInfo);
-		if (shader == NULL)
+		if (shader == NULL)//NOLINT(modernize-use-nullptr)
 		{
 			Logger::error("Failed to create shader!\r\n");
 			return nullptr;
@@ -85,7 +81,7 @@ namespace GameEng
 	) {
 		size_t codeSize;
 		uint8_t* codeRaw = static_cast<uint8_t*>(SDL_LoadFile(shaderFilename.c_str(), &codeSize));
-		if (codeRaw == NULL)
+		if (codeRaw == NULL) //NOLINT(modernize-use-nullptr)
 		{
 			Logger::error("Failed to load shader from disk! " + shaderFilename);
 			return nullptr;

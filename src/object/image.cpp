@@ -24,6 +24,6 @@ namespace GameEng
         ObjData* data = new ObjData();
         data->body = body;
         data->texBody = tex->getUV();
-        return {data, sizeof(ObjData)};
+        return {.data=data, .size=sizeof(ObjData)};
     }
 }

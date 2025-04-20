@@ -44,7 +44,7 @@ namespace GameEng
              * May be required for a derived class.
              * \param deltaT How much time has passed since the last update (in milliseconds).
              */
-            virtual void update(double deltaT) override {(void) deltaT;};
+            void update(double deltaT) override {(void) deltaT;};
 
             /**
              * \brief Draws the texture to the world.
@@ -53,7 +53,7 @@ namespace GameEng
              * \param buffer The buffer that contains the shader data.
              * \param renderPass The render pass for the current draw.
              */
-            virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
+            void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override;
 
         protected:
             std::shared_ptr<GPUTexture> texture;

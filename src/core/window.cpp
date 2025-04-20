@@ -11,7 +11,7 @@ namespace GameEng
     {
         win = SDL_CreateWindow(name.c_str(),
                                 width, height,  SDL_WINDOW_VULKAN | flags);
-        if (win == NULL)
+        if (win == NULL) //NOLINT(modernize-use-nullptr)
         {
             SDL_Log("CreateWindow failed: %s", SDL_GetError());
         }
@@ -25,10 +25,10 @@ namespace GameEng
             gpu = SDL_CreateGPUDevice(
                 SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
                 false,
-                NULL);
+                NULL); //NOLINT(modernize-use-nullptr)
         }
 
-        if (gpu == NULL)
+        if (gpu == NULL) //NOLINT(modernize-use-nullptr)
         {
             SDL_Log("GPUCreateDevice failed");
         }
@@ -45,7 +45,7 @@ namespace GameEng
             SDL_GPU_PRESENTMODE_IMMEDIATE
         );
 
-        reso = {width, height};
+        reso = {.x=width, .y=height};
 
     }
 

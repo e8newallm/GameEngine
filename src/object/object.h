@@ -92,7 +92,7 @@ namespace GameEng
              *
              * \return const SDL_Rect* the object's body.
              */
-            virtual const SDL_Rect* getBody() const { return &body; };
+             [[nodiscard]] virtual const SDL_Rect* getBody() const { return &body; };
 
         protected:
             SDL_Rect body;

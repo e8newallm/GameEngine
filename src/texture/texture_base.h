@@ -36,7 +36,7 @@ namespace GameEng
              *
              * \return SDL_FRect The UV rectangle to be used by the shader.
              */
-            virtual SDL_FRect getUV() { return SDL_FRect{0.0f, 0.0f, 1.0f, 1.0f}; };
+            virtual SDL_FRect getUV() { return SDL_FRect{0.0F, 0.0F, 1.0F, 1.0F}; };
             virtual ~Texture_base() {};
     };
 
@@ -52,7 +52,7 @@ namespace GameEng
         *
         * \param deltaT How much time has passed since the last update (in milliseconds).
         */
-        virtual void update(double deltaT) override { (void)deltaT; };
+        void update(double deltaT) override { (void)deltaT; };
 
         /**
         * \brief Does nothing.
@@ -61,7 +61,7 @@ namespace GameEng
         * \param buffer The buffer that contains the shader data.
         * \param renderPass The render pass for the current draw.
         */
-        virtual void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override { (void) world, (void)buffer, (void)renderPass; };
+        void draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass) override { (void) world, (void)buffer, (void)renderPass; };
     };
 
     extern const std::shared_ptr<Texture_base> NoTexture;
