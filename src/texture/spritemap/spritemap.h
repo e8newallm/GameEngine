@@ -77,7 +77,7 @@ namespace GameEng
             /**
              * \brief Set the current sprite to the named sprite and cancel any animation currently running.
              *
-             * \param name The name of the specific frame to set to.
+             * \param name The name of the sprite to set to.
              */
             void setSprite(const std::string& name);
 
@@ -85,7 +85,7 @@ namespace GameEng
              * \brief Set the current sprite to a named sprite without cancelling any current animation.
              * Primarily used for moving to the next sprite in an animation during the update function.
              *
-             * \param name
+             * \param name The name of the sprite to set to.
              */
             void setAnimationSprite(const std::string& name);
 

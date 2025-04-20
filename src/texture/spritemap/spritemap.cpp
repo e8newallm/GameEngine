@@ -55,6 +55,9 @@ namespace GameEng
 
     SDL_FRect SpriteMap::getUV()
     {
+        if(!currentSprite)
+            return {0, 0, 0, 0};
+
         SDL_FRect pos = currentSprite->position;
         const GPUTexture* tex = currentSprite->texture.get();
         return {pos.x / tex->width, pos.y / tex->height, (pos.x + pos.w) / tex->width, (pos.y + pos.h) / tex->height};
@@ -103,7 +106,7 @@ namespace GameEng
 
     void SpriteMap::setSprite(const std::string& name)
     {
-        if(data->sprites.find(name) == data->sprites.end())
+        if(data->sprites.contains(name))
             return;
 
         currentSprite = &data->sprites.find(name)->second;
@@ -113,16 +116,16 @@ namespace GameEng
 
     void SpriteMap::setAnimationSprite(const std::string& name)
     {
-        if(data->sprites.find(name) == data->sprites.end())
+        if(data->sprites.contains(name))
             return;
-        
+
         currentSprite = &data->sprites.find(name)->second;
 
     }
 
     void SpriteMap::startAnimation(const std::string& animation)
     {
-        if(data->animations.find(animation) == data->animations.end())
+        if(data->animations.contains(animation))
             return;
 
         currentAnimation = &data->animations.find(animation)->second;
