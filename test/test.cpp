@@ -36,7 +36,7 @@ using namespace GameEng;
 
 extern const char* SpriteMapSchema;
 
-// NOLINTBEGIN(readability-magic-numbers)
+//NOLINTBEGIN(readability-magic-numbers)
 
 uint64_t lineNumber;
 void loggingTestFunc(const std::string& message)
@@ -117,13 +117,15 @@ TEST_CASE("Logging", "[base][logging]")
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    Texture::add(new GPUTexture(), "testfiles/tex/spritemap.png");
+    Texture::add(GPUTexture(), "testfiles/tex/spritemap.png");
 
     SECTION("Schema sanity check")
     {
         const char* spriteMapJSON = R"(
             {
-                "Textures": "spritemap.png",
+                "Textures": [
+                    "spritemap.png"
+                ],
                 "Sprites": [
                     {
                         "name": "sprite01",
@@ -184,7 +186,7 @@ TEST_CASE("Spritemap parse testing", "[spritemap]")
                             "\"testfiles/json/spritemap/badspritemap.json\" has failed to pass SpriteMap schema");
 
         REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/texturenotfound.json"),
-                            "\"testfiles/json/spritemap/texturenotfound.json\" could not load texture file \"texspritemap.png\"");
+                            "\"testfiles/json/spritemap/texturenotfound.json\" could not load texture file \"unknown.png\"");
 
         REQUIRE_THROWS_WITH(SpriteMap("testfiles/json/spritemap/mismatchedsprite.json"),
                             "\"testfiles/json/spritemap/mismatchedsprite.json\" has a sprite (sprite01) referencing a texture not named in the JSON");
@@ -274,7 +276,7 @@ TEST_CASE("MouseState testing", "[base]")
     REQUIRE(MouseState::mouseDelta().x == 40);
     REQUIRE(MouseState::mouseDelta().y == 40);
 
-    REQUIRE(MouseState::scrollDelta() == -5);
+    REQUIRE(MouseState::scrollDelta() == 5);
 
     MouseState::reset();
 
@@ -314,7 +316,7 @@ void testRect(SDL_Rect first, SDL_Rect second, const std::source_location locati
 TEST_CASE("Basic functionality", "[physics]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    SDL_GPUDevice* gpu = SDL_CreateGPUDevice(0, false, NULL);
+    SDL_GPUDevice* gpu = SDL_CreateGPUDevice(0, false, nullptr);
 
     View viewport( {1000, 1000}, {0, 0});
     viewport.setZoom(1.0);

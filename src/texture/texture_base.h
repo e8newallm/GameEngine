@@ -37,7 +37,7 @@ namespace GameEng
              * \return SDL_FRect The UV rectangle to be used by the shader.
              */
             virtual SDL_FRect getUV() { return SDL_FRect{0.0F, 0.0F, 1.0F, 1.0F}; };
-            virtual ~Texture_base() {};
+            virtual ~Texture_base() = default;
     };
 
     /**

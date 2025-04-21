@@ -3,14 +3,12 @@
 
 #include "graphics.h"
 #include "image.h"
-#include "graphics.h"
 #include "texture.h"
-#include "texture_base.h"
 
 namespace GameEng
 {
     Image::Image(SDL_Rect body, const std::string& texture) :
-        Object(body, std::make_shared<Texture>(*new Texture(texture)))
+        Object(body, std::make_shared<Texture>(texture))
     {
     }
 

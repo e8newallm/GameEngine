@@ -1,10 +1,12 @@
 #include "geerror.h"
 
+#include <utility>
+
 namespace GameEng
 {
-    GameEngineException::GameEngineException(GEError errorCode, const std::string& errorMessage) :
+    GameEngineException::GameEngineException(GEError errorCode, std::string errorMessage) :
         errorCode(errorCode)
-        ,errorMessage(errorMessage)
+        ,errorMessage(std::move(errorMessage))
     {
     }
 

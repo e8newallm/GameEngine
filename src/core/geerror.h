@@ -30,7 +30,7 @@ namespace GameEng
              * \param errorCode The GEError code of the exception.
              * \param errorMessage A description of what caused the exception.
              */
-            GameEngineException(GEError errorCode, const std::string& errorMessage);
+            GameEngineException(GEError errorCode, std::string errorMessage);
 
             /**
              * \brief Get the description of the exception that occurred.

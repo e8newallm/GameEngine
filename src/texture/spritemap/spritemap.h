@@ -21,7 +21,6 @@ namespace GameEng
          Uint32 frame = 0;
      };
 
-
     /**
      * \brief A Texture_base derived class for drawing spritesheets.
      *

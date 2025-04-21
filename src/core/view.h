@@ -23,8 +23,7 @@ namespace GameEng
              * \param position The initial position of the view inside a given world.
              */
             View(SDL_FPoint resolution, SDL_FPoint position) :
-            zoom(1.0F)
-            ,resolution(resolution)
+            resolution(resolution)
             ,center(position)
             {
                 calcWindow();
@@ -97,7 +96,7 @@ namespace GameEng
                 Logger::debug("window: " + std::to_string(win.x) + ", " + std::to_string(win.y) + " - " + std::to_string(win.w) + ", " + std::to_string(win.h));
             }
 
-            float zoom;
+            float zoom{1.0F};
             SDL_FPoint resolution;
             SDL_FPoint center;
             SDL_Rect win;

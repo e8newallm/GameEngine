@@ -82,10 +82,7 @@ namespace GameEng
                     currentAnimation = nullptr;
                     break;
                 }
-                else
-                {
-                    setAnimationSprite(currentAnimation->sprites[currentFrame.frame]);
-                }
+                setAnimationSprite(currentAnimation->sprites[currentFrame.frame]);
 
             }
 

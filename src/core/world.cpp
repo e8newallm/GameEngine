@@ -1,5 +1,4 @@
 #include <SDL3/SDL.h>
-#include <cstdint>
 #include <mutex>
 
 #include "world.h"
@@ -30,15 +29,20 @@ namespace GameEng
 
     void World::update(double deltaTime)
     {
+        static const float milliseconds = 1000.0F;
         std::lock_guard<std::mutex> lock(usageLock);
 
-        setPhyInterpolation(physicsTimer.getElapsed() / (1000.0f / pps));
+        setPhyInterpolation(physicsTimer.getElapsed() / (milliseconds / pps));
 
         if(updateFunc != nullptr)
+        {
             (*updateFunc)(deltaTime, *this);
+        }
 
         for(Object* obj : objects)
+        {
             obj->update(deltaTime, *this);
+        }
     }
 
     void World::draw(SDL_Window* win)
@@ -47,18 +51,20 @@ namespace GameEng
 
         SDL_GPUCommandBuffer* cmdbuf = SDL_AcquireGPUCommandBuffer(getGPU());
         SDL_GPUTexture* swapchainTexture;
-        if (!SDL_AcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, NULL, NULL))
+        if (!SDL_AcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, nullptr, nullptr))
         {
             Logger::error("SDL_AcquireGPUSwapchainTexture failed!");
             return;
         }
-        if(swapchainTexture == NULL)
+        if(swapchainTexture == nullptr)
+        {
             return;
+        }
 
         SDL_GPUColorTargetInfo colorTargetInfo;
         SDL_zero(colorTargetInfo);
         colorTargetInfo.texture = swapchainTexture;
-        colorTargetInfo.clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };
+        colorTargetInfo.clear_color = { .r=0.0F, .g=0.0F, .b=0.0F, .a=1.0F };
         colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
         colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
@@ -66,9 +72,9 @@ namespace GameEng
         std::vector<Uint32> indexes{};
         Uint32 dataSize = 0;
 
-        for(uint64_t i = 0; i < objects.size(); i++)
+        for(Object* object : objects)
         {
-            ShaderObjData newData = objects[i]->predraw();
+            ShaderObjData newData = object->predraw();
             indexes.push_back(dataSize);
             dataSize += newData.size;
             data.push_back(newData);
@@ -102,7 +108,7 @@ namespace GameEng
         for(ShaderObjData objData : data)
         {
             SDL_memcpy(&dataPtr[address], objData.data, objData.size);
-            address += objData.size/4;
+            address += static_cast<int>(objData.size/4);
         }
 
         SDL_UnmapGPUTransferBuffer(gpu, transferBuffer);
@@ -127,24 +133,28 @@ namespace GameEng
 
         // END OF FUTURE FUNCTION
 
-        SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, NULL);
+        SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, nullptr);
 
         ShaderWorldData worldData {*getView().window()};
         SDL_PushGPUVertexUniformData(cmdbuf, 1, &worldData, sizeof(ShaderWorldData));
 
         int drawID = 0;
-        for(uint64_t i = 0; i < objects.size(); i++)
+        for(Object* object : objects)
         {
             SDL_PushGPUVertexUniformData(cmdbuf, 0, &drawID, sizeof(Uint32));
             drawID++;
-            if(SDL_HasRectIntersection(objects[i]->getBody(), getView().window()))
-                objects[i]->draw(this, objectDataBuffer, renderPass);
+            if(SDL_HasRectIntersection(object->getBody(), getView().window()))
+            {
+                object->draw(this, objectDataBuffer, renderPass);
+            }
         }
         SDL_EndGPURenderPass(renderPass);
         SDL_SubmitGPUCommandBuffer(cmdbuf);
 
         for(ShaderObjData test : data)
+        {
             free(test.data);
+        }
     }
 
 
@@ -166,11 +176,13 @@ namespace GameEng
             if(!GameState::gamePaused() && phyRunning)
             {
                 std::lock_guard<std::mutex> lock(usageLock);
-                for(uint64_t i = 0; i < objects.size(); i++)
+                for(Object* object : objects)
                 {
-                    PhysicsObject* phyObj = dynamic_cast<PhysicsObject*>(objects[i]);
-                    if(phyObj)
+                    PhysicsObject* phyObj = dynamic_cast<PhysicsObject*>(object);
+                    if(phyObj != nullptr)
+                    {
                         phyObj->runPhysics(pps, *this);
+                    }
                 }
             }
         }

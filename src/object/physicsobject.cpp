@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -42,15 +43,14 @@ namespace GameEng
         groundCheck.w = body.w;
         groundCheck.h = 2;
         const std::vector<Object*>& objects = world.getObjects();
-        for(uint64_t i = 0; i < objects.size(); i++)
-        {
-            const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
-            if(obj != this && obj != nullptr && SDL_HasRectIntersection(&groundCheck, objects[i]->getBody()))
+
+        return std::ranges::any_of(objects,
+            [&](Object* object)
             {
-                return true;
+                const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(object);
+                return obj != nullptr && obj != this && SDL_HasRectIntersection(&groundCheck, object->getBody());
             }
-        }
-        return false;
+        );
     }
 
     ShaderObjData PhysicsObject::predraw()
@@ -100,11 +100,11 @@ namespace GameEng
         SDL_Rect collisionArea;
 
         nextBody.x += static_cast<int>(displacement.x);
-        for(uint64_t i = 0; i < objects.size(); i++)
+        for(Object* object : objects)
         {
-            const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
+            const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(object);
 
-            if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
+            if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != object)
             {
                 if(obj->getBody()->x < body.x)
                 {
@@ -120,10 +120,10 @@ namespace GameEng
         }
 
         nextBody.y += static_cast<int>(displacement.y);
-        for(uint64_t i = 0; i < objects.size(); i++)
+        for(Object* object : objects)
         {
-            const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(objects[i]);
-            if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != objects[i])
+            const PhysicsObject* obj = dynamic_cast<PhysicsObject*>(object);
+            if(obj != nullptr && SDL_GetRectIntersection(&nextBody, obj->getBody(), &collisionArea) && this != object)
             {
                 if(obj->getBody()->y < body.y)
                 {

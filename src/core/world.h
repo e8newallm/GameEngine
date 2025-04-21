@@ -13,7 +13,7 @@ namespace GameEng
     class World;
 
 
-    typedef void (*GEUpdateFunc)(double deltaTime, World& world);
+    using GEUpdateFunc = void (*)(double deltaTime, World& world);
 
     /**
      * \brief A class for defining a given world for objects to exist and interact within.

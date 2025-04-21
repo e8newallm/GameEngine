@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <source_location>
 
 #ifdef DEBUG
 #include <stdint.h>
@@ -33,14 +34,14 @@ namespace GameEng
             * \param data A raw pointer to the object being added.
             * \param name A name to reference the object by.
             */
-            static void add(T* data, const std::string& name)
+            static void add(T data, const std::string& name)
             {
-                Data.insert({name, std::make_shared<T>(*data)});
+                Data.insert({name, std::make_shared<T>(data)});
             }
 
             /**
              * \brief Add a new shared_ptr to the store.
-             * 
+             *
              * \param data A shared_ptr to the object being added.
              * \param name A name to reference the object by.
              */
@@ -64,7 +65,7 @@ namespace GameEng
                     return Data[name];
                 }
 
-                throw GameEngineException(GEError::STORE_ENTRY_NOT_FOUND, "Requested entry " + name + " not found in " + ownerClass + " store");
+                throw GameEngineException(GEError::STORE_ENTRY_NOT_FOUND, "Requested entry " + name + " not found in " + std::string(ownerClass) + " store");
             }
 
             /**
@@ -92,7 +93,7 @@ namespace GameEng
 
         private:
             static inline std::unordered_map<std::string, std::shared_ptr<T>> Data;
-            static constexpr std::string ownerClass = std::string(getTypeName<storeID>());
+            constexpr static std::string_view ownerClass = getTypeName<storeID>();
     };
 
     /**
@@ -103,29 +104,22 @@ namespace GameEng
     */
     template <typename T> consteval std::string_view getTypeName()
     {
+        static constexpr std::string_view func = std::string_view{__PRETTY_FUNCTION__};
     #if defined(__clang__)
-        constexpr auto prefix   = std::string_view{"[T = "};
-        constexpr auto suffix   = std::string_view{";"};
-        constexpr auto function = std::string_view{__PRETTY_FUNCTION__};
+        constexpr int prefix = func.find("[T = ") + std::string("[with T = ").length();
+        static constexpr std::string_view str = func.substr(prefix, func.rfind(';') - prefix);
+        return str;
     #elif defined(__GNUC__)
-        constexpr auto prefix   = std::string_view{"with T = "};
-        constexpr auto suffix   = std::string_view{";"};
-        constexpr auto function = std::string_view{__PRETTY_FUNCTION__};
+        constexpr int prefix = func.find("[with T = ") + std::string("[with T = ").length();
+        static constexpr std::string_view str = func.substr(prefix, func.rfind(';') - prefix);
+        return str;
     #elif defined(_MSC_VER)
-        constexpr auto prefix   = std::string_view{"type_name_array<"};
-        constexpr auto suffix   = std::string_view{">(void)"};
-        constexpr auto function = std::string_view{__FUNCSIG__};
+        constexpr int prefix = func.find("type_name_array<") + std::string("type_name_array<").length();
+        static constexpr std::string_view str = func.substr(prefix, func.rfind(">(void)") - prefix);
+        return str;
     #else
     #   error Unsupported compiler
     #endif
-
-        constexpr auto start = function.find(prefix) + prefix.size();
-        constexpr auto end = function.rfind(suffix);
-
-        static_assert(start < end);
-
-        constexpr static auto name = function.substr(start, (end - start));
-        return name;
     }
 }
 

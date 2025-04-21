@@ -1,5 +1,7 @@
 {
-    "Textures": "testfiles/tex/spritemap.png",
+    "Textures": [
+        "testfiles/tex/spritemap.png"
+    ],
     "Sprites": [
         {
             "name": "sprite01",

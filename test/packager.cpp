@@ -13,13 +13,15 @@
 
 using namespace GameEng;
 
+//NOLINTBEGIN(readability-magic-numbers)
+
 inline void conversionTest(uint64_t value) {
 	std::vector<uint8_t> data = {};
 	numToByte(data, value);
 	REQUIRE(byteToNum(data) == value);
 }
 
-inline void fileEntryTest(const Packager::FileEntry lhs, const Packager::FileEntry rhs)
+inline void fileEntryTest(const Packager::FileEntry& lhs, const Packager::FileEntry& rhs)
 {
 	REQUIRE(lhs.name == rhs.name);
 	REQUIRE(lhs.start == rhs.start);
@@ -27,10 +29,14 @@ inline void fileEntryTest(const Packager::FileEntry lhs, const Packager::FileEnt
 	REQUIRE(lhs.length == rhs.length);
 };
 
-inline void headerTest(std::vector<Packager::FileEntry> data) {
+inline void headerTest(std::vector<Packager::FileEntry> data)
+{
 	std::vector<Packager::FileEntry> result = Packager::headerDecompress(headerCompress(data));
 	REQUIRE(result.size() == data.size());
-	for(uint64_t i = 0; i < data.size(); i++) fileEntryTest(result[i], data[i]);
+	for(uint64_t i = 0; i < data.size(); i++)
+	{
+		fileEntryTest(result[i], data[i]);
+	}
 
 }
 
@@ -43,13 +49,17 @@ TEST_CASE("Packager/NumByteTest", "[packager]")
 
 	srand(10);
 	for (int i = 0; i < 1000; i++)
+	{
 		conversionTest(((uint64_t)rand() << 32) + rand());
+	}
 }
 
 TEST_CASE("Packager/HeaderData", "[packager]")
 {
-	headerTest( {{"test", (uint64_t)-1, 4, 8}} );
-	headerTest( {{"t\\est", (uint64_t)-1, 4, 8}, {"wsenbogw/eniop/fvcwed.gewrs", 17, 255, 97}, {"wsenerthg.gdf", 1700, 2525, 99678677}} );
+	headerTest( {{.name="test", .start=(uint64_t)-1, .compressedLength=4, .length=8}} );
+	headerTest( {{.name="t\\est", .start=(uint64_t)-1, .compressedLength=4, .length=8},
+					{.name="wsenbogw/eniop/fvcwed.gewrs", .start=17, .compressedLength=255, .length=97},
+					{.name="wsenerthg.gdf", .start=1700, .compressedLength=2525, .length=99678677}} );
 	headerTest( std::vector<Packager::FileEntry>(200, {"", 0, 0, 0}));
 	headerTest( std::vector<Packager::FileEntry>());
 }
@@ -70,8 +80,8 @@ TEST_CASE("Packager/FullTest", "[packager]")
 	{
 		std::vector<uint8_t> fileReturn = testPackage.getFile(dirFiles[i]);
 		FILE* originalFile = fopen(("testfiles/"+dirFiles[i]).c_str(), "rb");
-		REQUIRE(originalFile != NULL);
-		if(originalFile != NULL)
+		REQUIRE(originalFile != nullptr);
+		if(originalFile != nullptr)
 		{
 			std::vector<uint8_t> originalData(std::filesystem::file_size("testfiles/"+dirFiles[i]));
 			fread(originalData.data(), 1, std::filesystem::file_size("testfiles/"+dirFiles[i]), originalFile);
@@ -109,3 +119,5 @@ TEST_CASE("Packager/Exceptions", "[packager][exceptions]")
 			Catch::Matchers::Message("Could not read entire header of testfiles/packager/invalidHeaderData.bin"));
 	}
 }
+
+//NOLINTEND(readability-magic-numbers)

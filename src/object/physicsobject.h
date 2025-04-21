@@ -97,7 +97,7 @@ namespace GameEng
              *
              * \return const SDL_Rect* the physics object's body.
              */
-            [[nodiscard]] virtual const SDL_Rect* getBody() const override { return &interBody; };
+            [[nodiscard]] const SDL_Rect* getBody() const override { return &interBody; };
 
             /**
              * \brief Returns if the physics object is static.

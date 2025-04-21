@@ -21,8 +21,6 @@ namespace GameEng
 {
     SpriteMapData::SpriteMapData() :
         package()
-        ,sprites()
-        ,animations()
     {
     }
 
@@ -67,52 +65,28 @@ namespace GameEng
             validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
             throw GameEngineException(GEError::INVALID_FILE_FORMAT, std::string("\"") + source + "\" has failed to pass SpriteMap schema");
         }
-        if(config["Textures"].IsArray())
+
+        for(rapidjson::Value& value : config["Textures"].GetArray())
         {
-            for(rapidjson::Value& value : config["Textures"].GetArray())
-            {
-                if(!Texture::exists(value.GetString()))
-                {
-                    const SDL_Surface* surface;
-                    if(package != nullptr)
-                    {
-                        std::vector<uint8_t> data = package->getFile(value.GetString());
-                        SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
-                        surface = IMG_Load_IO(dataBuffer, 1);
-                    }
-                    else
-                    {
-                        surface = IMG_Load(value.GetString());
-                    }
-                    if(surface == nullptr)
-                    {
-                        throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
-                    }
-                }
-                textures.insert({value.GetString(), Texture::get(value.GetString())});
-            }
-        }
-        else
-        {
-            if(!Texture::exists(config["Textures"].GetString()))
+            if(!Texture::exists(value.GetString()))
             {
                 const SDL_Surface* surface;
                 if(package != nullptr)
                 {
-                    std::vector<uint8_t> data = package->getFile(config["Textures"].GetString());
+                    std::vector<uint8_t> data = package->getFile(value.GetString());
                     SDL_IOStream* dataBuffer = SDL_IOFromMem(data.data(), data.size());
-                    surface = IMG_Load_IO(dataBuffer, 1);
+                    surface = IMG_Load_IO(dataBuffer, true);
                 }
                 else
                 {
-                    surface = IMG_Load(config["Textures"].GetString());
+                    surface = IMG_Load(value.GetString());
                 }
                 if(surface == nullptr)
                 {
-                    throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + config["Textures"].GetString() + "\"");
+                    throw GameEngineException(GEError::FILE_NOT_FOUND, std::string("\"") + source + "\" could not load texture file \"" + value.GetString() + "\"");
                 }
             }
-            textures.insert({config["Textures"].GetString(), Texture::get(config["Textures"].GetString())});
+            textures.insert({value.GetString(), Texture::get(value.GetString())});
         }
 
         for(rapidjson::Value& value : config["Sprites"].GetArray())
@@ -187,15 +161,15 @@ namespace GameEng
         rapidjson::Document::AllocatorType& allocator = config.GetAllocator();
         config.SetObject();
 
-        if(textures.size() == 0)
+        if(textures.empty())
         {
             throw GameEngineException(GEError::INVALID_FILE_FORMAT, "Serialise: Spritemap JSON has no textures defined!");
         }
 
         rapidjson::Value texArray(rapidjson::kArrayType);
-        for (std::map<std::string, std::shared_ptr<GPUTexture>>::iterator it = textures.begin(); it != textures.end(); ++it)
+        for (std::pair<const std::string, std::shared_ptr<GPUTexture>>& texture : textures)
         {
-            texArray.PushBack(rapidjson::Value(it->first.c_str(), allocator), allocator);
+            texArray.PushBack(rapidjson::Value(texture.first.c_str(), allocator), allocator);
         }
         config.AddMember("Textures", texArray, allocator);
 
@@ -224,9 +198,9 @@ namespace GameEng
                 value.AddMember("name", rapidjson::Value().SetString(animation.first.c_str(), allocator), allocator);
                 value.AddMember("FPS", rapidjson::Value().SetFloat(static_cast<float>(animation.second.FPS)), allocator);
                 rapidjson::Value frameArray(rapidjson::kArrayType);
-                for (std::vector<std::string>::iterator itTwo = animation.second.sprites.begin(); itTwo != animation.second.sprites.end(); ++itTwo)
+                for (const std::string& sprite : animation.second.sprites)
                 {
-                    frameArray.PushBack(rapidjson::Value().SetString(itTwo->c_str(), allocator), allocator);
+                    frameArray.PushBack(rapidjson::Value().SetString(sprite.c_str(), allocator), allocator);
                 }
                 value.AddMember("frames", frameArray, allocator);
                 aniArray.PushBack(value, allocator);

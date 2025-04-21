@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     for(int i = 2; i < argc; i++)
     {
-        std::string data = "";
+        std::string data;
         std::string path = argv[i];
         std::string schema = path.substr(path.find_last_of("/\\") + 1);
         schema.resize(schema.find_last_of('.'));
