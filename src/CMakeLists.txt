@@ -1,5 +1,5 @@
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
 find_package(RapidJSON REQUIRED)
 
 add_subdirectory(tools)

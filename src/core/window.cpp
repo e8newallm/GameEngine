@@ -11,24 +11,14 @@ namespace GameEng
     {
         win = SDL_CreateWindow(name.c_str(),
                                 width, height,  SDL_WINDOW_VULKAN | flags);
-        if (win == NULL) //NOLINT(modernize-use-nullptr)
+        if (win == nullptr)
         {
             SDL_Log("CreateWindow failed: %s", SDL_GetError());
         }
 
-        if(newGPU != nullptr)
-        {
-            gpu = newGPU;
-        }
-        else
-        {
-            gpu = SDL_CreateGPUDevice(
-                SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
-                false,
-                NULL); //NOLINT(modernize-use-nullptr)
-        }
+        gpu = newGPU;
 
-        if (gpu == NULL) //NOLINT(modernize-use-nullptr)
+        if (gpu == nullptr)
         {
             SDL_Log("GPUCreateDevice failed");
         }
@@ -46,7 +36,6 @@ namespace GameEng
         );
 
         reso = {.x=width, .y=height};
-
     }
 
     Window::Window(const std::string& name, int flags, SDL_GPUDevice* newGPU) : Window(name, 0, 0, SDL_WINDOW_FULLSCREEN | flags, newGPU)
@@ -69,6 +58,5 @@ namespace GameEng
     {
         SDL_ReleaseWindowFromGPUDevice(gpu, win);
         SDL_DestroyWindow(win);
-        SDL_DestroyGPUDevice(gpu);
     }
 }

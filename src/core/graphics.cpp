@@ -3,9 +3,41 @@
 
 #include "graphics.h"
 #include "shader.h"
+#include "texture.h"
+#include "spritemap.h"
 
 namespace GameEng
 {
+	void GPUDevice::GPUDeviceInit(SDL_GPUShaderFormat flags)
+	{
+		device.gpu = SDL_CreateGPUDevice(
+			flags,
+			false,
+			nullptr);
+	};
+
+	void GPUDevice::GPUDeviceDeinit()
+	{
+		if(device.gpu != nullptr)
+		{
+			SpriteMap::clear();
+			Texture::clear();
+			Sampler::clear();
+			Shader::clear();
+			Pipeline::clear();
+			SDL_DestroyGPUDevice(device.gpu);
+		}
+	};
+
+	SDL_GPUDevice* GPUDevice::getGPU()
+	{
+		if(device.gpu != nullptr)
+		{
+			return device.gpu;
+		}
+		throw GameEngineException(GEError::GPUDEVICE_NOT_INIT, "GPUDeviceInit has not been ran");
+	};
+
 	std::shared_ptr<Sampler> Sampler::createSampler(const Window& win, SDL_GPUSamplerCreateInfo& sampleInfo)
 	{
 		SDL_GPUSampler* sample = SDL_CreateGPUSampler(win.getGPU(), &sampleInfo);
@@ -15,7 +47,7 @@ namespace GameEng
 			return nullptr;
 		}
 
-		return std::make_shared<Sampler>(Sampler(sample));
+		return std::make_shared<Sampler>(sample);
 	}
 
 	std::shared_ptr<Pipeline> Pipeline::createPipeline(const Window& win, const std::string& vertShader = "default", const std::string& fragShader = "default")
@@ -60,6 +92,8 @@ namespace GameEng
 			return nullptr;
 		}
 		
-		return std::make_shared<Pipeline>(Pipeline(pipe));
+		return std::make_shared<Pipeline>(pipe);
 	};
+
+	GPUDevice GPUDevice::device;
 }

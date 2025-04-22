@@ -9,7 +9,7 @@
 namespace GameEng
 {
 	std::shared_ptr<Shader> Shader::createShader(
-		SDL_GPUDevice* device,
+		SDL_GPUDevice* gpu,
 		const std::string& filename,
 		const std::vector<uint8_t>& code,
 		Uint32 samplerCount,
@@ -32,7 +32,7 @@ namespace GameEng
 			return nullptr;
 		}
 
-		SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(device);
+		SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(gpu);
 		SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
 		const char* entrypoint;
 
@@ -61,18 +61,18 @@ namespace GameEng
 		shaderInfo.num_storage_buffers = storageBufferCount;
 		shaderInfo.num_uniform_buffers = uniformBufferCount;
 
-		SDL_GPUShader* shader = SDL_CreateGPUShader(device, &shaderInfo);
+		SDL_GPUShader* shader = SDL_CreateGPUShader(gpu, &shaderInfo);
 		if (shader == NULL)//NOLINT(modernize-use-nullptr)
 		{
 			Logger::error("Failed to create shader!\r\n");
 			return nullptr;
 		}
 
-		return std::make_shared<Shader>(shader);
+		return std::make_shared<Shader>(shader, gpu);
 	}
 
 	std::shared_ptr<Shader> Shader::LoadShaderFromFile(
-		SDL_GPUDevice* device,
+		SDL_GPUDevice* gpu,
 		const std::string& shaderFilename,
 		Uint32 samplerCount,
 		Uint32 uniformBufferCount,
@@ -90,11 +90,11 @@ namespace GameEng
 		std::vector<uint8_t> code;
 		code.assign(codeRaw, codeRaw + codeSize);
 
-		return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
+		return createShader(gpu, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
 	}
 
 	std::shared_ptr<Shader> Shader::LoadShaderFromArray(
-		SDL_GPUDevice* device,
+		SDL_GPUDevice* gpu,
 		const std::string& shaderFilename,
 		const std::vector<uint8_t>& code,
 		Uint32 samplerCount,
@@ -102,6 +102,6 @@ namespace GameEng
 		Uint32 storageBufferCount,
 		Uint32 storageTextureCount
 	) {
-		return createShader(device, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
+		return createShader(gpu, shaderFilename, code, samplerCount, uniformBufferCount, storageBufferCount, storageTextureCount);
 	}
 }

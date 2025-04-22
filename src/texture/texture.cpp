@@ -1,4 +1,6 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_gpu.h>
+#include <memory>
 #include <string>
 
 #include "texture.h"
@@ -21,11 +23,11 @@ namespace GameEng
     void Texture::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
     {
         (void)world;
-
+        static SDL_GPUSampler* samp = Sampler::get("default")->getSampler();
         SDL_GPUTextureSamplerBinding sampleBinding;
         SDL_zero(sampleBinding);
-        sampleBinding.texture = texture->tex;
-        sampleBinding.sampler = Sampler::get("default")->getSampler();
+        sampleBinding.texture = texture->getTex();
+        sampleBinding.sampler = samp;
 
         SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
         SDL_BindGPUFragmentSamplers(renderPass, 0, &sampleBinding, 1);
@@ -33,7 +35,7 @@ namespace GameEng
         SDL_DrawGPUPrimitives(renderPass, 6, 1, 0, 0); //NOLINT
     }
 
-    SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename)
+    std::shared_ptr<GPUTexture> createTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename)
     {
         SDL_Surface* convertSurf = SDL_ConvertSurface(surf, SDL_PIXELFORMAT_ABGR8888);
 
@@ -80,6 +82,6 @@ namespace GameEng
         SDL_SubmitGPUCommandBuffer(uploadCmdBuf);
         SDL_ReleaseGPUTransferBuffer(gpu, textureTransferBuffer);
 
-        return tex;
+        return std::make_shared<GPUTexture>(tex, surf->w, surf->h);
     }
 }

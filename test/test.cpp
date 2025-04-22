@@ -117,7 +117,8 @@ TEST_CASE("Logging", "[base][logging]")
 TEST_CASE("Spritemap parse testing", "[spritemap]")
 {
     REQUIRE(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS));
-    Texture::add(GPUTexture(), "testfiles/tex/spritemap.png");
+    Texture::add(std::make_shared<GPUTexture>(nullptr, 0, 0), "testfiles/tex/spritemap.png");
+    REQUIRE(Texture::exists("testfiles/tex/spritemap.png"));
 
     SECTION("Schema sanity check")
     {

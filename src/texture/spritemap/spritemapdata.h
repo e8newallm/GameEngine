@@ -89,6 +89,8 @@ namespace GameEng
              */
             std::string serialise();
 
+            SpriteMapData(const SpriteMapData&) = delete;
+
             const Packager::PackageManager* package;
 
             std::map<std::string, std::shared_ptr<GPUTexture>> textures;

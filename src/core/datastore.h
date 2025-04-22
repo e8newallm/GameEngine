@@ -4,10 +4,9 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include <source_location>
 
 #ifdef DEBUG
-#include <stdint.h>
+#include <cstdint>
 
 extern std::unordered_map<std::string, std::unordered_map<std::string, uint64_t> (*)()> storeList;
 #endif
@@ -27,18 +26,6 @@ namespace GameEng
     template <class T, class storeID> class DataStore
     {
         public:
-
-            /**
-            * \brief Add a new entry to the store.
-            * 
-            * \param data A raw pointer to the object being added.
-            * \param name A name to reference the object by.
-            */
-            static void add(T data, const std::string& name)
-            {
-                Data.insert({name, std::make_shared<T>(data)});
-            }
-
             /**
              * \brief Add a new shared_ptr to the store.
              *
@@ -77,6 +64,15 @@ namespace GameEng
             static bool exists(const std::string& name)
             {
                 return Data.contains(name);
+            }
+
+            /**
+             * \brief Empties the store of entries.
+             * 
+             */
+            static void clear()
+            {
+                Data.clear();
             }
 
     #ifdef DEBUG

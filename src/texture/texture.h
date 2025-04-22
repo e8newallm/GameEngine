@@ -2,21 +2,44 @@
 #define TEXTURE_H
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_gpu.h>
 
 #include "texture_base.h"
 #include "datastore.h"
+#include "graphics.h"
 
 namespace GameEng
 {
     /**
      * \brief An abstraction for SDL_GPUTexture* that contains texture width and height, as well as enable DataStore to deconstruct it.
-     * 
+     *
      */
-    struct GPUTexture
+    class GPUTexture
     {
-        SDL_GPUTexture* tex; //< The texture that is loaded into memory.
-        int width; //< The width of the texture.
-        int height; //< The height of the texture.
+        public:
+            GPUTexture(SDL_GPUTexture* tex, int width, int height) :
+            tex(tex)
+            ,width(width)
+            ,height(height)
+            {}
+
+            ~GPUTexture()
+            {
+                if(tex != nullptr)
+                {
+                    SDL_ReleaseGPUTexture(GPUDevice::getGPU(), tex);
+                }
+            }
+
+            SDL_GPUTexture* getTex() { return tex; };
+            [[nodiscard]] int getWidth() const { return width; };
+            [[nodiscard]] int getHeight() const { return height; };
+
+            GPUTexture(const GPUTexture&) = delete;
+        private:
+            SDL_GPUTexture* tex; //< The texture that is loaded into memory.
+            int width; //< The width of the texture.
+            int height; //< The height of the texture.
     };
 
     /**
@@ -66,9 +89,9 @@ namespace GameEng
      * \param gpu The GPUDevice to upload the texture with.
      * \param surf The texture converted into a SDL_Surface to upload.
      * \param filename The filename of the texture being uploaded.
-     * \return SDL_GPUTexture* A pointer to the texture in memory.
+     * \return std::shared_ptr<GPUTexture> A pointer to the texture in memory.
      */
-    SDL_GPUTexture* uploadTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename);
+    std::shared_ptr<GPUTexture> createTexture(SDL_GPUDevice* gpu, SDL_Surface* surf, const std::string& filename);
 }
 
 #endif

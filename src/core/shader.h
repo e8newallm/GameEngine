@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "datastore.h"
 
@@ -23,12 +24,24 @@ namespace GameEng
              *
              * \param sampler The SDL_GPUShader* to be wrapped
              */
-            explicit Shader(SDL_GPUShader* shader) { this->shader = shader; };
+            Shader(SDL_GPUShader* shader, SDL_GPUDevice* newGPU) :
+            shader(shader)
+            ,gpu(newGPU)
+            {};
+
+            /**
+             * \brief Destroy the Shader object
+             * 
+             */
+            ~Shader()
+            {
+                SDL_ReleaseGPUShader(gpu, shader);
+            };
 
             /**
              * \brief Create a Shader object from an vector array
              *
-             * \param device The SDL_GPUDevice* to load the shader into.
+             * \param gpu The SDL_GPUDevice* to load the shader into.
              * \param shaderFilename The filename of the shader (Used for parsing the format).
              * \param code The shader code to be used.
              * \param samplerCount The number of samplers defined in the shader.
@@ -38,7 +51,7 @@ namespace GameEng
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
             static std::shared_ptr<Shader> LoadShaderFromArray(
-                SDL_GPUDevice* device,
+                SDL_GPUDevice* gpu,
                 const std::string& shaderFilename,
                 const std::vector<uint8_t>& code,
                 Uint32 samplerCount,
@@ -50,7 +63,7 @@ namespace GameEng
             /**
              * \brief Create a Shader object from af file
              *
-             * \param device The SDL_GPUDevice* to load the shader into.
+             * \param gpu The SDL_GPUDevice* to load the shader into.
              * \param shaderFilename The filename of the shader (Used for parsing the format).
              * \param samplerCount The number of samplers defined in the shader.
              * \param uniformBufferCount The number of uniform buffers defined in the shader.
@@ -59,7 +72,7 @@ namespace GameEng
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
             static std::shared_ptr<Shader> LoadShaderFromFile(
-                SDL_GPUDevice* device,
+                SDL_GPUDevice* gpu,
                 const std::string& shaderFilename,
                 Uint32 samplerCount,
                 Uint32 uniformBufferCount,
@@ -70,7 +83,7 @@ namespace GameEng
             /**
              * \brief Create a SDL_GPUShader* object
              *
-             * \param device The SDL_GPUDevice* to load the shader into.
+             * \param gpu The SDL_GPUDevice* to load the shader into.
              * \param filename The filename of the shader (Used for parsing the format).
              * \param code The shader code to be used.
              * \param samplerCount The number of samplers defined in the shader.
@@ -80,7 +93,7 @@ namespace GameEng
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
             static std::shared_ptr<Shader> createShader(
-                SDL_GPUDevice* device,
+                SDL_GPUDevice* gpu,
                 const std::string& filename,
                 const std::vector<uint8_t>& code,
                 Uint32 samplerCount,
@@ -98,6 +111,7 @@ namespace GameEng
 
         private:
             SDL_GPUShader* shader;
+            SDL_GPUDevice* gpu;
     };
 }
 

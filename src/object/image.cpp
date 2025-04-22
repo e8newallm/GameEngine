@@ -19,7 +19,7 @@ namespace GameEng
             SDL_FRect texBody;
         };
 
-        ObjData* data = new ObjData();
+        ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
         data->body = body;
         data->texBody = tex->getUV();
         return {.data=data, .size=sizeof(ObjData)};

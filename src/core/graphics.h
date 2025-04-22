@@ -11,6 +11,21 @@
 
 namespace GameEng
 {
+    class GPUDevice
+    {
+        public:
+            static void GPUDeviceInit(SDL_GPUShaderFormat flags = SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL);
+            static void GPUDeviceDeinit();
+            static SDL_GPUDevice* getGPU();
+
+            GPUDevice() = default;
+
+        private:
+            static GPUDevice device;
+
+            SDL_GPUDevice* gpu = nullptr;
+    };
+
     /**
      * \brief A structure for holding the data blob the shader will require.
      * 
@@ -36,6 +51,18 @@ namespace GameEng
             explicit Sampler(SDL_GPUSampler* sampler) { this->sampler = sampler; };
 
             /**
+             * \brief Destroy the Sampler wrapper as well as the SDL_GPUSampler
+             * 
+             */
+            ~Sampler()
+            {
+                if(sampler != nullptr)
+                {
+                    SDL_ReleaseGPUSampler(GPUDevice::getGPU(), sampler);
+                }
+            }
+
+            /**
              * \brief Create a Sampler object.
              *
              * \param win The window the sampler will be used for.
@@ -52,6 +79,8 @@ namespace GameEng
              * \return SDL_GPUSampler* The SDL pipeline object.
              */
              SDL_GPUSampler* getSampler() { return sampler; };
+
+             Sampler(const Sampler&) = delete;
 
         private:
             SDL_GPUSampler* sampler;
@@ -72,6 +101,18 @@ namespace GameEng
             explicit Pipeline(SDL_GPUGraphicsPipeline* pipeline) { this->pipeline = pipeline; };
 
             /**
+             * \brief Destroy the Pipeline wrapper as well as the SDL_GPUPipeline
+             * 
+             */
+             ~Pipeline()
+             {
+                if(pipeline != nullptr)
+                {
+                    SDL_ReleaseGPUGraphicsPipeline(GPUDevice::getGPU(), pipeline);
+                }
+             }
+
+            /**
              * \brief Create a Pipeline object using shaders saved in the Shader DataStore.
              *
              * \param win The window the pipline will be used for.
@@ -88,6 +129,7 @@ namespace GameEng
              */
             SDL_GPUGraphicsPipeline* getPipeline() { return pipeline; };
 
+            Pipeline(const Pipeline&) = delete;
         private:
             SDL_GPUGraphicsPipeline* pipeline;
     };

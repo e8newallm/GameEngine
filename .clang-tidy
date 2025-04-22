@@ -1,6 +1,7 @@
 ---
 Checks: "clang-diagnostic-*,clang-analyzer-*,bugprone-*,modernize-*,performance-*,readability-*,\
-         -modernize-use-trailing-return-type,-readability-identifier-length,-bugprone-easily-swappable-parameters,-modernize-use-auto"
+         -modernize-use-trailing-return-type,-readability-identifier-length,-bugprone-easily-swappable-parameters,-modernize-use-auto,\
+         -readability-function-cognitive-complexity"
 WarningsAsErrors: ''
 HeaderFileExtensions:
   - ''

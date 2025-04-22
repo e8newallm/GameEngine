@@ -11,6 +11,8 @@ namespace GameEng
      * \brief Error codes for GameEngine exceptions.
      */
     enum class GEError { //NOLINT(performance-enum-size)
+        GPUDEVICE_NOT_INIT,     ///< GPUDeviceInit was not run before attempting to use GPUDevice::getGPU() 
+
         FILE_NOT_FOUND,         ///< File does not exist.
         FILE_IO,                ///< File was unable to be written to or read.
         INVALID_FILE_FORMAT,    ///< Input file was not formatted correctly.

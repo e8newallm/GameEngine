@@ -16,7 +16,7 @@ namespace GameEng
         std::string storeName = std::string(configLocation);
         if(!exists(storeName))
         {
-            data = std::make_shared<SpriteMapData>(SpriteMapData());
+            data = std::make_shared<SpriteMapData>();
             data->loadFromFile(configLocation);
             add(data, storeName);
         }
@@ -34,7 +34,7 @@ namespace GameEng
         std::string storeName = package->getPackageName() + ":" + std::string(path);
         if(!exists(storeName))
         {
-            data = std::make_shared<SpriteMapData>(SpriteMapData());
+            data = std::make_shared<SpriteMapData>();
             data->loadFromPackage(package, path);
             add(data, storeName);
         }
@@ -62,8 +62,8 @@ namespace GameEng
 
         SDL_FRect pos = currentSprite->position;
         const GPUTexture* tex = currentSprite->texture.get();
-        return {.x=(pos.x / static_cast<float>(tex->width)),         .y=pos.y / static_cast<float>(tex->height),
-                .w=(pos.x + pos.w) / static_cast<float>(tex->width), .h=(pos.y + pos.h) / static_cast<float>(tex->height)};
+        return {.x=(pos.x / static_cast<float>(tex->getWidth())),         .y=pos.y / static_cast<float>(tex->getHeight()),
+                .w=(pos.x + pos.w) / static_cast<float>(tex->getWidth()), .h=(pos.y + pos.h) / static_cast<float>(tex->getHeight())};
     }
 
     void SpriteMap::update(double deltaT)
@@ -91,12 +91,13 @@ namespace GameEng
 
     void SpriteMap::draw(World* world, SDL_GPUBuffer* buffer, SDL_GPURenderPass* renderPass)
     {
+        //static auto samp = Sampler::get("default");
         (void)world;
         if(currentSprite != nullptr)
         {
             SDL_GPUTextureSamplerBinding sampleBinding;
             SDL_zero(sampleBinding);
-            sampleBinding.texture = currentSprite->texture->tex;
+            sampleBinding.texture = currentSprite->texture->getTex();
             sampleBinding.sampler = Sampler::get("default")->getSampler();
 
             SDL_BindGPUGraphicsPipeline(renderPass, Pipeline::get("default")->getPipeline());
