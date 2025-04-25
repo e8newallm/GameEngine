@@ -27,4 +27,5 @@ find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 find_package(SDL3_image REQUIRED)
 
 add_subdirectory(src)
+add_subdirectory(extern)
 add_subdirectory(test)

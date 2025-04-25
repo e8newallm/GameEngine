@@ -3,10 +3,10 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gpu.h>
+#include <SDL3_shadercross/SDL_shadercross.h>
 
 #include <memory>
 #include <vector>
-#include <iostream>
 
 #include "datastore.h"
 
@@ -39,6 +39,15 @@ namespace GameEng
             };
 
             /**
+             * \brief Builds a shader from source into SPIRV format.
+             *
+             * \param filename The filename of the shader being built (Used for automatically determining the shader stage).
+             * \param source The source file to be build.
+             * \return std::vector<uint8_t> The build shader ready for use.
+             */
+            [[nodiscard]] static std::vector<uint8_t> buildShader(const std::string& filename, const std::vector<uint8_t>& source);
+
+            /**
              * \brief Create a Shader object from an vector array
              *
              * \param gpu The SDL_GPUDevice* to load the shader into.
@@ -50,7 +59,7 @@ namespace GameEng
              * \param storageTextureCount The number of storage textures defined in the shader.
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
-            static std::shared_ptr<Shader> LoadShaderFromArray(
+            [[nodiscard]] static std::shared_ptr<Shader> LoadShaderFromArray(
                 SDL_GPUDevice* gpu,
                 const std::string& shaderFilename,
                 const std::vector<uint8_t>& code,
@@ -71,7 +80,7 @@ namespace GameEng
              * \param storageTextureCount The number of storage textures defined in the shader.
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
-            static std::shared_ptr<Shader> LoadShaderFromFile(
+            [[nodiscard]] static std::shared_ptr<Shader> LoadShaderFromFile(
                 SDL_GPUDevice* gpu,
                 const std::string& shaderFilename,
                 Uint32 samplerCount,
@@ -92,7 +101,7 @@ namespace GameEng
              * \param storageTextureCount The number of storage textures defined in the shader.
              * \return std::shared_ptr<Shader> The resulting shader saved in the GPU.
              */
-            static std::shared_ptr<Shader> createShader(
+            [[nodiscard]] static std::shared_ptr<Shader> createShader(
                 SDL_GPUDevice* gpu,
                 const std::string& filename,
                 const std::vector<uint8_t>& code,

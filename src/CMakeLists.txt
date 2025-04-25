@@ -42,7 +42,7 @@ if(DEBUG)
 endif()
 
 add_library(GameEngine STATIC ${src})
-target_link_libraries(GameEngine PUBLIC ${SDL3_LIBRARIES} SDL3_image lua Packager)
+target_link_libraries(GameEngine PUBLIC ${SDL3_LIBRARIES} SDL3_image SDL3_shadercross lua Packager)
 target_include_directories(GameEngine PUBLIC . ${GAMEENGINE_HEADERS} ${CMAKE_BINARY_DIR})
 add_dependencies(GameEngine SchemaGeneration)
 
