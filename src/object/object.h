@@ -34,9 +34,9 @@ namespace GameEng
             /**
              * \brief Generates the data required by the image object's shader.
              *
-             * \return ShaderObjData The data to be passed to the shader.
+             * \return std::vector<std::byte> The data to be passed to the shader.
              */
-            virtual ShaderObjData predraw() = 0;
+            virtual std::vector<std::byte> predraw() = 0;
 
             /**
              * \brief Draw the object to the given world.

@@ -27,16 +27,6 @@ namespace GameEng
     };
 
     /**
-     * \brief A structure for holding the data blob the shader will require.
-     * 
-     */
-    struct ShaderObjData
-    {
-        void* data; ///< A pointer to the data in memory.
-        size_t size; ///< The size of the data.
-    };
-
-    /**
      * \brief A class for wrapping SDL_GPUSampler for use with the DataStore in the class. Also contains functions for creating and storing all created SDL samplers.
      *
      */
@@ -130,6 +120,7 @@ namespace GameEng
             SDL_GPUGraphicsPipeline* getPipeline() { return pipeline; };
 
             Pipeline(const Pipeline&) = delete;
+
         private:
             SDL_GPUGraphicsPipeline* pipeline;
     };

@@ -1,7 +1,6 @@
 #include <memory>
 #include <string>
 
-#include "graphics.h"
 #include "image.h"
 #include "texture.h"
 
@@ -12,16 +11,18 @@ namespace GameEng
     {
     }
 
-    ShaderObjData Image::predraw()
+    std::vector<std::byte> Image::predraw()
     {
         struct ObjData {
             SDL_Rect body;
             SDL_FRect texBody;
         };
 
-        ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
+
+        std::vector<std::byte> mem(sizeof(ObjData));
+        ObjData* data = reinterpret_cast<ObjData*>(mem.data());
         data->body = body;
         data->texBody = tex->getUV();
-        return {.data=data, .size=sizeof(ObjData)};
+        return mem;
     }
 }

@@ -68,15 +68,15 @@ namespace GameEng
         colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
         colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
-        std::vector<ShaderObjData> data{};
+        std::vector<std::vector<std::byte>> data{};
         std::vector<Uint32> indexes{};
         Uint32 dataSize = 0;
 
         for(Object* object : objects)
         {
-            ShaderObjData newData = object->predraw();
+            std::vector<std::byte> newData = object->predraw();
             indexes.push_back(dataSize);
-            dataSize += newData.size;
+            dataSize += newData.size();
             data.push_back(newData);
         }
 
@@ -105,10 +105,10 @@ namespace GameEng
             dataPtr[address++] = index + indexes.size() * 4;
         }
 
-        for(ShaderObjData objData : data)
+        for(std::vector<std::byte> objData : data)
         {
-            SDL_memcpy(&dataPtr[address], objData.data, objData.size);
-            address += static_cast<int>(objData.size/4);
+            SDL_memcpy(&dataPtr[address], objData.data(), objData.size());
+            address += static_cast<int>(objData.size()/4);
         }
 
         SDL_UnmapGPUTransferBuffer(gpu, transferBuffer);
@@ -151,9 +151,9 @@ namespace GameEng
         SDL_EndGPURenderPass(renderPass);
         SDL_SubmitGPUCommandBuffer(cmdbuf);
 
-        for(ShaderObjData test : data)
+        for(std::vector<std::byte> test : data)
         {
-            free(test.data);
+            test.clear();
         }
     }
 

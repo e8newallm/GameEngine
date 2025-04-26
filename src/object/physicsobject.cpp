@@ -53,17 +53,19 @@ namespace GameEng
         );
     }
 
-    ShaderObjData PhysicsObject::predraw()
+    std::vector<std::byte> PhysicsObject::predraw()
     {
         struct ObjData {
             SDL_Rect body;
             SDL_FRect texBody;
         };
 
-        ObjData* data = static_cast<ObjData*>(malloc(sizeof(ObjData)));
-        data->body = *getBody();
+
+        std::vector<std::byte> mem(sizeof(ObjData));
+        ObjData* data = reinterpret_cast<ObjData*>(mem.data());
+        data->body = body;
         data->texBody = tex->getUV();
-        return {.data=data, .size=sizeof(ObjData)};
+        return mem;
     }
 
     void PhysicsObject::update(double deltaTime, World& world)

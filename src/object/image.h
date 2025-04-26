@@ -27,9 +27,9 @@ namespace GameEng
             /**
              * \brief Generates the data required by the image object's shader.
              *
-             * \return ShaderObjData The data to be passed to the shader.
+             * \return std::vector<std::byte> The data to be passed to the shader.
              */
-            ShaderObjData predraw() override;
+             std::vector<std::byte> predraw() override;
     };
 }
 
