@@ -17,12 +17,23 @@ namespace GameEng
     class GPUTexture
     {
         public:
+            /**
+             * \brief Construct a new GPUTexture object.
+             *
+             * \param tex The texture being used.
+             * \param width The width of the texture.
+             * \param height The height of the texture.
+             */
             GPUTexture(SDL_GPUTexture* tex, int width, int height) :
             tex(tex)
             ,width(width)
             ,height(height)
             {}
 
+            /**
+             * \brief Destroy the GPUTexture wrapper as well as the SDL_GPUTexture
+             *
+             */
             ~GPUTexture()
             {
                 if(tex != nullptr)
@@ -31,8 +42,25 @@ namespace GameEng
                 }
             }
 
-            SDL_GPUTexture* getTex() { return tex; };
+            /**
+             * \brief Get the SDL_GPUTexture object.
+             * 
+             * \return SDL_GPUTexture* The texture.
+             */
+            [[nodiscard]] SDL_GPUTexture* getTex() { return tex; };
+
+            /**
+             * \brief Get the texture's width.
+             *
+             * \return int The width of the texture.
+             */
             [[nodiscard]] int getWidth() const { return width; };
+
+            /**
+             * \brief Get the texture's height.
+             *
+             * \return int The height of the texture.
+             */
             [[nodiscard]] int getHeight() const { return height; };
 
             GPUTexture(const GPUTexture&) = delete;
@@ -84,7 +112,7 @@ namespace GameEng
     };
 
     /**
-     * \brief Upload a texture to the GPU.
+     * \brief Creates a new texture and uploaded it to the GPU.
      *
      * \param gpu The GPUDevice to upload the texture with.
      * \param surf The texture converted into a SDL_Surface to upload.
