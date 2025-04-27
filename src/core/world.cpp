@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_gpu.h>
 #include <mutex>
 
 #include "world.h"
@@ -51,7 +52,7 @@ namespace GameEng
 
         SDL_GPUCommandBuffer* cmdbuf = SDL_AcquireGPUCommandBuffer(getGPU());
         SDL_GPUTexture* swapchainTexture;
-        if (!SDL_AcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, nullptr, nullptr))
+        if (!SDL_WaitAndAcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, nullptr, nullptr))
         {
             Logger::error("SDL_AcquireGPUSwapchainTexture failed!");
             return;
@@ -128,7 +129,6 @@ namespace GameEng
         bufferRegion.size = dataSize + (Uint32)indexes.size() * 4;
 
         SDL_UploadToGPUBuffer(copyPass, &transferBufferLocation, &bufferRegion,true);
-
         SDL_EndGPUCopyPass(copyPass);
 
         // END OF FUTURE FUNCTION
@@ -150,6 +150,10 @@ namespace GameEng
         }
         SDL_EndGPURenderPass(renderPass);
         SDL_SubmitGPUCommandBuffer(cmdbuf);
+
+        SDL_ReleaseGPUTransferBuffer(getGPU(), transferBuffer);
+        SDL_ReleaseGPUBuffer(getGPU(), objectDataBuffer);
+        //SDL_ReleaseGPUTexture(getGPU(), swapchainTexture);
 
         for(std::vector<std::byte> test : data)
         {
