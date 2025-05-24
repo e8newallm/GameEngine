@@ -42,16 +42,17 @@ namespace GameEng
     {
     }
 
-    void Window::render(World& world)
+    bool Window::render(World& world)
     {
         if(renderTimer.trigger())
         {
             double deltaTime = renderTimer.getElapsed();
             renderTimer.update();
-
             world.update(deltaTime);
             world.draw(getWin());
+            return true;
         }
+        return false;
     }
 
     Window::~Window()

@@ -81,10 +81,11 @@ namespace GameEng
             void stopPhysics();
 
             /**
-             * \brief Runs one physics update tick (As long as the physics isn't paused and the game isn't paused).
+             * \brief Runs one physics update tick if it is time for a new update tick (As long as the physics isn't paused and the game isn't paused).
              *
+             * \return bool Was it time for a new update tick?
              */
-            void runPhysics();
+            bool runPhysics();
 
             /**
              * \brief Returns if the physics is currently running or paused.

@@ -6,7 +6,6 @@
 #include "object.h"
 #include "logging.h"
 #include "gamestate.h"
-#include "graphics.h"
 #include "physicsobject.h"
 
 namespace GameEng
@@ -52,7 +51,7 @@ namespace GameEng
 
         SDL_GPUCommandBuffer* cmdbuf = SDL_AcquireGPUCommandBuffer(getGPU());
         SDL_GPUTexture* swapchainTexture;
-        if (!SDL_WaitAndAcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, nullptr, nullptr))
+        if (!SDL_AcquireGPUSwapchainTexture(cmdbuf, win, &swapchainTexture, nullptr, nullptr))
         {
             Logger::error("SDL_AcquireGPUSwapchainTexture failed!");
             return;
@@ -80,8 +79,6 @@ namespace GameEng
             dataSize += newData.size();
             data.push_back(newData);
         }
-
-        //FUTURE FUNCTION
 
         SDL_GPUTransferBuffer* transferBuffer;
         SDL_GPUBuffer* objectDataBuffer;
@@ -131,8 +128,6 @@ namespace GameEng
         SDL_UploadToGPUBuffer(copyPass, &transferBufferLocation, &bufferRegion,true);
         SDL_EndGPUCopyPass(copyPass);
 
-        // END OF FUTURE FUNCTION
-
         SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, nullptr);
 
         ShaderWorldData worldData {*getView().window()};
@@ -153,7 +148,6 @@ namespace GameEng
 
         SDL_ReleaseGPUTransferBuffer(getGPU(), transferBuffer);
         SDL_ReleaseGPUBuffer(getGPU(), objectDataBuffer);
-        //SDL_ReleaseGPUTexture(getGPU(), swapchainTexture);
 
         for(std::vector<std::byte> test : data)
         {
@@ -172,7 +166,7 @@ namespace GameEng
         phyRunning = false;
     }
 
-    void World::runPhysics()
+    bool World::runPhysics()
     {
         if(physicsTimer.trigger())
         {
@@ -189,7 +183,9 @@ namespace GameEng
                     }
                 }
             }
+            return true;
         }
+        return false;
     }
 
     void World::registerUpdate(GEUpdateFunc func)

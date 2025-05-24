@@ -10,7 +10,7 @@
 namespace GameEng
 {
     /**
-     * \brief A class for handling window creation/interation/destruction.
+     * \brief A class for handling window construction/interation/destruction.
      * 
      */
     class Window
@@ -59,11 +59,12 @@ namespace GameEng
             [[nodiscard]] const SDL_Point* getResolution() const { return &reso; };
 
             /**
-             * \brief Renders a frame for the window using a given world.
+             * \brief Renders a frame for the window using a given world if it is time for a new frame render.
              *
              * \param world The world to be rendered.
+             * \return Was it time for a new frame render?
              */
-            void render(World& world);
+            bool render(World& world);
 
             Window() = delete;
             Window(const Window&) = delete;

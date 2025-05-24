@@ -360,7 +360,8 @@ uint64_t byteToNum(std::vector<uint8_t>& data)
     return result;
 }
 
-std::string getExtension(const std::string& filename) {
+std::string getExtension(const std::string& filename)
+{
     size_t pos = filename.find_last_of('.');
     if (pos != std::string::npos && pos != filename.size() - 1) {
         return filename.substr(pos + 1);
