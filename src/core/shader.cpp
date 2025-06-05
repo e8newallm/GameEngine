@@ -36,7 +36,7 @@ namespace GameEng
 		void* data = SDL_ShaderCross_CompileSPIRVFromHLSL(&hlslInfo, &size);
 		if(size == 0)
 		{
-			Logger::error(std::string("Failed to build shader: ") + SDL_GetError() + "\r\n");
+			Logger::error("Failed to build shader: ", SDL_GetError(), "\r\n");
 		}
 
 		std::vector<uint8_t> result(size);
@@ -101,7 +101,7 @@ namespace GameEng
 		SDL_GPUShader* shader = SDL_CreateGPUShader(gpu, &shaderInfo);
 		if (shader == nullptr)
 		{
-			Logger::error(std::string("Failed to create shader: ") + SDL_GetError() + "\r\n");
+			Logger::error("Failed to create shader: ", SDL_GetError(), "\r\n");
 			return nullptr;
 		}
 
@@ -120,7 +120,7 @@ namespace GameEng
 		uint8_t* codeRaw = static_cast<uint8_t*>(SDL_LoadFile(shaderFilename.c_str(), &codeSize));
 		if (codeRaw == nullptr)
 		{
-			Logger::error("Failed to load shader from disk! " + shaderFilename);
+			Logger::error("Failed to load shader from disk! ", shaderFilename);
 			return nullptr;
 		}
 

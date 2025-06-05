@@ -93,7 +93,7 @@ namespace GameEng
                 win.h = static_cast<int>(resolution.y/zoom);
                 win.x = static_cast<int>(center.x - (resolution.x/zoom/2.0F)); //NOLINT(readability-magic-numbers)
                 win.y = static_cast<int>(center.y - (resolution.y/zoom/2.0F)); //NOLINT(readability-magic-numbers)
-                Logger::debug("window: " + std::to_string(win.x) + ", " + std::to_string(win.y) + " - " + std::to_string(win.w) + ", " + std::to_string(win.h));
+                Logger::debug("window: ", win.x, ", ", win.y, " - ", win.w, ",", win.h);
             }
 
             float zoom{1.0F};

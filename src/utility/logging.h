@@ -17,35 +17,60 @@ namespace GameEng
             /**
              * \brief Logs an error in the log.
              *
-             * \param msg The message being logged.
-             * \param location The location in source where the log message was used (Does not show in a release build)
-             */
-            static void error(const std::string& msg, const std::source_location& location = std::source_location::current());
-
+             * \param args The arguments to be written to the log 
+			 */
+            template <typename... Args> static void error(Args... args)
+            {
+                log("ERROR: " + stringify(args...));
+            }
+            
             /**
              * \brief Logs an warning in the log.
              *
-             * \param msg The message being logged.
-             * \param location The location in source where the log message was used (Does not show in a release build)
-             */
-            static void warning(const std::string& msg, const std::source_location& location = std::source_location::current());
-
+             * \param args The arguments to be written to the log 
+			 */
+            template <typename... Args> static void warning(Args... args)
+            {
+                log("WARN: " + stringify(args...));
+            }
+    
             /**
              * \brief Logs an message in the log.
              *
-             * \param msg The message being logged.
-             * \param location The location in source where the log message was used (Does not show in a release build)
-             */
-            static void message(const std::string& msg, const std::source_location& location = std::source_location::current());
-
+             * \param args The arguments to be written to the log 
+			 */
+            template <typename... Args> static void message(Args... args)
+            {
+                log("INFO: " + stringify(args...));
+            }
+            
             /**
-             * \brief Logs an debug in the log.
-             * Does not show in a release build
-             * \param msg The message being logged.
-             * \param location The location in source where the log message was used (Does not show in a release build)
-             */
-            static void debug(const std::string& msg, const std::source_location& location = std::source_location::current());
-
+             * \brief Logs an debug message in the log.
+             *
+             * \param args The arguments to be written to the log 
+			 */
+            template <typename... Args> static void debug(Args... args)
+            {
+            #ifdef DEBUG
+                log("DEBUG: " + stringify(args));
+            #else
+                (void)sizeof...(args);
+            #endif
+            }
+            
+			
+		   /**
+			* \brief Converts a parameter pack into a string
+			*
+			* \param args The arguments to be stringified
+			*/
+			template <typename... Args> static std::string stringify(Args... args)
+            {
+                std::ostringstream str;
+                ((str << args), ...);
+                return str.str();
+            }
+            
             /**
              * \brief Initialises the log to output to a given ostream, replacing std::cout.
              * Init also registers deinit function to run on game close.
@@ -67,9 +92,7 @@ namespace GameEng
             static void deinit();
 
         private:
-            static void log(const std::string& msg,
-            const std::source_location& location =
-                std::source_location::current());
+            static void log(const std::string& msg);
 
             static inline std::ostream* logFile = &std::cout;
             static inline std::ofstream* file = nullptr;

@@ -49,7 +49,7 @@ namespace GameEng
                 }
                 default:
                 {
-                    Logger::warning("Unhandled mouse event: " + std::format("{:x}", event.type));
+                    Logger::warning("Unhandled mouse event: ", std::format("{:x}", event.type));
                 }
             }
         }
