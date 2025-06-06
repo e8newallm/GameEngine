@@ -2,6 +2,6 @@
 
 namespace GameEng
 {
-    bool GameState::paused = false;
-    bool GameState::closing = false;
-}
+bool GameState::paused = false;
+bool GameState::closing = false;
+} // namespace GameEng

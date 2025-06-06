@@ -4,8 +4,8 @@
 #include <SDL3/SDL_gpu.h>
 #include <map>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
@@ -18,85 +18,85 @@
 
 namespace GameEng
 {
+/**
+ * \brief A structure for holding a sprite's data for use with a SpriteMapData.
+ *
+ */
+struct Sprite
+{
+    std::shared_ptr<GPUTexture> texture;
+    std::string textureName;
+    SDL_FRect position;
+};
+
+/**
+ * \brief A structure for holding a spritemap animation data for use with a SpriteMapData.
+ *
+ */
+struct Animation
+{
+    double FPS;
+    std::vector<std::string> sprites;
+};
+
+/**
+ * \brief A class for holding the data of a SpriteMap.
+ *
+ */
+class SpriteMapData
+{
+  public:
     /**
-     * \brief A structure for holding a sprite's data for use with a SpriteMapData.
+     * \brief Construct an empty SpriteMapData object.
      *
      */
-    struct Sprite
-    {
-        std::shared_ptr<GPUTexture> texture;
-        std::string textureName;
-        SDL_FRect position;
-    };
+    SpriteMapData();
 
     /**
-     * \brief A structure for holding a spritemap animation data for use with a SpriteMapData.
+     * \brief Load SpriteMapData from a file.
      *
+     * \param configLocation The file location of a config.
      */
-    struct Animation
-    {
-        double FPS;
-        std::vector<std::string> sprites;
-    };
+    void loadFromFile(const char* configLocation);
 
     /**
-     * \brief A class for holding the data of a SpriteMap.
+     * \brief Load SpriteMapData from a package.
      *
+     * \param package The package the load the data from.
+     * \param path The path within the package to load the config from.
      */
-    class SpriteMapData
-    {
-        public:
-            /**
-             * \brief Construct an empty SpriteMapData object.
-             * 
-             */
-            SpriteMapData();
+    void loadFromPackage(const Packager::PackageManager* package, const char* path);
 
-            /**
-             * \brief Load SpriteMapData from a file.
-             * 
-             * \param configLocation The file location of a config.
-             */
-            void loadFromFile(const char* configLocation);
+    /**
+     * \brief Load SpriteMapData from a string.
+     *
+     * \param spriteConfig The SpriteMapData config file.
+     * \param source The source of the config file (Used for error reporting where the failing config file came from).
+     */
+    void loadFromString(const char* spriteConfig, const char* source = "string config");
 
-            /**
-             * \brief Load SpriteMapData from a package.
-             * 
-             * \param package The package the load the data from.
-             * \param path The path within the package to load the config from.
-             */
-            void loadFromPackage(const Packager::PackageManager* package, const char* path);
+    /**
+     * \brief Save the current SpriteMapData as a config file.
+     *
+     * \param spriteConfig The location to save the SpriteMapData to.
+     */
+    void save(const char* spriteConfig);
 
-            /**
-             * \brief Load SpriteMapData from a string.
-             * 
-             * \param spriteConfig The SpriteMapData config file.
-             * \param source The source of the config file (Used for error reporting where the failing config file came from).
-             */
-            void loadFromString(const char* spriteConfig, const char* source = "string config");
+    /**
+     * \brief Turn the current SpriteMapData into a binary blob for saving.
+     *
+     * \return std::string The binary blob to be saved.
+     */
+    std::string serialise();
 
-            /**
-             * \brief Save the current SpriteMapData as a config file.
-             * 
-             * \param spriteConfig The location to save the SpriteMapData to.
-             */
-            void save(const char* spriteConfig);
+    SpriteMapData(const SpriteMapData&) = delete;
 
-            /**
-             * \brief Turn the current SpriteMapData into a binary blob for saving.
-             *
-             * \return std::string The binary blob to be saved.
-             */
-            std::string serialise();
+    const Packager::PackageManager* package;
 
-            SpriteMapData(const SpriteMapData&) = delete;
-
-            const Packager::PackageManager* package;
-
-            std::map<std::string, std::shared_ptr<GPUTexture>> textures;
-            std::map<std::string, Sprite> sprites;
-            std::map<std::string, Animation> animations;
-    };
-}
+    std::map<std::string, std::shared_ptr<GPUTexture>> textures;
+    std::map<std::string, Sprite> sprites;
+    std::map<std::string, Animation> animations;
+};
+} // namespace GameEng
 
 #endif

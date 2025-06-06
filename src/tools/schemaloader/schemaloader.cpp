@@ -1,10 +1,10 @@
 #include <filesystem>
-#include <string>
-#include <sstream>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     for(int i = 0; i < argc; i++)
     {
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         }
 
         std::ofstream header(headerFile);
-        
+
         header << data;
         header.close();
     }
