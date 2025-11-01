@@ -1,6 +1,5 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_stdinc.h>
-#include <SDL3_shadercross/SDL_shadercross.h>
 
 #include <cstdint>
 #include <cstring>
@@ -19,8 +18,6 @@ std::vector<uint8_t> Shader::buildShader(const std::string& filename, const std:
     hlslInfo.entrypoint = "main";
     hlslInfo.include_dir = nullptr;
     hlslInfo.defines = nullptr;
-    hlslInfo.enable_debug = false;
-    hlslInfo.name = filename.c_str();
     hlslInfo.props = 0;
 
     if(SDL_strstr(filename.c_str(), ".vert") != nullptr)

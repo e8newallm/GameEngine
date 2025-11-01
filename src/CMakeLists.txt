@@ -43,8 +43,9 @@ endif()
 
 add_library(GameEngine STATIC ${src})
 target_link_libraries(GameEngine PUBLIC ${SDL3_LIBRARIES} SDL3_image SDL3_shadercross-static lua Packager)
-target_include_directories(GameEngine PUBLIC . ${GAMEENGINE_HEADERS} ${CMAKE_BINARY_DIR} SDL3_shadercross-static)
+target_include_directories(GameEngine PUBLIC . ${GAMEENGINE_HEADERS} ${CMAKE_BINARY_DIR} SDL3_image SDL3_shadercross-static)
 add_dependencies(GameEngine SchemaGeneration)
+target_compile_options(GameEngine PUBLIC -Wall -Wextra -Werror -Wpedantic)
 
 if(DEBUG)
     target_compile_definitions(GameEngine PUBLIC DEBUG)

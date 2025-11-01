@@ -10,7 +10,7 @@
 
 namespace GameEng
 {
-PhysicsObject::PhysicsObject(SDL_Rect body, int flags, std::shared_ptr<Texture_base> texture)
+PhysicsObject::PhysicsObject(SDL_Rect body, int flags, std::weak_ptr<Texture_base> texture)
     : Object(body, std::move(texture)), _isStatic((flags & PhyObjFlag::Static) != 0),
       _canCollide((flags & PhyObjFlag::Collide) != 0), nextBody(body), interBody(body), currentVelocity(),
       nextVelocity()

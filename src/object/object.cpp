@@ -5,7 +5,7 @@
 
 namespace GameEng
 {
-Object::Object(SDL_Rect body, std::shared_ptr<Texture_base> texture) : body(body), tex(std::move(texture))
+Object::Object(SDL_Rect body, std::weak_ptr<Texture_base> texture) : body(body), tex(std::move(texture))
 {
 }
 

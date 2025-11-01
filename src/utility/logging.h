@@ -3,7 +3,6 @@
 
 #include <filesystem>
 #include <iostream>
-#include <source_location>
 
 namespace GameEng
 {

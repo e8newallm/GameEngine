@@ -263,6 +263,8 @@ TEST_CASE("MouseState testing", "[base]")
         5.1,
         SDL_MOUSEWHEEL_FLIPPED,
         0,
+        0,
+        0,
         0
     });
 

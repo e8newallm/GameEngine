@@ -22,13 +22,13 @@ class Object
      * \param body The dimensions of the object.
      * \param texture The texture of the object.
      */
-    Object(SDL_Rect body, std::shared_ptr<Texture_base> texture = NoTexture);
+    Object(SDL_Rect body, std::weak_ptr<Texture_base> texture = NoTexture);
 
     /**
      * \brief Construct a new object with all dimensions 0 and no assigned texture.
      *
      */
-    Object() : Object({0, 0, 0, 0}, nullptr) {};
+    Object() : Object({0, 0, 0, 0}) {};
     virtual ~Object();
 
     /**
