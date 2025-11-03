@@ -56,7 +56,7 @@ std::vector<std::byte> PhysicsObject::predraw()
 
     std::vector<std::byte> mem(sizeof(ObjData));
     ObjData* data = reinterpret_cast<ObjData*>(mem.data());
-    data->body = body;
+    data->body = *getBody();
     data->texBody = tex->getUV();
     return mem;
 }

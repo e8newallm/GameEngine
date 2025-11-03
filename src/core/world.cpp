@@ -81,13 +81,13 @@ void World::draw(SDL_Window* win)
     SDL_GPUTransferBufferCreateInfo transferBufferCreateInfo;
     SDL_zero(transferBufferCreateInfo);
     transferBufferCreateInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-    transferBufferCreateInfo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
+    transferBufferCreateInfo.size = dataSize + ((Uint32)indexes.size() * (Uint32)sizeof(Uint32));
     transferBuffer = SDL_CreateGPUTransferBuffer(gpu, &transferBufferCreateInfo);
 
     SDL_GPUBufferCreateInfo bufferCreateInfo;
     SDL_zero(bufferCreateInfo);
     bufferCreateInfo.usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ;
-    bufferCreateInfo.size = dataSize + (Uint32)indexes.size() * (Uint32)sizeof(Uint32);
+    bufferCreateInfo.size = dataSize + ((Uint32)indexes.size() * (Uint32)sizeof(Uint32));
     objectDataBuffer = SDL_CreateGPUBuffer(gpu, &bufferCreateInfo);
 
     Uint32* dataPtr = static_cast<Uint32*>(SDL_MapGPUTransferBuffer(gpu, transferBuffer, true));
@@ -95,7 +95,7 @@ void World::draw(SDL_Window* win)
     int address = 0;
     for(Uint32 index : indexes)
     {
-        dataPtr[address++] = index + indexes.size() * 4;
+        dataPtr[address++] = index + ((Uint32)indexes.size() * 4);
     }
 
     for(std::vector<std::byte> objData : data)
@@ -118,7 +118,7 @@ void World::draw(SDL_Window* win)
     SDL_zero(bufferRegion);
     bufferRegion.buffer = objectDataBuffer;
     bufferRegion.offset = 0;
-    bufferRegion.size = dataSize + (Uint32)indexes.size() * 4;
+    bufferRegion.size = dataSize + ((Uint32)indexes.size() * 4);
 
     SDL_UploadToGPUBuffer(copyPass, &transferBufferLocation, &bufferRegion, true);
     SDL_EndGPUCopyPass(copyPass);
